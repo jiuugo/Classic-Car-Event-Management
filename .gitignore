@@ -37,3 +37,4 @@ pnpm-debug.log*
 next-env.d.ts
 
 /app/generated/prisma
+prisma/migrations/migration_lock.toml
