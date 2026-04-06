@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
@@ -12,17 +10,97 @@ datasource db {
   provider = "postgresql"
 }
 
-model User { 
-  id    Int     @id @default(autoincrement()) 
-  email String  @unique
-  name  String?
-  posts Post[]
-} 
-model Post { 
-  id        Int     @id @default(autoincrement()) 
-  title     String
-  content   String?
-  published Boolean @default(false) 
-  authorId  Int
-  author    User    @relation(fields: [authorId], references: [id]) 
-} 
+enum Role {
+  ADMIN
+  STAFF
+}
+
+enum RegistrationStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum PaymentProvider {
+  STRIPE
+  PAYPAL
+}
+
+enum PaymentStatus {
+  COMPLETED
+  FAILED
+}
+
+model DashboardUser {
+  id            String @id @default(uuid())
+  email         String @unique
+  password_hash String
+  role          Role
+
+  @@map("dashboard_user")
+}
+
+model Participant {
+  id            String         @id @default(uuid())
+  national_id   String         @unique
+  full_name     String
+  email         String         @unique
+  qr_token      String         @unique
+
+  vehicles      Vehicle[]
+  registrations Registration[]
+
+  @@index([qr_token], type: Hash)
+  @@map("participant")
+}
+
+model Vehicle {
+  id             String            @id @default(uuid())
+  participant_id String
+  brand          String
+  model          String
+  license_plate  String            @unique
+
+  participant    Participant       @relation(fields: [participant_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  registration_item RegistrationItem?
+
+  @@index([license_plate])
+  @@map("vehicle")
+}
+
+model Registration {
+  id             String             @id @default(uuid())
+  participant_id String
+  status         RegistrationStatus @default(PENDING)
+
+  participant    Participant        @relation(fields: [participant_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  items          RegistrationItem[]
+  payments       Payment[]
+
+  @@map("registration")
+}
+
+model RegistrationItem {
+  id              String       @id @default(uuid())
+  registration_id String
+  vehicle_id      String       @unique
+  entry_number    Int?         @unique
+  checkin_date    DateTime?
+
+  registration    Registration @relation(fields: [registration_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  vehicle         Vehicle      @relation(fields: [vehicle_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("registration_item")
+}
+
+model Payment {
+  id              String          @id @default(uuid())
+  registration_id String
+  provider        PaymentProvider
+  amount          Decimal         @db.Decimal(10, 2)
+  status          PaymentStatus
+
+  registration    Registration    @relation(fields: [registration_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("payment")
+}
