@@ -1,5 +1,3 @@
-import Image from 'next/image'
-
 export default function Location(): JSX.Element {
   return (
     <section className="relative py-12 bg-white" id="ubicacion">
