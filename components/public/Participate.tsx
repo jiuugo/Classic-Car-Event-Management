@@ -1,42 +1,73 @@
-import React from 'react'
+import React from "react"
 
-export default function Participate(): JSX.Element {
+export default function Participate() {
   return (
-    <section className="py-12 bg-surface-container-low" id="participar">
+    <section className="bg-surface-container-low py-12" id="participar">
       <div className="container mx-auto px-6 md:px-12">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-serif font-black tracking-tighter mb-2">Proceso de Inscripción</h2>
-          <p className="text-on-surface-variant uppercase text-xs tracking-[0.2em] font-bold">Cuatro pasos para asegurar tu plaza</p>
+        <div className="mb-8 text-center">
+          <h2 className="mb-2 font-serif text-3xl font-black tracking-tighter md:text-4xl">
+            Proceso de Inscripción
+          </h2>
+          <p className="text-on-surface-variant text-xs font-bold tracking-[0.2em] uppercase">
+            Cuatro pasos para asegurar tu plaza
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-sm shadow-sm border-t-4 border-surface-tint text-center">
-            <span className="text-4xl font-serif italic font-bold text-zinc-200 mb-2 block">01</span>
-            <h5 className="font-bold uppercase tracking-tight mb-2">Formulario</h5>
-            <p className="text-sm text-on-surface-variant">Completa los datos de tu vehículo y contacto.</p>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+          <div className="border-surface-tint rounded-sm border-t-4 bg-white p-6 text-center shadow-sm">
+            <span className="mb-2 block font-serif text-4xl font-bold text-zinc-200 italic">
+              01
+            </span>
+            <h5 className="mb-2 font-bold tracking-tight uppercase">
+              Formulario
+            </h5>
+            <p className="text-on-surface-variant text-sm">
+              Completa los datos de tu vehículo y contacto.
+            </p>
           </div>
 
-          <div className="bg-white p-6 rounded-sm shadow-sm border-t-4 border-primary text-center">
-            <span className="text-4xl font-serif italic font-bold text-zinc-200 mb-2 block">02</span>
-            <h5 className="font-bold uppercase tracking-tight mb-2">Documentación</h5>
-            <p className="text-sm text-on-surface-variant">Adjunta fotos y ficha técnica actualizada.</p>
+          <div className="rounded-sm border-t-4 border-primary bg-white p-6 text-center shadow-sm">
+            <span className="mb-2 block font-serif text-4xl font-bold text-zinc-200 italic">
+              02
+            </span>
+            <h5 className="mb-2 font-bold tracking-tight uppercase">
+              Documentación
+            </h5>
+            <p className="text-on-surface-variant text-sm">
+              Adjunta fotos y ficha técnica actualizada.
+            </p>
           </div>
 
-          <div className="bg-white p-6 rounded-sm shadow-sm border-t-4 border-surface-tint text-center">
-            <span className="text-4xl font-serif italic font-bold text-zinc-200 mb-2 block">03</span>
-            <h5 className="font-bold uppercase tracking-tight mb-2">Confirmación</h5>
-            <p className="text-sm text-on-surface-variant">Nuestro comité técnico validará tu entrada.</p>
+          <div className="border-surface-tint rounded-sm border-t-4 bg-white p-6 text-center shadow-sm">
+            <span className="mb-2 block font-serif text-4xl font-bold text-zinc-200 italic">
+              03
+            </span>
+            <h5 className="mb-2 font-bold tracking-tight uppercase">
+              Confirmación
+            </h5>
+            <p className="text-on-surface-variant text-sm">
+              Nuestro comité técnico validará tu entrada.
+            </p>
           </div>
 
-          <div className="bg-white p-6 rounded-sm shadow-sm border-t-4 border-primary text-center">
-            <span className="text-4xl font-serif italic font-bold text-zinc-200 mb-2 block">04</span>
-            <h5 className="font-bold uppercase tracking-tight mb-2">Pago</h5>
-            <p className="text-sm text-on-surface-variant">Abona la cuota para finalizar el registro.</p>
+          <div className="rounded-sm border-t-4 border-primary bg-white p-6 text-center shadow-sm">
+            <span className="mb-2 block font-serif text-4xl font-bold text-zinc-200 italic">
+              04
+            </span>
+            <h5 className="mb-2 font-bold tracking-tight uppercase">Pago</h5>
+            <p className="text-on-surface-variant text-sm">
+              Abona la cuota para finalizar el registro.
+            </p>
           </div>
         </div>
 
         <div className="mt-8 flex justify-center">
-          <a href="/register" className="bg-primary text-white px-12 py-4 rounded-sm font-black uppercase tracking-widest text-sm hover:bg-surface-tint transition-colors shadow-2xl">Comenzar Inscripción Ahora</a>
+          <a
+            href="/register"
+            className="hover:bg-surface-tint rounded-sm bg-primary px-12 py-4 text-sm font-black tracking-widest text-white uppercase shadow-2xl transition-colors"
+          >
+            Comenzar Inscripción Ahora
+          </a>
         </div>
       </div>
     </section>
