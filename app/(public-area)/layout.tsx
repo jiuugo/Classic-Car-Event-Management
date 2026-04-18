@@ -1,15 +1,14 @@
-import Link from 'next/link'
-import { Button } from "@/components/ui/button"
+import PublicHeader from '@/components/public/PublicHeader'
+import PublicFooter from '@/components/public/PublicFooter'
 
-export default function PublicLayout({children}: Readonly<{
-  children: React.ReactNode;
-}>){
-    return <div className="test">
-        <div><h1>Header</h1>
-        <Button><Link href={'/dashboard'}>IR a dashboard</Link></Button></div>
-        <div className="contiene">
-            {children}
+export default function PublicLayout({ children }: Readonly<{
+    children: React.ReactNode
+}>) {
+    return (
+        <div>
+            <PublicHeader />
+            <main className="pt-16">{children}</main>
+            <PublicFooter />
         </div>
-        <h2>Footer</h2>
-    </div>
+    )
 }
