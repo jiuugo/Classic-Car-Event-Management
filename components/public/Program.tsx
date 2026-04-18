@@ -1,4 +1,4 @@
-import React from 'react'
+import Image from 'next/image'
 
 export default function Program(): JSX.Element {
   return (
@@ -37,7 +37,7 @@ export default function Program(): JSX.Element {
           </div>
 
           <div className="relative group">
-            <img alt="Event Visual" className="w-full h-full object-cover rounded-sm opacity-60 transition-opacity duration-500 group-hover:opacity-80" src="/images/event.svg" />
+            <Image alt="Event Visual" className="w-full h-full object-cover rounded-sm opacity-60 transition-opacity duration-500 group-hover:opacity-80" src="/images/event.webp" width={1920} height={1080} />
             <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent"></div>
           </div>
         </div>

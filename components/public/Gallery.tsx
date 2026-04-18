@@ -2,7 +2,7 @@ import React from 'react'
 import Carousel from './Carousel'
 
 export default function Gallery(): JSX.Element {
-  const images = ['/images/gallery-1.svg', '/images/gallery-2.svg', '/images/gallery-3.svg']
+  const images = ['/images/gallery-1.webp', '/images/gallery-2.webp', '/images/gallery-3.webp']
   return (
     <section className="py-12 bg-surface-container-lowest">
       <div className="container mx-auto px-6 md:px-12">
