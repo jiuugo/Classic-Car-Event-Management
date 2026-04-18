@@ -1,10 +1,10 @@
-import React from 'react'
+import Image from 'next/image'
 
 export default function PublicFooter(): JSX.Element {
   return (
     <footer className="bg-zinc-950 text-white w-full flex flex-col md:flex-row justify-between items-center px-12 py-16 gap-8 text-center md:text-left border-t border-white/5 mt-12">
       <div className="flex flex-col items-center md:items-start gap-4">
-        <img src="/images/logo.svg" alt="Villa de la Robla Logo" className="h-16 w-auto brightness-0 invert" />
+        <Image src="/images/logo.png" alt="Villa de la Robla Logo" className="h-16 w-auto" width={1920} height={1080} />
         <div>
           <p className="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">© 2024 VILLA DE LA ROBLA. HERITAGE & MOTORS.</p>
         </div>

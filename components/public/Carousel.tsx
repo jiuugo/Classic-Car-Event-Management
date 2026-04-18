@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 export default function Carousel({ images }: { images: string[] }) {
   const [current, setCurrent] = useState(0)
@@ -16,7 +17,7 @@ export default function Carousel({ images }: { images: string[] }) {
       <div className="flex transition-transform duration-500" style={{ transform: `translateX(-${current * 100}%)` }}>
         {images.map((src, idx) => (
           <div key={idx} className="min-w-full flex-shrink-0">
-            <img src={src} alt={`Gallery ${idx + 1}`} className="w-full h-96 object-cover" />
+            <Image src={src} alt={`Gallery ${idx + 1}`} className="w-full h-190 object-cover" width={1920} height={1080} />
           </div>
         ))}
       </div>

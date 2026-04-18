@@ -1,11 +1,11 @@
-import React from 'react'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 
 export default function Hero(): JSX.Element {
   return (
     <section className="relative min-h-svh flex items-center overflow-hidden pt-16">
       <div className="absolute inset-0 z-0">
-        <img alt="Hero Image" className="w-full h-full object-cover" src="/images/hero.svg" />
+        <Image alt="Hero Image" className="w-full h-full object-cover" src="/images/hero.webp" width={1920} height={1080} />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
       </div>
 
@@ -29,7 +29,7 @@ export default function Hero(): JSX.Element {
             <Button asChild>
               <a href="/register" className="px-8 py-4">Inscribir mi Vehículo</a>
             </Button>
-            <Button variant="ghost">Ver Galería</Button>
+            <Button variant="secondary">Ver Galería</Button>
           </div>
         </div>
       </div>
