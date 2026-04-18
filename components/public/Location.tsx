@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default function Location(): JSX.Element {
   return (
     <section className="relative py-12 bg-white" id="ubicacion">
@@ -21,7 +19,8 @@ export default function Location(): JSX.Element {
         </div>
 
         <div className="relative h-[350px] w-full bg-surface-container rounded-xl overflow-hidden shadow-2xl border-4 border-white">
-          <img alt="Location Visual" className="w-full h-full object-cover grayscale" src="/images/location.svg" />
+          {/* TODO: look  */}
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d443.03944523207053!2d-5.629341992044571!3d42.80344525817155!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd37a3f5fa061965%3A0xa4d8d9c2928c8c31!2sPl.%20la%20Constituci%C3%B3n%2C%2024640%20La%20Robla%2C%20Le%C3%B3n!5e0!3m2!1ses!2ses!4v1776528435353!5m2!1ses!2ses" width="600" height="450" loading="lazy" ></iframe>
           <div className="absolute top-1/2 left-1/2 -translate-x-12 -translate-y-12 w-24 h-24 bg-surface-tint/20 rounded-full animate-pulse flex items-center justify-center">
             <div className="w-4 h-4 bg-surface-tint rounded-full ring-4 ring-white"></div>
           </div>
