@@ -31,18 +31,6 @@ export default async function Page({
         Manage participants and add walk-ins.
       </p>
 
-      <div className="mt-4 flex w-full gap-2">
-        <form method="get" className="flex w-full gap-2">
-          <Input
-            name="q"
-            defaultValue={q}
-            placeholder="Search participants by name, email or ID"
-            className="flex-1"
-          />
-          <Button type="submit">Search</Button>
-        </form>
-      </div>
-
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <ParticipantForm />
         <ParticipantList participants={participants} q={q} />
