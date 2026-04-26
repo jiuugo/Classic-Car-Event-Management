@@ -1,5 +1,8 @@
 import prisma from "@/lib/prisma"
 import { createParticipant } from "@/app/actions/participants.server"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 
 export default async function Page() {
   const participants = await prisma.participant.findMany({
@@ -15,35 +18,22 @@ export default async function Page() {
       </p>
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <form action={createParticipant} className="rounded-md border p-4">
-          <h3 className="font-medium">Create Participant (Walk-in)</h3>
-          <div className="mt-2 grid gap-2">
-            <input
-              name="full_name"
-              required
-              placeholder="Full name"
-              className="h-10 rounded-md border px-3"
-            />
-            <input
-              name="email"
-              type="email"
-              required
-              placeholder="Email"
-              className="h-10 rounded-md border px-3"
-            />
-            <input
-              name="national_id"
-              required
-              placeholder="National ID"
-              className="h-10 rounded-md border px-3"
-            />
-            <button
-              type="submit"
-              className="mt-2 inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm text-white"
-            >
-              Create
-            </button>
-          </div>
+        <form action={createParticipant}>
+          <Card size="sm">
+            <CardHeader>
+              <CardTitle>Create Participant (Walk-in)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="mt-2 grid gap-2">
+                <Input name="full_name" required placeholder="Full name" />
+                <Input name="email" type="email" required placeholder="Email" />
+                <Input name="national_id" required placeholder="National ID" />
+                <div className="mt-2">
+                  <Button type="submit">Create</Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </form>
 
         <div className="rounded-md border p-4">
