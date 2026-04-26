@@ -4,15 +4,14 @@ import React, { useState, useTransition } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { toast } from "sonner"
 
-export default function ParticipantForm({ onSuccess }: { onSuccess?: () => void }) {
+export default function ParticipantForm({
+  onSuccess,
+}: {
+  onSuccess?: () => void
+}) {
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [nationalId, setNationalId] = useState("")

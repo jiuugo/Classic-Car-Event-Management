@@ -4,7 +4,10 @@ import { randomUUID } from "crypto"
 import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { requireStaffOrAdmin } from "@/lib/auth"
-import { ParticipantSchema } from "@/lib/validation/participant.schema"
+import {
+  ParticipantSchema,
+  ParticipantUpdateSchema,
+} from "@/lib/validation/participant.schema"
 import { mapPrismaError } from "@/lib/errors"
 
 export async function createParticipant(formData: FormData): Promise<void> {
@@ -84,5 +87,29 @@ export async function getParticipantById(id: string) {
       success: false,
       error: mapPrismaError(err).message ?? "Server error",
     }
+  }
+}
+
+export async function updateParticipant(id: string, payload: any) {
+  try {
+    await requireStaffOrAdmin()
+
+    const parsed = ParticipantUpdateSchema.parse(payload)
+
+    const updated = await prisma.participant.update({
+      where: { id },
+      data: parsed,
+    })
+
+    try {
+      revalidatePath("/dashboard/participants")
+    } catch (e) {
+      // ignore revalidation errors
+    }
+
+    return { success: true, data: updated }
+  } catch (err) {
+    const message = mapPrismaError(err).message ?? ((err as any)?.message ?? "Server error")
+    return { success: false, error: message }
   }
 }
