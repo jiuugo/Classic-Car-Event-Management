@@ -1,10 +1,5 @@
 import React from "react"
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import {
   Table,
   TableHeader,
@@ -29,7 +24,9 @@ export default function ParticipantList({
       </CardHeader>
       <CardContent>
         <div className="mb-4 flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">{participants.length} participants</div>
+          <div className="text-sm text-muted-foreground">
+            {participants.length} participants
+          </div>
         </div>
 
         <Table>
@@ -49,7 +46,7 @@ export default function ParticipantList({
                 <TableCell>{p.email}</TableCell>
                 <TableCell>{p.national_id}</TableCell>
                 <TableCell>
-                  <ParticipantRowActions participantId={p.id} />
+                  <ParticipantRowActions participant={p} />
                 </TableCell>
               </TableRow>
             ))}

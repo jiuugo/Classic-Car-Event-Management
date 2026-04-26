@@ -7,3 +7,6 @@ export const ParticipantSchema = z.object({
 })
 
 export type ParticipantInput = z.infer<typeof ParticipantSchema>
+
+export const ParticipantUpdateSchema = ParticipantSchema.partial()
+export type ParticipantUpdateInput = z.infer<typeof ParticipantUpdateSchema>

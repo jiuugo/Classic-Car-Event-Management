@@ -1,15 +1,30 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet"
+import ParticipantEditForm from "./participant-edit-form"
 
-export default function ParticipantRowActions({ participantId }: { participantId: string }) {
+export default function ParticipantRowActions({
+  participant,
+}: {
+  participant: any
+}) {
+  const [open, setOpen] = useState(false)
+
   const handleDelete = async () => {
     if (!confirm("Delete this participant?")) return
 
     try {
-      const res = await fetch(`/api/participants/${participantId}`, {
+      const res = await fetch(`/api/participants/${participant.id}`, {
         method: "DELETE",
       })
 
@@ -27,10 +42,28 @@ export default function ParticipantRowActions({ participantId }: { participantId
   }
 
   return (
-    <div className="flex gap-2">
-      <Button variant="ghost" size="sm" asChild>
-        <a href="#">View</a>
-      </Button>
+    <div className="flex items-center gap-2">
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="sm">
+            Edit
+          </Button>
+        </SheetTrigger>
+
+        <SheetContent side="right">
+          <SheetHeader>
+            <SheetTitle>Edit participant</SheetTitle>
+            <SheetDescription>Update participant information below.</SheetDescription>
+          </SheetHeader>
+          <div className="p-6">
+            <ParticipantEditForm
+              participant={participant}
+              onClose={() => setOpen(false)}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
+
       <Button variant="destructive" size="sm" onClick={handleDelete}>
         Delete
       </Button>
