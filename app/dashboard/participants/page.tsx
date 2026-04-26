@@ -1,14 +1,28 @@
 import prisma from "@/lib/prisma"
-import { createParticipant } from "@/app/actions/participants.server"
+import { searchParticipants } from "@/app/actions/participants.server"
+import ParticipantForm from "@/components/participant-form"
+import ParticipantList from "@/components/participant-list"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 
-export default async function Page() {
-  const participants = await prisma.participant.findMany({
-    take: 50,
-    orderBy: { full_name: "asc" },
-  })
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: { q?: string }
+}) {
+  const q = searchParams?.q ?? undefined
+
+  let participants: any[] = []
+
+  if (q) {
+    const res = await searchParticipants(q)
+    participants = res?.success ? (res.data ?? []) : []
+  } else {
+    participants = await prisma.participant.findMany({
+      take: 50,
+      orderBy: { full_name: "asc" },
+    })
+  }
 
   return (
     <div className="p-6">
@@ -17,40 +31,21 @@ export default async function Page() {
         Manage participants and add walk-ins.
       </p>
 
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <form action={createParticipant}>
-          <Card size="sm">
-            <CardHeader>
-              <CardTitle>Create Participant (Walk-in)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mt-2 grid gap-2">
-                <Input name="full_name" required placeholder="Full name" />
-                <Input name="email" type="email" required placeholder="Email" />
-                <Input name="national_id" required placeholder="National ID" />
-                <div className="mt-2">
-                  <Button type="submit">Create</Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="mt-4 flex w-full gap-2">
+        <form method="get" className="flex w-full gap-2">
+          <Input
+            name="q"
+            defaultValue={q}
+            placeholder="Search participants by name, email or ID"
+            className="flex-1"
+          />
+          <Button type="submit">Search</Button>
         </form>
+      </div>
 
-        <div className="rounded-md border p-4">
-          <h3 className="font-medium">Existing participants</h3>
-          <ul className="mt-2 space-y-2">
-            {participants.map((p) => (
-              <li key={p.id} className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium">{p.full_name}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {p.email} · {p.national_id}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <ParticipantForm />
+        <ParticipantList participants={participants} q={q} />
       </div>
     </div>
   )

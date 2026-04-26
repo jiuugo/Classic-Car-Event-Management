@@ -102,7 +102,12 @@ export function CheckinClient({
           <Button variant="outline" size="sm" onClick={selectAll} type="button">
             Select all
           </Button>
-          <Button variant="outline" size="sm" onClick={clearSelection} type="button">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={clearSelection}
+            type="button"
+          >
             Clear
           </Button>
           <Button
@@ -120,7 +125,9 @@ export function CheckinClient({
 
         <ul className="mt-2 space-y-2">
           {localItems.length === 0 && (
-            <li className="text-sm text-muted-foreground">No registration items found.</li>
+            <li className="text-sm text-muted-foreground">
+              No registration items found.
+            </li>
           )}
 
           {localItems.map((it) => (
@@ -138,10 +145,12 @@ export function CheckinClient({
                 />
                 <div>
                   <div className="font-medium">
-                    {it.vehicle?.license_plate ?? "—"} {" "}
+                    {it.vehicle?.license_plate ?? "—"}{" "}
                     {it.vehicle?.brand ? `· ${it.vehicle.brand}` : ""}
                   </div>
-                  <div className="text-xs text-muted-foreground">Bib: {it.entry_number ?? "—"}</div>
+                  <div className="text-xs text-muted-foreground">
+                    Bib: {it.entry_number ?? "—"}
+                  </div>
                 </div>
               </div>
 
