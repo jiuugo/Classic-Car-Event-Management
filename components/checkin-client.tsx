@@ -2,6 +2,17 @@
 
 import React, { useEffect, useState, useTransition } from "react"
 import { checkinRegistrationItems } from "@/app/actions/checkin.server"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge"
+import { toast } from "sonner"
 
 type VehiclePreview = {
   license_plate: string
@@ -49,7 +60,7 @@ export function CheckinClient({
   const confirm = () => {
     const ids = Object.keys(selected).filter((k) => selected[k])
     if (ids.length === 0) {
-      setMessage("Select at least one item to check-in.")
+      toast.error("Select at least one item to check-in.")
       return
     }
 
@@ -64,89 +75,98 @@ export function CheckinClient({
               ids.includes(it.id) ? { ...it, checkin_date: now } : it
             )
           )
-          setMessage(
-            `Checked-in ${(res as any).updatedCount ?? ids.length} item(s).`
-          )
+          const msg = `Checked-in ${(res as any).updatedCount ?? ids.length} item(s).`
+          toast.success(msg)
+          setMessage(msg)
           clearSelection()
         } else {
-          setMessage(((res as any)?.error as string) ?? "Unknown error")
+          const err = ((res as any)?.error as string) ?? "Unknown error"
+          toast.error(err)
+          setMessage(err)
         }
       } catch (err: any) {
-        setMessage(err?.message ?? String(err))
+        const e = err?.message ?? String(err)
+        toast.error(e)
+        setMessage(e)
       }
     })
   }
 
+  const selectedCount = Object.keys(selected).filter((k) => selected[k]).length
+
   return (
-    <div>
-      <div className="flex items-center gap-2">
-        <div className="text-sm text-muted-foreground">Search: </div>
-        <div className="font-medium">{query ?? "—"}</div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Search Results</CardTitle>
         <div className="ml-auto flex gap-2">
-          <button
-            type="button"
-            onClick={selectAll}
-            className="rounded-md border px-2 py-1 text-sm"
-          >
+          <Button variant="outline" size="sm" onClick={selectAll} type="button">
             Select all
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={clearSelection}
-            className="rounded-md border px-2 py-1 text-sm"
+            type="button"
           >
             Clear
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
             onClick={confirm}
-            disabled={isPending}
-            className="rounded-md bg-primary px-3 py-1 text-sm text-white disabled:opacity-60"
+            disabled={isPending || selectedCount === 0}
+            data-testid="confirm-checkin"
           >
             {isPending ? "Checking..." : "Confirm Check-in"}
-          </button>
+          </Button>
         </div>
-      </div>
+      </CardHeader>
 
-      {message && <div className="mt-2 text-sm">{message}</div>}
+      <CardContent>
+        {message && <div className="mb-4 text-sm">{message}</div>}
 
-      <ul className="mt-4 space-y-2">
-        {localItems.length === 0 && (
-          <li className="text-sm text-muted-foreground">
-            No registration items found.
-          </li>
-        )}
-        {localItems.map((it) => (
-          <li
-            key={it.id}
-            className="flex items-center justify-between rounded-md border px-3 py-2"
-          >
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                checked={!!selected[it.id]}
-                onChange={() => toggle(it.id)}
-              />
-              <div>
-                <div className="font-medium">
-                  {it.vehicle?.license_plate ?? "—"}{" "}
-                  {it.vehicle?.brand ? `· ${it.vehicle.brand}` : ""}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Bib: {it.entry_number ?? "—"}
+        <ul className="mt-2 space-y-2">
+          {localItems.length === 0 && (
+            <li className="text-sm text-muted-foreground">
+              No registration items found.
+            </li>
+          )}
+
+          {localItems.map((it) => (
+            <li
+              key={it.id}
+              className="flex items-center justify-between rounded-md border px-3 py-2"
+            >
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  checked={!!selected[it.id]}
+                  onCheckedChange={(val) =>
+                    setSelected((s) => ({ ...s, [it.id]: !!val }))
+                  }
+                  aria-label={`Select item ${it.entry_number ?? it.id}`}
+                />
+                <div>
+                  <div className="font-medium">
+                    {it.vehicle?.license_plate ?? "—"}{" "}
+                    {it.vehicle?.brand ? `· ${it.vehicle.brand}` : ""}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Bib: {it.entry_number ?? "—"}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="text-sm">
-              {it.checkin_date ? (
-                <span className="text-emerald-600">Present</span>
-              ) : (
-                <span className="text-muted-foreground">Not present</span>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+
+              <div className="text-sm">
+                {it.checkin_date ? (
+                  <Badge variant="default">Present</Badge>
+                ) : (
+                  <Badge variant="outline">Not present</Badge>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+
+      <CardFooter />
+    </Card>
   )
 }

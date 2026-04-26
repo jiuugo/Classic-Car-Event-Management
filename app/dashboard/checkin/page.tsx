@@ -4,6 +4,8 @@ import {
   searchByLicensePlate,
 } from "@/app/actions/checkin.server"
 import { CheckinClient } from "@/components/checkin-client"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export default async function Page({
   searchParams,
@@ -75,18 +77,13 @@ export default async function Page({
 
       <div className="mt-4 flex gap-2">
         <form method="get" className="flex w-full gap-2">
-          <input
+          <Input
             name="q"
             defaultValue={q}
             placeholder="QR token or license plate"
-            className="flex-1 rounded-md border px-3 py-2"
+            className="flex-1"
           />
-          <button
-            type="submit"
-            className="rounded-md bg-primary px-3 py-2 text-white"
-          >
-            Search
-          </button>
+          <Button type="submit">Search</Button>
         </form>
       </div>
 
