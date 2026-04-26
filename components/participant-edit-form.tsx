@@ -55,24 +55,41 @@ export default function ParticipantEditForm({
     <form onSubmit={handleSubmit} className="grid gap-3">
       <div>
         <Label>Full name</Label>
-        <Input value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+        <Input
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          required
+        />
       </div>
 
       <div>
         <Label>Email</Label>
-        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <Input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
       </div>
 
       <div>
         <Label>National ID</Label>
-        <Input value={nationalId} onChange={(e) => setNationalId(e.target.value)} required />
+        <Input
+          value={nationalId}
+          onChange={(e) => setNationalId(e.target.value)}
+          required
+        />
       </div>
 
       <div className="mt-4 flex gap-2">
         <Button type="submit" disabled={isPending}>
           Save
         </Button>
-        <Button variant="ghost" type="button" onClick={() => onClose && onClose()}>
+        <Button
+          variant="ghost"
+          type="button"
+          onClick={() => onClose && onClose()}
+        >
           Cancel
         </Button>
       </div>

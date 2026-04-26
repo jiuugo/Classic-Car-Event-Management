@@ -53,7 +53,10 @@ export async function PATCH(request: Request, ctx: any) {
     const res = await updateParticipant(id, payload)
 
     if (res?.success) {
-      return NextResponse.json({ success: true, data: res.data }, { status: 200 })
+      return NextResponse.json(
+        { success: true, data: res.data },
+        { status: 200 }
+      )
     }
 
     const errMsg = res?.error ?? "Failed to update"

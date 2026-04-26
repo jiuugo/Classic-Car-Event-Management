@@ -53,7 +53,9 @@ export default function ParticipantRowActions({
         <SheetContent side="right">
           <SheetHeader>
             <SheetTitle>Edit participant</SheetTitle>
-            <SheetDescription>Update participant information below.</SheetDescription>
+            <SheetDescription>
+              Update participant information below.
+            </SheetDescription>
           </SheetHeader>
           <div className="p-6">
             <ParticipantEditForm
