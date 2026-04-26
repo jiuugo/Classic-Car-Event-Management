@@ -109,7 +109,8 @@ export async function updateParticipant(id: string, payload: any) {
 
     return { success: true, data: updated }
   } catch (err) {
-    const message = mapPrismaError(err).message ?? ((err as any)?.message ?? "Server error")
+    const message =
+      mapPrismaError(err).message ?? (err as any)?.message ?? "Server error"
     return { success: false, error: message }
   }
 }
