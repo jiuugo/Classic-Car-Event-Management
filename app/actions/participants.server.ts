@@ -103,11 +103,48 @@ export async function updateParticipant(id: string, payload: any) {
 
     try {
       revalidatePath("/dashboard/participants")
+      revalidatePath(`/dashboard/participants/${id}`)
     } catch (e) {
       // ignore revalidation errors
     }
 
     return { success: true, data: updated }
+  } catch (err) {
+    const message =
+      mapPrismaError(err).message ?? (err as any)?.message ?? "Server error"
+    return { success: false, error: message }
+  }
+}
+
+export async function deleteParticipant(id: string) {
+  try {
+    await requireStaffOrAdmin()
+
+    // Safeguard: block deletion if there are completed payments linked
+    const completedPayments = await prisma.payment.findFirst({
+      where: {
+        registration: { participant_id: id },
+        status: "COMPLETED",
+      },
+    })
+
+    if (completedPayments) {
+      return {
+        success: false,
+        error:
+          "Cannot delete a participant with completed payments. Cancel or refund all payments first.",
+      }
+    }
+
+    await prisma.participant.delete({ where: { id } })
+
+    try {
+      revalidatePath("/dashboard/participants")
+    } catch (e) {
+      // ignore revalidation errors
+    }
+
+    return { success: true }
   } catch (err) {
     const message =
       mapPrismaError(err).message ?? (err as any)?.message ?? "Server error"
