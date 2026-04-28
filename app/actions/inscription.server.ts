@@ -3,7 +3,10 @@
 import { randomUUID } from "crypto"
 import { ZodError } from "zod"
 import prisma from "@/lib/prisma"
-import { InscriptionSchema, InscriptionInput } from "@/lib/validation/registration.schema"
+import {
+  InscriptionSchema,
+  InscriptionInput,
+} from "@/lib/validation/registration.schema"
 import { mapPrismaError } from "@/lib/errors"
 import { redirect } from "next/navigation"
 
@@ -11,6 +14,8 @@ export type InscriptionResult = {
   success: boolean
   error?: string
   registrationId?: string
+  fieldErrors?: Record<string, string>
+  code?: string
 }
 
 export async function submitInscription(
@@ -64,12 +69,42 @@ export async function submitInscription(
       return { success: false, error: firstError || "Validation error" }
     }
 
-    const { message } = mapPrismaError(err)
-    return { success: false, error: message }
+    const { message, fields, code } = mapPrismaError(err)
+
+    // Map DB column names to form field keys and friendly messages
+    const dbToFormKey: Record<string, string> = {
+      national_id: "national_id",
+      email: "email",
+      license_plate: "license_plate",
+      qr_token: "qr_token",
+    }
+
+    const friendlyPerField: Record<string, string> = {
+      email:
+        "Este email ya está registrado. Si es tu cuenta, intenta iniciar sesión o usa otro email. Si crees que es un error, contacta con la organización.",
+      national_id:
+        "Ya existe una inscripción con este DNI/NIE. Si crees que es un error, contacta con la organización para que lo revisen.",
+      license_plate:
+        "Esta matrícula ya está registrada en otra inscripción. Si es tu vehículo y crees que es un error, contacta con la organización.",
+      qr_token: "Ya existe un participante con este identificador",
+    }
+
+    let fieldErrors: Record<string, string> | undefined = undefined
+    if (Array.isArray(fields) && fields.length > 0) {
+      fieldErrors = {}
+      for (const f of fields) {
+        const key = dbToFormKey[f] ?? f
+        fieldErrors[key] = friendlyPerField[f] ?? message
+      }
+    }
+
+    return { success: false, error: message, fieldErrors, code }
   }
 }
 
-export async function createInscription(formData: FormData): Promise<InscriptionResult> {
+export async function createInscription(
+  formData: FormData
+): Promise<InscriptionResult> {
   const payload: InscriptionInput = {
     full_name: String(formData.get("full_name") ?? ""),
     email: String(formData.get("email") ?? ""),
