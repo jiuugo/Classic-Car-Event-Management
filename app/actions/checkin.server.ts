@@ -41,18 +41,65 @@ export async function searchByLicensePlate(licensePlate: string) {
   }
 }
 
-export async function checkinRegistrationItems(input: { itemIds: string[] }) {
+export async function checkinRegistrationItems(input: {
+  itemIds: string[]
+  mode?: "mark" | "undo" | "toggle"
+}) {
   try {
     await requireStaffOrAdmin()
 
-    const parsed = CheckinItemsSchema.parse(input)
+    const parsed = CheckinItemsSchema.parse({ itemIds: input.itemIds })
 
     const now = new Date()
+    const mode = input.mode ?? "mark"
 
-    const result = await prisma.registrationItem.updateMany({
-      where: { id: { in: parsed.itemIds }, checkin_date: null },
-      data: { checkin_date: now },
-    })
+    let updatedCount = 0
+
+    if (mode === "mark") {
+      const result = await prisma.registrationItem.updateMany({
+        where: { id: { in: parsed.itemIds }, checkin_date: null },
+        data: { checkin_date: now },
+      })
+      updatedCount = (result as any).count ?? 0
+    } else if (mode === "undo") {
+      const result = await prisma.registrationItem.updateMany({
+        where: { id: { in: parsed.itemIds }, NOT: { checkin_date: null } },
+        data: { checkin_date: null },
+      })
+      updatedCount = (result as any).count ?? 0
+    } else {
+      // toggle
+      const items = await prisma.registrationItem.findMany({
+        where: { id: { in: parsed.itemIds } },
+        select: { id: true, checkin_date: true },
+      })
+
+      const toMark = items
+        .filter((i) => i.checkin_date == null)
+        .map((i) => i.id)
+      const toUndo = items
+        .filter((i) => i.checkin_date != null)
+        .map((i) => i.id)
+
+      const results = await prisma.$transaction([
+        toMark.length
+          ? prisma.registrationItem.updateMany({
+              where: { id: { in: toMark }, checkin_date: null },
+              data: { checkin_date: now },
+            })
+          : prisma.$executeRaw`SELECT 1`,
+        toUndo.length
+          ? prisma.registrationItem.updateMany({
+              where: { id: { in: toUndo }, NOT: { checkin_date: null } },
+              data: { checkin_date: null },
+            })
+          : prisma.$executeRaw`SELECT 1`,
+      ])
+
+      const r1 = Array.isArray(results) && (results[0] as any)?.count
+      const r2 = Array.isArray(results) && (results[1] as any)?.count
+      updatedCount = (r1 ?? 0) + (r2 ?? 0)
+    }
 
     try {
       revalidatePath("/dashboard/checkin")
@@ -60,7 +107,7 @@ export async function checkinRegistrationItems(input: { itemIds: string[] }) {
       // ignore revalidation errors in environments that don't support it
     }
 
-    return { success: true, updatedCount: (result as any).count ?? 0 }
+    return { success: true, updatedCount }
   } catch (err) {
     return { success: false, error: mapPrismaError(err).message }
   }

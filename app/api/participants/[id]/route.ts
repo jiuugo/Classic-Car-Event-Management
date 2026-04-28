@@ -2,7 +2,40 @@ import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import { requireStaffOrAdmin } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
-import { updateParticipant } from "@/app/actions/participants.server"
+import {
+  updateParticipant,
+  getParticipantById,
+} from "@/app/actions/participants.server"
+
+export async function GET(request: Request, ctx: any) {
+  try {
+    await requireStaffOrAdmin()
+
+    const params =
+      ctx.params && typeof ctx.params.then !== "function"
+        ? ctx.params
+        : await ctx.params
+
+    const id = params?.id
+    if (!id) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 })
+    }
+
+    const res = await getParticipantById(id)
+
+    if (!res?.success) {
+      return NextResponse.json(
+        { error: res?.error ?? "Not found" },
+        { status: 404 }
+      )
+    }
+
+    return NextResponse.json({ success: true, data: res.data }, { status: 200 })
+  } catch (err: any) {
+    const message = err?.message ?? "Server error"
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
 
 export async function DELETE(request: Request, ctx: any) {
   try {
