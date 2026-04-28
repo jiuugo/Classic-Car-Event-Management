@@ -31,8 +31,7 @@ export default async function Page({
         Manage participants and add walk-ins.
       </p>
 
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <ParticipantForm />
+      <div className="mt-4">
         <ParticipantList participants={participants} q={q} />
       </div>
     </div>

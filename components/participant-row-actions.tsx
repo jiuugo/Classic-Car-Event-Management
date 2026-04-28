@@ -12,6 +12,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet"
 import ParticipantEditForm from "./participant-edit-form"
+import ParticipantCarsSheet from "./participant-cars-sheet"
 
 export default function ParticipantRowActions({
   participant,
@@ -43,6 +44,7 @@ export default function ParticipantRowActions({
 
   return (
     <div className="flex items-center gap-2">
+      <ParticipantCarsSheet participantId={participant.id} />
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button variant="ghost" size="sm">
