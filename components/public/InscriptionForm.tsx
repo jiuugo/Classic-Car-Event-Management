@@ -221,6 +221,36 @@ export default function InscriptionForm() {
         const data: InscriptionResult = await res.json()
 
         if (!res.ok || !data.success) {
+          // If the server returned field-specific errors, set them inline
+          if (data.fieldErrors && Object.keys(data.fieldErrors).length > 0) {
+            setFieldErrors(data.fieldErrors)
+            // mark those fields as touched so errors display
+            const touched = Object.keys(data.fieldErrors).reduce(
+              (acc, f) => ({ ...acc, [f]: true }),
+              {}
+            )
+            setTouchedFields((prev) => ({ ...prev, ...touched }))
+
+            // Navigate back to the step that owns the first errored field
+            const firstField = Object.keys(data.fieldErrors)[0]
+            const step1Fields = ["full_name", "email", "national_id"]
+            const step2Fields = ["brand", "model", "license_plate"]
+            if (step1Fields.includes(firstField)) {
+              setCurrentStep(1)
+            } else if (step2Fields.includes(firstField)) {
+              setCurrentStep(2)
+            }
+
+            // focus first invalid field after step renders
+            setTimeout(() => {
+              const el = document.getElementById(
+                firstField
+              ) as HTMLElement | null
+              if (el && typeof el.focus === "function") el.focus()
+            }, 50)
+            return
+          }
+
           setError(data.error || "Error al enviar el formulario")
           toast.error(data.error || "Error al enviar el formulario")
           return
