@@ -5,12 +5,11 @@ import ParticipantList from "@/components/participant-list"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams?: { q?: string }
+export default async function Page(props: {
+  searchParams?: Promise<{ q?: string }>
 }) {
-  const q = searchParams?.q ?? undefined
+  const searchParams = props.searchParams ? await props.searchParams : {}
+  const q = searchParams.q ?? undefined
 
   let participants: any[] = []
 

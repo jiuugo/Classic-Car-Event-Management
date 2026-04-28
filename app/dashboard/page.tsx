@@ -1,18 +1,53 @@
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
-import { SectionCards } from "@/components/section-cards"
+import { getDashboardStats } from "@/app/actions/dashboard.server"
+import { DashboardKpiCards } from "@/components/dashboard-kpi-cards"
+import { DashboardRegistrationChart } from "@/components/dashboard-registration-chart"
+import { DashboardAttendanceCard } from "@/components/dashboard-attendance-card"
+import {
+  DashboardQuickActions,
+  DashboardRecentRegistrations,
+} from "@/components/dashboard-quick-actions"
 
-import data from "./data.json"
+export const dynamic = "force-dynamic"
 
-export default function Page() {
+export default async function DashboardPage() {
+  const result = await getDashboardStats()
+
+  const stats = result.success
+    ? result.data
+    : {
+        totalParticipants: 0,
+        totalVehicles: 0,
+        totalRevenue: 0,
+        liveAttendanceRate: 0,
+        checkedInVehicles: 0,
+        totalRegistrationItems: 0,
+        registrationsByStatus: { PENDING: 0, PAID: 0, CANCELLED: 0 },
+        paymentsByStatus: { COMPLETED: 0, FAILED: 0 },
+        recentRegistrations: [],
+      }
+
   return (
-    <div className="@container/main flex flex-1 flex-col gap-2 px-4 lg:px-6">
-      <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-        <SectionCards />
-        <div className="px-0 lg:px-6">
-          <ChartAreaInteractive />
-        </div>
-        <DataTable data={data} />
+    <div className="flex flex-1 flex-col gap-6 px-4 lg:px-6">
+      {/* KPI Cards row */}
+      <DashboardKpiCards stats={stats} />
+
+      {/* Charts + Quick actions row */}
+      <div className="grid gap-6 px-4 lg:grid-cols-3 lg:px-6">
+        {/* Registration donut chart */}
+        <DashboardRegistrationChart stats={stats} />
+
+        {/* Attendance progress */}
+        <DashboardAttendanceCard stats={stats} />
+
+        {/* Quick actions */}
+        <DashboardQuickActions />
+      </div>
+
+      {/* Recent registrations */}
+      <div className="px-4 lg:px-6">
+        <DashboardRecentRegistrations
+          registrations={stats.recentRegistrations}
+        />
       </div>
     </div>
   )

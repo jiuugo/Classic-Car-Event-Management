@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import Link from "next/link"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import ParticipantRowActions from "./participant-row-actions"
 import DataTable from "@/components/data-table/data-table"
@@ -14,7 +15,18 @@ export default function ParticipantList({
   q?: string
 }) {
   const columns: ColumnDef<any>[] = [
-    { accessorKey: "full_name", header: "Name" },
+    { 
+      accessorKey: "full_name", 
+      header: "Name",
+      cell: ({ row }) => (
+        <Link
+          href={`/dashboard/participants/${row.original.id}`}
+          className="font-medium text-primary underline-offset-4 hover:underline"
+        >
+          {row.original.full_name}
+        </Link>
+      ),
+    },
     { accessorKey: "email", header: "Email" },
     { accessorKey: "national_id", header: "National ID" },
     {
