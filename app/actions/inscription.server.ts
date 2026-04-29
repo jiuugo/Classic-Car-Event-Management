@@ -18,20 +18,20 @@ export type InscriptionResult = {
 }
 
 /**
- * Creates a full inscription (participant + N vehicles + registration + items).
- * Called from the Stripe webhook after successful payment, or directly for free
- * registrations.
+ * Creates a full inscription with PENDING status.
+ * Records are persisted BEFORE payment so that data is never lost.
+ * The Stripe webhook will later flip the status to PAID.
  *
- * @param paymentAmount – the total amount paid (in EUR)
+ * @param registrationId – pre-generated UUID for the registration
  */
 export async function submitInscription(
   data: InscriptionInput,
-  paymentAmount?: number
+  registrationId?: string
 ): Promise<InscriptionResult> {
   try {
     const parsed = InscriptionSchema.parse(data)
 
-    let registrationId = ""
+    const regId = registrationId ?? randomUUID()
 
     await prisma.$transaction(async (tx) => {
       const participant = await tx.participant.create({
@@ -44,15 +44,13 @@ export async function submitInscription(
         },
       })
 
-      const registration = await tx.registration.create({
+      await tx.registration.create({
         data: {
-          id: randomUUID(),
+          id: regId,
           participant_id: participant.id,
-          status: paymentAmount ? "PAID" : "PENDING",
+          status: "PENDING",
         },
       })
-
-      registrationId = registration.id
 
       for (const v of parsed.vehicles) {
         const vehicle = await tx.vehicle.create({
@@ -68,26 +66,14 @@ export async function submitInscription(
         await tx.registrationItem.create({
           data: {
             id: randomUUID(),
-            registration_id: registration.id,
+            registration_id: regId,
             vehicle_id: vehicle.id,
-          },
-        })
-      }
-
-      if (paymentAmount) {
-        await tx.payment.create({
-          data: {
-            id: randomUUID(),
-            registration_id: registration.id,
-            provider: "STRIPE",
-            amount: paymentAmount,
-            status: "COMPLETED",
           },
         })
       }
     })
 
-    return { success: true, registrationId }
+    return { success: true, registrationId: regId }
   } catch (err: unknown) {
     if (err instanceof ZodError) {
       const firstError = err.issues?.[0]?.message
@@ -125,4 +111,128 @@ export async function submitInscription(
 
     return { success: false, error: message, fieldErrors, code }
   }
+}
+
+/**
+ * Marks a registration as PAID and records the payment.
+ * Idempotent — skips if the registration is already PAID.
+ */
+export async function confirmPayment(
+  registrationId: string,
+  amountEur: number
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const registration = await prisma.registration.findUnique({
+      where: { id: registrationId },
+      select: { status: true },
+    })
+
+    // Already confirmed — nothing to do
+    if (!registration || registration.status === "PAID") {
+      return { success: true }
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.registration.update({
+        where: { id: registrationId },
+        data: { status: "PAID" },
+      })
+
+      await tx.payment.create({
+        data: {
+          id: randomUUID(),
+          registration_id: registrationId,
+          provider: "STRIPE",
+          amount: amountEur,
+          status: "COMPLETED",
+        },
+      })
+    })
+
+    return { success: true }
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error"
+    return { success: false, error: message }
+  }
+}
+
+/**
+ * Reconcile a registration by its Stripe session ID.
+ * Used as a safety net on the success page.
+ */
+export async function reconcileBySessionId(
+  stripeSessionId: string,
+  amountEur: number
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const registration = await prisma.registration.findUnique({
+      where: { stripe_session_id: stripeSessionId },
+      select: { id: true, status: true },
+    })
+
+    if (!registration) {
+      return { success: false, error: "Registration not found" }
+    }
+
+    if (registration.status === "PAID") {
+      return { success: true }
+    }
+
+    return confirmPayment(registration.id, amountEur)
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error"
+    return { success: false, error: message }
+  }
+}
+
+/**
+ * Reconcile ALL pending registrations that have a stripe_session_id.
+ * Queries the Stripe API to check actual payment status.
+ * Should be called periodically (cron) or manually (admin action).
+ */
+export async function reconcilePendingRegistrations(): Promise<{
+  total: number
+  reconciled: string[]
+  failed: string[]
+}> {
+  // Dynamic import to avoid loading Stripe on every server action import
+  const stripeClient = (await import("@/lib/stripe")).default
+
+  const pendingRegistrations = await prisma.registration.findMany({
+    where: {
+      status: "PENDING",
+      stripe_session_id: { not: null },
+    },
+    select: { id: true, stripe_session_id: true },
+  })
+
+  const reconciled: string[] = []
+  const failed: string[] = []
+
+  for (const reg of pendingRegistrations) {
+    try {
+      const session = await stripeClient.checkout.sessions.retrieve(
+        reg.stripe_session_id!
+      )
+
+      if (session.payment_status === "paid") {
+        const amountEur = (session.amount_total ?? 0) / 100
+        const result = await confirmPayment(reg.id, amountEur)
+        if (result.success) {
+          reconciled.push(reg.id)
+        } else {
+          failed.push(reg.id)
+        }
+      }
+      // If not paid, leave as PENDING — payment may still come through
+    } catch (err) {
+      console.error(
+        `[reconcile] Failed to check session for registration ${reg.id}:`,
+        err
+      )
+      failed.push(reg.id)
+    }
+  }
+
+  return { total: pendingRegistrations.length, reconciled, failed }
 }
