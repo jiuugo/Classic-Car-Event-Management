@@ -12,12 +12,19 @@ export const VehicleStepSchema = z.object({
   license_plate: z.string().min(1, "Matrícula es requerida"),
 })
 
+export const VehiclesArraySchema = z.object({
+  vehicles: z
+    .array(VehicleStepSchema)
+    .min(1, "Debes añadir al menos un vehículo"),
+})
+
 export const TermsStepSchema = z.object({
   accept_terms: z.boolean().refine((val) => val === true, {
     message: "Debes aceptar los términos",
   }),
 })
 
-export const InscriptionSchema = ParticipantStepSchema.merge(VehicleStepSchema).merge(TermsStepSchema)
+export const InscriptionSchema = ParticipantStepSchema.merge(VehiclesArraySchema).merge(TermsStepSchema)
 
+export type VehicleInput = z.infer<typeof VehicleStepSchema>
 export type InscriptionInput = z.infer<typeof InscriptionSchema>

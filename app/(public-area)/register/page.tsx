@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import InscriptionForm from "@/components/public/InscriptionForm"
 
 export default function RegisterPage() {
@@ -12,7 +13,9 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      <InscriptionForm />
+      <Suspense fallback={null}>
+        <InscriptionForm />
+      </Suspense>
     </div>
   )
 }
