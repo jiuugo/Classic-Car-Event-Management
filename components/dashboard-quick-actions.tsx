@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import {
   Card,
@@ -15,7 +16,10 @@ import {
   FileTextIcon,
   UsersIcon,
   ArrowRightIcon,
+  ArrowsClockwise,
+  CheckCircle,
 } from "@phosphor-icons/react"
+import { toast } from "sonner"
 import type { DashboardStats } from "@/app/actions/dashboard.server"
 
 const statusVariant: Record<string, "default" | "outline" | "destructive"> = {
@@ -25,6 +29,41 @@ const statusVariant: Record<string, "default" | "outline" | "destructive"> = {
 }
 
 export function DashboardQuickActions() {
+  const [isReconciling, setIsReconciling] = useState(false)
+
+  const handleReconcile = async () => {
+    setIsReconciling(true)
+    try {
+      const res = await fetch("/api/reconcile/trigger", { method: "POST" })
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error(data.error || "Error al reconciliar")
+        return
+      }
+
+      if (data.reconciled.length > 0) {
+        toast.success(
+          `${data.reconciled.length} inscripción(es) actualizada(s) a PAID`
+        )
+      } else if (data.total === 0) {
+        toast.info("No hay inscripciones pendientes con pago por verificar")
+      } else {
+        toast.info(
+          `${data.total} pendiente(s) revisada(s), ninguna requería actualización`
+        )
+      }
+
+      if (data.failed.length > 0) {
+        toast.warning(`${data.failed.length} inscripción(es) fallaron al reconciliar`)
+      }
+    } catch {
+      toast.error("Error de conexión al reconciliar")
+    } finally {
+      setIsReconciling(false)
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -85,6 +124,29 @@ export function DashboardQuickActions() {
             <ArrowRightIcon className="size-4 text-muted-foreground" />
           </Button>
         </Link>
+
+        <Button
+          variant="outline"
+          className="w-full justify-start gap-3 h-12 text-left"
+          onClick={handleReconcile}
+          disabled={isReconciling}
+        >
+          <span className="flex size-8 items-center justify-center rounded-lg bg-green-500/10 text-green-600 dark:text-green-400">
+            {isReconciling ? (
+              <ArrowsClockwise className="size-4 animate-spin" weight="bold" />
+            ) : (
+              <CheckCircle className="size-4" weight="duotone" />
+            )}
+          </span>
+          <div className="flex-1">
+            <p className="text-sm font-medium">
+              {isReconciling ? "Reconciliando…" : "Reconciliar Pagos"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Verificar pagos pendientes con Stripe
+            </p>
+          </div>
+        </Button>
       </CardContent>
     </Card>
   )
