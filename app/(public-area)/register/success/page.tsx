@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import stripe from "@/lib/stripe"
+import { reconcileBySessionId } from "@/app/actions/inscription.server"
 
 interface Props {
   searchParams: Promise<{ session_id?: string }>
@@ -21,6 +22,14 @@ export default async function SuccessPage({ searchParams }: Props) {
         : 0)
       totalPaid = ((session.amount_total ?? 0) / 100).toFixed(2)
       email = session.customer_email ?? session.metadata?.email ?? ""
+
+      // Safety net: if the webhook failed (DB was down, network error, etc.),
+      // reconcile the payment status right here. This is idempotent — if the
+      // webhook already confirmed it, this is a no-op.
+      if (session.payment_status === "paid") {
+        const amountEur = (session.amount_total ?? 0) / 100
+        await reconcileBySessionId(session.id, amountEur)
+      }
     } catch {
       // session not found — gracefully degrade
     }

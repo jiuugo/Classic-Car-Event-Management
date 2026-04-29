@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
+import { randomUUID } from "crypto"
 import stripe from "@/lib/stripe"
+import { submitInscription } from "@/app/actions/inscription.server"
 import type { InscriptionInput } from "@/lib/validation/registration.schema"
 import { InscriptionSchema } from "@/lib/validation/registration.schema"
 
@@ -9,24 +11,29 @@ export async function POST(request: Request) {
   try {
     const payload: InscriptionInput = await request.json()
 
-    // Validate before creating a Stripe session
+    // Validate before anything
     const parsed = InscriptionSchema.parse(payload)
-
     const vehicleCount = parsed.vehicles.length
-    const totalCents = vehicleCount * PRICE_PER_VEHICLE_CENTS
 
-    // We store the form data in metadata so the webhook can create the records
-    // Stripe metadata values must be strings ≤ 500 chars each.
-    // For safety we split vehicles into a separate key.
-    const metadata: Record<string, string> = {
-      full_name: parsed.full_name,
-      email: parsed.email,
-      national_id: parsed.national_id,
-      vehicles: JSON.stringify(parsed.vehicles),
-    }
+    // Generate a stable registration ID upfront so we can pass it in
+    // Stripe metadata AND use the same ID in the DB — no race condition.
+    const registrationId = randomUUID()
 
     const origin = new URL(request.url).origin
 
+    // 1) Create DB records FIRST (PENDING status).
+    //    Data is persisted before the user ever reaches Stripe.
+    const result = await submitInscription(parsed, registrationId)
+
+    if (!result.success) {
+      return NextResponse.json(
+        { success: false, error: result.error, fieldErrors: result.fieldErrors },
+        { status: result.code === "P2002" ? 409 : 400 }
+      )
+    }
+
+    // 2) Create Stripe Checkout session with registration_id in metadata.
+    //    If this fails the registration stays PENDING — harmless, admin can clean up.
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
@@ -45,14 +52,26 @@ export async function POST(request: Request) {
           quantity: vehicleCount,
         },
       ],
-      metadata,
+      metadata: { registration_id: registrationId },
       success_url: `${origin}/register/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/register?cancelled=true`,
     })
 
+    // 3) Store the Stripe session ID on the registration for reconciliation lookups.
+    //    Non-critical — if this fails the webhook still works via metadata.
+    try {
+      const prisma = (await import("@/lib/prisma")).default
+      await prisma.registration.update({
+        where: { id: registrationId },
+        data: { stripe_session_id: session.id },
+      })
+    } catch (err) {
+      console.warn("[checkout] Failed to store stripe_session_id:", err)
+    }
+
     return NextResponse.json({ url: session.url }, { status: 200 })
   } catch (err: unknown) {
-    console.error("[checkout] Error creating session:", err)
+    console.error("[checkout] Error:", err)
     const message = err instanceof Error ? err.message : "Server error"
     return NextResponse.json(
       { success: false, error: message },
