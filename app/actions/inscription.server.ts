@@ -8,7 +8,6 @@ import {
   InscriptionInput,
 } from "@/lib/validation/registration.schema"
 import { mapPrismaError } from "@/lib/errors"
-import { redirect } from "next/navigation"
 
 export type InscriptionResult = {
   success: boolean
@@ -18,11 +17,21 @@ export type InscriptionResult = {
   code?: string
 }
 
+/**
+ * Creates a full inscription (participant + N vehicles + registration + items).
+ * Called from the Stripe webhook after successful payment, or directly for free
+ * registrations.
+ *
+ * @param paymentAmount – the total amount paid (in EUR)
+ */
 export async function submitInscription(
-  data: InscriptionInput
+  data: InscriptionInput,
+  paymentAmount?: number
 ): Promise<InscriptionResult> {
   try {
     const parsed = InscriptionSchema.parse(data)
+
+    let registrationId = ""
 
     await prisma.$transaction(async (tx) => {
       const participant = await tx.participant.create({
@@ -35,34 +44,50 @@ export async function submitInscription(
         },
       })
 
-      const vehicle = await tx.vehicle.create({
-        data: {
-          id: randomUUID(),
-          participant_id: participant.id,
-          brand: parsed.brand,
-          model: parsed.model,
-          license_plate: parsed.license_plate,
-        },
-      })
-
       const registration = await tx.registration.create({
         data: {
           id: randomUUID(),
           participant_id: participant.id,
-          status: "PENDING",
+          status: paymentAmount ? "PAID" : "PENDING",
         },
       })
 
-      await tx.registrationItem.create({
-        data: {
-          id: randomUUID(),
-          registration_id: registration.id,
-          vehicle_id: vehicle.id,
-        },
-      })
+      registrationId = registration.id
+
+      for (const v of parsed.vehicles) {
+        const vehicle = await tx.vehicle.create({
+          data: {
+            id: randomUUID(),
+            participant_id: participant.id,
+            brand: v.brand,
+            model: v.model,
+            license_plate: v.license_plate,
+          },
+        })
+
+        await tx.registrationItem.create({
+          data: {
+            id: randomUUID(),
+            registration_id: registration.id,
+            vehicle_id: vehicle.id,
+          },
+        })
+      }
+
+      if (paymentAmount) {
+        await tx.payment.create({
+          data: {
+            id: randomUUID(),
+            registration_id: registration.id,
+            provider: "STRIPE",
+            amount: paymentAmount,
+            status: "COMPLETED",
+          },
+        })
+      }
     })
 
-    return { success: true, registrationId: "" }
+    return { success: true, registrationId }
   } catch (err: unknown) {
     if (err instanceof ZodError) {
       const firstError = err.issues?.[0]?.message
@@ -100,26 +125,4 @@ export async function submitInscription(
 
     return { success: false, error: message, fieldErrors, code }
   }
-}
-
-export async function createInscription(
-  formData: FormData
-): Promise<InscriptionResult> {
-  const payload: InscriptionInput = {
-    full_name: String(formData.get("full_name") ?? ""),
-    email: String(formData.get("email") ?? ""),
-    national_id: String(formData.get("national_id") ?? ""),
-    brand: String(formData.get("brand") ?? ""),
-    model: String(formData.get("model") ?? ""),
-    license_plate: String(formData.get("license_plate") ?? ""),
-    accept_terms: formData.get("accept_terms") === "on",
-  }
-
-  const result = await submitInscription(payload)
-
-  if (result.success) {
-    redirect("/register/success")
-  }
-
-  return result
 }
