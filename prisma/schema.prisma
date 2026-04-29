@@ -69,9 +69,10 @@ model Vehicle {
 }
 
 model Registration {
-  id             String             @id @default(uuid())
-  participant_id String
-  status         RegistrationStatus @default(PENDING)
+  id                String             @id @default(uuid())
+  participant_id    String
+  status            RegistrationStatus @default(PENDING)
+  stripe_session_id String?            @unique
 
   participant    Participant        @relation(fields: [participant_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
   items          RegistrationItem[]

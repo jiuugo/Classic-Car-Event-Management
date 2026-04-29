@@ -18,7 +18,7 @@
         "name": "next"
       }
     ],
-    "ignoreDeprecations": "6.0",//no se que hace
+
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
