@@ -62,7 +62,7 @@ export async function getDashboardStats(): Promise<
       prisma.payment.count({ where: { status: "FAILED" } }),
       prisma.registration.findMany({
         take: 5,
-        orderBy: { id: "desc" },
+        orderBy: { created_at: "desc" },
         include: {
           participant: { select: { full_name: true } },
           _count: { select: { items: true } },
