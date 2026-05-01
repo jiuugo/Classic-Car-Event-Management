@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { toast } from "sonner"
+import { createParticipant } from "@/app/actions/participants.server"
 
 export default function ParticipantForm({
   onSuccess,
@@ -27,19 +28,14 @@ export default function ParticipantForm({
 
     startTransition(async () => {
       try {
-        const res = await fetch("/api/participants", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            full_name: fullName,
-            email,
-            national_id: nationalId,
-          }),
+        const result = await createParticipant({
+          full_name: fullName,
+          email,
+          national_id: nationalId,
         })
 
-        if (!res.ok) {
-          const json = await res.json().catch(() => null)
-          toast.error(json?.error ?? "Failed to create participant")
+        if (!result.success) {
+          toast.error(result.error ?? "Failed to create participant")
           return
         }
 

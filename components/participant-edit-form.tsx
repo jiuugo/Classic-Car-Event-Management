@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { updateParticipant } from "@/app/actions/participants.server"
 
 export default function ParticipantEditForm({
   participant,
@@ -25,20 +26,14 @@ export default function ParticipantEditForm({
 
     startTransition(async () => {
       try {
-        const res = await fetch(`/api/participants/${participant.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            full_name: fullName,
-            email,
-            national_id: nationalId,
-          }),
+        const result = await updateParticipant(participant.id, {
+          full_name: fullName,
+          email,
+          national_id: nationalId,
         })
 
-        const json = await res.json().catch(() => null)
-
-        if (!res.ok) {
-          toast.error(json?.error ?? "Failed to update participant")
+        if (!result.success) {
+          toast.error(result.error ?? "Failed to update participant")
           return
         }
 
