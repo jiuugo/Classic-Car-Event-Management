@@ -10,17 +10,15 @@ import {
 } from "@/lib/validation/participant.schema"
 import { mapPrismaError } from "@/lib/errors"
 
-export async function createParticipant(formData: FormData): Promise<void> {
+export async function createParticipant(data: {
+  full_name: string
+  email: string
+  national_id: string
+}): Promise<{ success: true } | { success: false; error: string }> {
   try {
     await requireStaffOrAdmin()
 
-    const payload = {
-      full_name: String(formData.get("full_name") ?? ""),
-      email: String(formData.get("email") ?? ""),
-      national_id: String(formData.get("national_id") ?? ""),
-    }
-
-    const parsed = ParticipantSchema.parse(payload)
+    const parsed = ParticipantSchema.parse(data)
 
     await prisma.participant.create({
       data: {
@@ -37,12 +35,10 @@ export async function createParticipant(formData: FormData): Promise<void> {
       // ignore in environments that don't support revalidation
     }
 
-    // Form actions should return void. The page will re-render after the action.
-    return
+    return { success: true }
   } catch (err) {
     const message = mapPrismaError(err).message ?? "Server error"
-    // Throw so the framework can handle the error (and the developer can capture it)
-    throw new Error(message)
+    return { success: false, error: message }
   }
 }
 
