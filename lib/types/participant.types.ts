@@ -24,7 +24,7 @@ export type ParticipantRegistrationItem = {
 
 export type ParticipantPayment = {
   id: string
-  provider: "STRIPE" | "PAYPAL"
+  provider: "STRIPE" | "PAYPAL" | "MANUAL"
   amount: string // Decimal serialised as string
   status: "COMPLETED" | "FAILED"
 }
