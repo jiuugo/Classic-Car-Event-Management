@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { updateVehicle } from "@/app/actions/vehicles.server"
 
 export default function VehicleEditForm({
   vehicle,
@@ -25,20 +26,14 @@ export default function VehicleEditForm({
 
     startTransition(async () => {
       try {
-        const res = await fetch(`/api/vehicles/${vehicle.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            brand,
-            model,
-            license_plate: licensePlate,
-          }),
+        const result = await updateVehicle(vehicle.id, {
+          brand,
+          model,
+          license_plate: licensePlate,
         })
 
-        const json = await res.json().catch(() => null)
-
-        if (!res.ok) {
-          toast.error(json?.error ?? "Failed to update vehicle")
+        if (!result.success) {
+          toast.error(result.error ?? "Failed to update vehicle")
           return
         }
 

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useTransition } from "react"
+import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 import {
   Avatar,
@@ -20,7 +20,6 @@ import {
 import { toast } from "sonner"
 import {
   PencilSimpleIcon,
-  TrashIcon,
   EnvelopeIcon,
   CopyIcon,
   ArrowLeftIcon,
@@ -45,36 +44,6 @@ export default function ParticipantDetailHeader({
 }) {
   const router = useRouter()
   const [editOpen, setEditOpen] = useState(false)
-  const [isPending, startTransition] = useTransition()
-
-  const handleDelete = () => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this participant? This action cannot be undone."
-      )
-    )
-      return
-
-    startTransition(async () => {
-      try {
-        const res = await fetch(`/api/participants/${participant.id}`, {
-          method: "DELETE",
-        })
-
-        const json = await res.json().catch(() => null)
-
-        if (!res.ok) {
-          toast.error(json?.error ?? "Failed to delete participant")
-          return
-        }
-
-        toast.success("Participant deleted")
-        router.push("/dashboard/participants")
-      } catch (err) {
-        toast.error(String(err))
-      }
-    })
-  }
 
   const handleCopyToken = async () => {
     try {
@@ -165,18 +134,6 @@ export default function ParticipantDetailHeader({
             >
               <EnvelopeIcon className="size-4" />
               Resend QR
-            </Button>
-
-            {/* Delete */}
-            <Button
-              variant="destructive"
-              size="sm"
-              className="gap-1.5"
-              onClick={handleDelete}
-              disabled={isPending}
-            >
-              <TrashIcon className="size-4" />
-              {isPending ? "Deleting…" : "Delete"}
             </Button>
           </div>
         </div>
