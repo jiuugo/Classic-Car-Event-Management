@@ -2,7 +2,6 @@
 
 import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
 import {
   Sheet,
   SheetTrigger,
@@ -20,27 +19,6 @@ export default function ParticipantRowActions({
   participant: any
 }) {
   const [open, setOpen] = useState(false)
-
-  const handleDelete = async () => {
-    if (!confirm("Delete this participant?")) return
-
-    try {
-      const res = await fetch(`/api/participants/${participant.id}`, {
-        method: "DELETE",
-      })
-
-      if (!res.ok) {
-        const json = await res.json().catch(() => null)
-        toast.error(json?.error ?? "Failed to delete")
-        return
-      }
-
-      toast.success("Participant deleted")
-      window.location.reload()
-    } catch (err) {
-      toast.error(String(err))
-    }
-  }
 
   return (
     <div className="flex items-center gap-2">
@@ -67,10 +45,6 @@ export default function ParticipantRowActions({
           </div>
         </SheetContent>
       </Sheet>
-
-      <Button variant="destructive" size="sm" onClick={handleDelete}>
-        Delete
-      </Button>
     </div>
   )
 }

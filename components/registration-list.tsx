@@ -5,7 +5,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -64,7 +63,6 @@ export default function RegistrationList({
 }: {
   registrations: RegistrationRow[]
   currentFilters: {
-    email?: string
     status?: string
     paymentStatus?: string
   }
@@ -206,22 +204,6 @@ export default function RegistrationList({
       <CardContent>
         {/* Toolbar */}
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <form
-            className="flex-1"
-            onSubmit={(e) => {
-              e.preventDefault()
-              const fd = new FormData(e.currentTarget)
-              updateFilter("email", String(fd.get("email") ?? ""))
-            }}
-          >
-            <Input
-              name="email"
-              placeholder="Search by email…"
-              defaultValue={currentFilters.email ?? ""}
-              className="max-w-xs"
-            />
-          </form>
-
           <Select
             value={currentFilters.status ?? ""}
             onValueChange={(v) => updateFilter("status", v === "all" ? "" : v)}

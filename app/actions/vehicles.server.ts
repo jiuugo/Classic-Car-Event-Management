@@ -145,3 +145,25 @@ export async function updateVehicle(id: string, payload: any) {
     return { success: false, error: message }
   }
 }
+
+export async function deleteVehicle(
+  id: string
+): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    await requireStaffOrAdmin()
+
+    await prisma.vehicle.delete({ where: { id } })
+
+    try {
+      revalidatePath("/dashboard/vehicles")
+    } catch (e) {
+      // ignore
+    }
+
+    return { success: true }
+  } catch (err) {
+    const message =
+      mapPrismaError(err).message ?? (err as any)?.message ?? "Server error"
+    return { success: false, error: message }
+  }
+}

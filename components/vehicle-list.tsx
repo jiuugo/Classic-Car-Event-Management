@@ -5,7 +5,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -26,7 +25,7 @@ export default function VehicleList({
 }: {
   vehicles: VehicleRow[]
   brands: string[]
-  currentFilters: { q?: string; brand?: string; status?: string }
+  currentFilters: { brand?: string; status?: string }
 }) {
   const router = useRouter()
 
@@ -117,25 +116,8 @@ export default function VehicleList({
       </CardHeader>
 
       <CardContent>
-        {/* Toolbar: Search + Filters */}
+        {/* Toolbar: Filters */}
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-          {/* License plate search */}
-          <form
-            className="flex-1"
-            onSubmit={(e) => {
-              e.preventDefault()
-              const fd = new FormData(e.currentTarget)
-              updateFilter("q", String(fd.get("q") ?? ""))
-            }}
-          >
-            <Input
-              name="q"
-              placeholder="Search by license plate…"
-              defaultValue={currentFilters.q ?? ""}
-              className="max-w-xs"
-            />
-          </form>
-
           {/* Brand filter */}
           <Select
             value={currentFilters.brand ?? ""}
