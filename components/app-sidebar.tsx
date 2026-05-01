@@ -18,8 +18,6 @@ import {
 import {
   SquaresFourIcon,
   ListIcon,
-  ChartBarIcon,
-  FolderIcon,
   UsersIcon,
   CameraIcon,
   FileTextIcon,
@@ -28,17 +26,24 @@ import {
   MagnifyingGlassIcon,
   DatabaseIcon,
   ChartLineIcon,
-  FileIcon,
   CommandIcon,
 } from "@phosphor-icons/react"
+import Link from "next/link"
 
 export function AppSidebar({
   role = "STAFF",
+  user = {
+    name: "Usuario",
+    email: "",
+  },
   ...props
-}: { role?: "ADMIN" | "STAFF" } & React.ComponentProps<typeof Sidebar>) {
-  const user = {
-    name: "shadcn",
-    email: "m@example.com",
+}: {
+  role?: "ADMIN" | "STAFF"
+  user?: { name: string; email: string }
+} & React.ComponentProps<typeof Sidebar>) {
+  const navUser = {
+    name: user.name,
+    email: user.email,
     avatar: "/avatars/shadcn.jpg",
   }
 
@@ -119,10 +124,10 @@ export function AppSidebar({
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <a href="/">
+              <Link href="/">
                 <CommandIcon className="size-5!" />
                 <span className="text-base font-semibold">Acme Inc.</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -133,7 +138,7 @@ export function AppSidebar({
         <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser user={navUser} />
       </SidebarFooter>
     </Sidebar>
   )

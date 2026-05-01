@@ -1,6 +1,9 @@
+"use client"
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import { SignInIcon } from "@phosphor-icons/react"
 
 export default function PublicHeader() {
   return (
@@ -42,8 +45,14 @@ export default function PublicHeader() {
         </a>
       </div>
 
-      <div className="flex items-center gap-4">
-        <Button asChild>
+      <div className="flex items-center gap-2 md:gap-4">
+        <Button asChild variant="ghost" size="sm" className="px-2 md:px-4">
+          <Link href="/dashboard">
+            <SignInIcon className="size-4 md:mr-2" />
+            <span className="hidden md:inline">Iniciar sesión</span>
+          </Link>
+        </Button>
+        <Button asChild size="sm">
           <Link href="/register">Inscribirse</Link>
         </Button>
       </div>
