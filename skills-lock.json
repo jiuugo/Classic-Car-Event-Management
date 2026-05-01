@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "authjs-skills": {
+      "source": "gocallum/nextjs16-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/authjs-skills/SKILL.md",
+      "computedHash": "43ae8a1f2ddafc02ac2d4d8fc952ec73c54bc8ac3411d589091dfd81d01151cb"
+    },
     "nextjs-app-router-patterns": {
       "source": "wshobson/agents",
       "sourceType": "github",
