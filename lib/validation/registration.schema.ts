@@ -26,5 +26,10 @@ export const TermsStepSchema = z.object({
 
 export const InscriptionSchema = ParticipantStepSchema.merge(VehiclesArraySchema).merge(TermsStepSchema)
 
+export const ManualInscriptionSchema = ParticipantStepSchema.merge(VehiclesArraySchema).extend({
+  amount: z.number().min(0, "El importe debe ser 0 o mayor"),
+})
+
 export type VehicleInput = z.infer<typeof VehicleStepSchema>
 export type InscriptionInput = z.infer<typeof InscriptionSchema>
+export type ManualInscriptionInput = z.infer<typeof ManualInscriptionSchema>

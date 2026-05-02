@@ -2,10 +2,14 @@
 
 import { randomUUID } from "crypto"
 import { ZodError } from "zod"
+import { revalidatePath } from "next/cache"
 import prisma from "@/lib/prisma"
+import { requireStaffOrAdmin } from "@/lib/auth"
 import {
   InscriptionSchema,
   InscriptionInput,
+  ManualInscriptionSchema,
+  ManualInscriptionInput,
 } from "@/lib/validation/registration.schema"
 import { mapPrismaError } from "@/lib/errors"
 
@@ -227,7 +231,7 @@ export async function reconcilePendingRegistrations(): Promise<{
       // If not paid, leave as PENDING — payment may still come through
     } catch (err) {
       console.error(
-        `[reconcile] Failed to check session for registration ${reg.id}:`,
+        `[reconcile] Failed to check session for registration ${reg.id}:\n`,
         err
       )
       failed.push(reg.id)
@@ -235,4 +239,122 @@ export async function reconcilePendingRegistrations(): Promise<{
   }
 
   return { total: pendingRegistrations.length, reconciled, failed }
+}
+
+export type ManualInscriptionResult = {
+  success: boolean
+  error?: string
+  registrationId?: string
+  fieldErrors?: Record<string, string>
+  code?: string
+}
+
+/**
+ * Creates a full inscription directly by staff/admin.
+ * Registration is created as PAID with a MANUAL payment record.
+ * No Stripe interaction occurs.
+ */
+export async function createManualInscription(
+  data: ManualInscriptionInput
+): Promise<ManualInscriptionResult> {
+  try {
+    await requireStaffOrAdmin()
+
+    const parsed = ManualInscriptionSchema.parse(data)
+    const regId = randomUUID()
+
+    await prisma.$transaction(async (tx) => {
+      const participant = await tx.participant.create({
+        data: {
+          id: randomUUID(),
+          full_name: parsed.full_name,
+          email: parsed.email,
+          national_id: parsed.national_id,
+          qr_token: randomUUID(),
+        },
+      })
+
+      await tx.registration.create({
+        data: {
+          id: regId,
+          participant_id: participant.id,
+          status: "PAID",
+        },
+      })
+
+      for (const v of parsed.vehicles) {
+        const vehicle = await tx.vehicle.create({
+          data: {
+            id: randomUUID(),
+            participant_id: participant.id,
+            brand: v.brand,
+            model: v.model,
+            license_plate: v.license_plate,
+          },
+        })
+
+        await tx.registrationItem.create({
+          data: {
+            id: randomUUID(),
+            registration_id: regId,
+            vehicle_id: vehicle.id,
+          },
+        })
+      }
+
+      await tx.payment.create({
+        data: {
+          id: randomUUID(),
+          registration_id: regId,
+          provider: "MANUAL",
+          amount: parsed.amount,
+          status: "COMPLETED",
+        },
+      })
+    })
+
+    try {
+      revalidatePath("/dashboard/participants")
+      revalidatePath("/dashboard/registrations")
+    } catch {
+      // ignore revalidation errors
+    }
+
+    return { success: true, registrationId: regId }
+  } catch (err: unknown) {
+    if (err instanceof ZodError) {
+      const firstError = err.issues?.[0]?.message
+      return { success: false, error: firstError || "Validation error" }
+    }
+
+    const { message, fields, code } = mapPrismaError(err)
+
+    const dbToFormKey: Record<string, string> = {
+      national_id: "national_id",
+      email: "email",
+      license_plate: "license_plate",
+      qr_token: "qr_token",
+    }
+
+    const friendlyPerField: Record<string, string> = {
+      email:
+        "Este email ya está registrado. Si es tu cuenta, intenta iniciar sesión o usa otro email. Si crees que es un error, contacta con la organización.",
+      national_id:
+        "Ya existe una inscripción con este DNI/NIE. Si crees que es un error, contacta con la organización para que lo revisen.",
+      license_plate:
+        "Esta matrícula ya está registrada en otra inscripción. Si es tu vehículo y crees que es un error, contacta con la organización.",
+      qr_token: "Ya existe un participante con este identificador",
+    }
+
+    let fieldErrors: Record<string, string> | undefined = undefined
+    if (Array.isArray(fields) && fields.length > 0) {
+      fieldErrors = {}
+      for (const f of fields) {
+        const key = dbToFormKey[f] ?? f
+        fieldErrors[key] = friendlyPerField[f] ?? message
+      }
+    }
+
+    return { success: false, error: message, fieldErrors, code }
+  }
 }
