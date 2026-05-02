@@ -1,9 +1,9 @@
+import Link from "next/link"
 import prisma from "@/lib/prisma"
 import { searchParticipants } from "@/app/actions/participants.server"
-import ParticipantForm from "@/components/participant-form"
 import ParticipantList from "@/components/participant-list"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Plus } from "@phosphor-icons/react/dist/ssr"
 
 export default async function Page(props: {
   searchParams?: Promise<{ q?: string }>
@@ -25,10 +25,20 @@ export default async function Page(props: {
 
   return (
     <div className="p-6">
-      <h2 className="text-lg font-semibold">Participants</h2>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Manage participants and add walk-ins.
-      </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">Participants</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Manage participants and add walk-ins.
+          </p>
+        </div>
+        <Button asChild>
+          <Link href="/dashboard/participants/new">
+            <Plus className="mr-1.5 h-4 w-4" />
+            Nueva inscripción
+          </Link>
+        </Button>
+      </div>
 
       <div className="mt-4">
         <ParticipantList participants={participants} q={q} />

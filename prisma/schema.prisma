@@ -24,6 +24,7 @@ enum RegistrationStatus {
 enum PaymentProvider {
   STRIPE
   PAYPAL
+  MANUAL
 }
 
 enum PaymentStatus {
@@ -73,6 +74,8 @@ model Registration {
   participant_id    String
   status            RegistrationStatus @default(PENDING)
   stripe_session_id String?            @unique
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
 
   participant    Participant        @relation(fields: [participant_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
   items          RegistrationItem[]

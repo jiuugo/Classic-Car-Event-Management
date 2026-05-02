@@ -14,6 +14,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet"
 import { checkinRegistrationItems } from "@/app/actions/checkin.server"
+import { getParticipantById } from "@/app/actions/participants.server"
 
 export default function ParticipantCarsSheet({
   participantId,
@@ -36,23 +37,23 @@ export default function ParticipantCarsSheet({
     setItems([])
     setSelected({})
 
-    fetch(`/api/participants/${participantId}`, {
-      method: "GET",
-      cache: "no-store",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((json) => {
+    getParticipantById(participantId)
+      .then((result) => {
         if (!mounted) return
-        if (!json?.success) {
-          setError(json?.error ?? "Failed to load participant data")
+        if (!result.success) {
+          setError(result.error ?? "Failed to load participant data")
           return
         }
 
-        const p = json.data
-        setParticipantName(p?.full_name ?? "")
+        const p = result.data
+        if (!p) {
+          setError("Participant not found")
+          return
+        }
 
-        const regs: any[] = p?.registrations ?? []
+        setParticipantName(p.full_name ?? "")
+
+        const regs: any[] = p.registrations ?? []
         const allItems = regs.flatMap((r) =>
           (r.items ?? []).map((it: any) => ({ ...it, registration: r }))
         )
@@ -119,23 +120,19 @@ export default function ParticipantCarsSheet({
           // re-fetch items
           setLoading(true)
           setError(null)
-          const json = await fetch(`/api/participants/${participantId}`, {
-            method: "GET",
-            cache: "no-store",
-            credentials: "include",
-          }).then((r) => r.json())
+          const result = await getParticipantById(participantId)
 
-          if (json?.success) {
-            const p = json.data
-            setParticipantName(p?.full_name ?? "")
-            const regs: any[] = p?.registrations ?? []
+          if (result.success && result.data) {
+            const p = result.data
+            setParticipantName(p.full_name ?? "")
+            const regs: any[] = p.registrations ?? []
             const allItems = regs.flatMap((r) =>
               (r.items ?? []).map((it: any) => ({ ...it, registration: r }))
             )
             setItems(allItems)
             clearSelection()
           } else {
-            setError(json?.error ?? "Failed to refresh items")
+            setError(result.error ?? "Failed to refresh items")
           }
         } else {
           const err = ((res as any)?.error as string) ?? "Unknown error"

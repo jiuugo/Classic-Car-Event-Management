@@ -1,13 +1,24 @@
 import React from "react"
+import { auth } from "@/auth"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const session = await auth()
+
+  const user = session?.user
+    ? {
+        name: session.user.name ?? session.user.email ?? "Usuario",
+        email: session.user.email ?? "",
+        role: session.user.role ?? "STAFF",
+      }
+    : { name: "Usuario", email: "", role: "STAFF" as const }
+
   return (
     <SidebarProvider
       style={
@@ -17,7 +28,7 @@ export default function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset" role={user.role} user={user} />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">

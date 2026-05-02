@@ -2,7 +2,6 @@
 
 import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
 import {
   Sheet,
   SheetTrigger,
@@ -15,27 +14,6 @@ import VehicleEditForm from "./vehicle-edit-form"
 
 export default function VehicleRowActions({ vehicle }: { vehicle: any }) {
   const [open, setOpen] = useState(false)
-
-  const handleDelete = async () => {
-    if (!confirm("Delete this vehicle?")) return
-
-    try {
-      const res = await fetch(`/api/vehicles/${vehicle.id}`, {
-        method: "DELETE",
-      })
-
-      if (!res.ok) {
-        const json = await res.json().catch(() => null)
-        toast.error(json?.error ?? "Failed to delete")
-        return
-      }
-
-        toast.success("Vehicle deleted")
-        window.location.reload()
-    } catch (err) {
-      toast.error(String(err))
-    }
-  }
 
   return (
     <div className="flex items-center gap-2">
@@ -58,10 +36,6 @@ export default function VehicleRowActions({ vehicle }: { vehicle: any }) {
           </div>
         </SheetContent>
       </Sheet>
-
-      <Button variant="destructive" size="sm" onClick={handleDelete}>
-        Delete
-      </Button>
     </div>
   )
 }

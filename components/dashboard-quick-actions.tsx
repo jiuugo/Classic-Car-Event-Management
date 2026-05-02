@@ -21,6 +21,7 @@ import {
 } from "@phosphor-icons/react"
 import { toast } from "sonner"
 import type { DashboardStats } from "@/app/actions/dashboard.server"
+import { reconcilePendingRegistrations } from "@/app/actions/inscription.server"
 
 const statusVariant: Record<string, "default" | "outline" | "destructive"> = {
   PAID: "default",
@@ -34,28 +35,27 @@ export function DashboardQuickActions() {
   const handleReconcile = async () => {
     setIsReconciling(true)
     try {
-      const res = await fetch("/api/reconcile/trigger", { method: "POST" })
-      const data = await res.json()
+      const result = await reconcilePendingRegistrations()
 
-      if (!res.ok) {
-        toast.error(data.error || "Error al reconciliar")
-        return
-      }
+      console.log(
+        `[reconcile/trigger] Checked ${result.total} pending registrations. ` +
+          `Reconciled: ${result.reconciled.length}, Failed: ${result.failed.length}`
+      )
 
-      if (data.reconciled.length > 0) {
+      if (result.reconciled.length > 0) {
         toast.success(
-          `${data.reconciled.length} inscripción(es) actualizada(s) a PAID`
+          `${result.reconciled.length} inscripción(es) actualizada(s) a PAID`
         )
-      } else if (data.total === 0) {
+      } else if (result.total === 0) {
         toast.info("No hay inscripciones pendientes con pago por verificar")
       } else {
         toast.info(
-          `${data.total} pendiente(s) revisada(s), ninguna requería actualización`
+          `${result.total} pendiente(s) revisada(s), ninguna requería actualización`
         )
       }
 
-      if (data.failed.length > 0) {
-        toast.warning(`${data.failed.length} inscripción(es) fallaron al reconciliar`)
+      if (result.failed.length > 0) {
+        toast.warning(`${result.failed.length} inscripción(es) fallaron al reconciliar`)
       }
     } catch {
       toast.error("Error de conexión al reconciliar")
