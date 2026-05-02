@@ -51,6 +51,7 @@ export function DataTable<TData extends object>({
   onRowReorder,
   onSelectionChange,
   className,
+  getRowClassName,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -87,7 +88,7 @@ export function DataTable<TData extends object>({
     ),
   }
 
-  let injectedColumns = [...(columns as any[])]
+  const injectedColumns = [...(columns as any[])]
   if (enableSelection) injectedColumns.unshift(selectColumn)
   if (enableDrag) injectedColumns.unshift(dragColumn)
 
@@ -215,7 +216,11 @@ export function DataTable<TData extends object>({
                     strategy={verticalListSortingStrategy}
                   >
                     {table.getRowModel().rows.map((row) => (
-                      <DraggableRow key={row.id} row={row}>
+                      <DraggableRow
+                        key={row.id}
+                        row={row}
+                        className={getRowClassName?.(row.original)}
+                      >
                         {row.getVisibleCells().map((cell) => (
                           <TableCell
                             key={cell.id}
@@ -243,7 +248,10 @@ export function DataTable<TData extends object>({
                 </DndContext>
               ) : (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <TableRow
+                    key={row.id}
+                    className={getRowClassName?.(row.original)}
+                  >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
                         {cell.column.id === "select" ? (

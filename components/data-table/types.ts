@@ -23,6 +23,7 @@ export interface DataTableProps<TData extends object> {
   rowKey?: (row: TData) => string
   className?: string
   rowExpansionRenderer?: (row: TData) => React.ReactNode
+  getRowClassName?: (row: TData) => string
 }
 
 export type { ColumnDef }

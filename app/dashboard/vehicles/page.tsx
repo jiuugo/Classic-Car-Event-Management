@@ -2,17 +2,23 @@ import { getVehicles, getDistinctBrands } from "@/app/actions/vehicles.server"
 import VehicleList from "@/components/vehicle-list"
 
 export default async function Page(props: {
-  searchParams?: Promise<{ brand?: string; status?: string }>
+  searchParams?: Promise<{
+    brand?: string
+    status?: string
+    showUnpaid?: string
+  }>
 }) {
   const searchParams = props.searchParams ? await props.searchParams : {}
 
   const brand = searchParams.brand ?? undefined
   const status = searchParams.status as "present" | "absent" | undefined
+  const showUnpaid = searchParams.showUnpaid === "true"
 
   const [vehiclesResult, brands] = await Promise.all([
     getVehicles({
       brand,
       attendance: status,
+      showUnpaid,
     }),
     getDistinctBrands(),
   ])
@@ -31,7 +37,7 @@ export default async function Page(props: {
         <VehicleList
           vehicles={vehicles}
           brands={brands}
-          currentFilters={{ brand, status }}
+          currentFilters={{ brand, status, showUnpaid }}
         />
       </div>
     </div>

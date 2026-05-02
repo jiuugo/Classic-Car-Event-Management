@@ -11,6 +11,7 @@ export type VehicleFilters = {
   licensePlate?: string
   brand?: string
   attendance?: "present" | "absent"
+  showUnpaid?: boolean
 }
 
 /**
@@ -39,6 +40,7 @@ export async function getVehicles(
 
     if (filters?.attendance === "present") {
       where.registration_item = {
+        ...where.registration_item,
         checkin_date: { not: null },
       }
     } else if (filters?.attendance === "absent") {
@@ -48,12 +50,21 @@ export async function getVehicles(
       ]
     }
 
+    if (!filters?.showUnpaid) {
+      where.registration_item = {
+        ...where.registration_item,
+        registration: { status: "PAID" },
+      }
+    }
+
     const vehicles = await prisma.vehicle.findMany({
       where,
       include: {
         participant: { select: { id: true, full_name: true } },
         registration_item: {
-          select: { entry_number: true, checkin_date: true },
+          include: {
+            registration: { select: { status: true } },
+          },
         },
       },
       orderBy: { brand: "asc" },
@@ -78,6 +89,8 @@ export async function getVehicles(
               : null,
           }
         : null,
+      registration_status:
+        v.registration_item?.registration?.status ?? null,
     }))
 
     return { success: true, data }
