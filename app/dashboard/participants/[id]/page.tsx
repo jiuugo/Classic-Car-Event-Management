@@ -9,8 +9,11 @@ import type { ParticipantDetail } from "@/lib/types/participant.types"
 
 export default async function ParticipantDetailPage(props: {
   params: Promise<{ id: string }>
+  searchParams?: Promise<{ tab?: string }>
 }) {
   const { id } = await props.params
+  const searchParams = props.searchParams ? await props.searchParams : {}
+  const defaultTab = searchParams.tab === "registrations" ? "registrations" : "vehicles"
 
   const result = await getParticipantById(id)
 
@@ -71,7 +74,7 @@ export default async function ParticipantDetailPage(props: {
         </div>
 
         {/* Tabbed content */}
-        <Tabs defaultValue="vehicles">
+        <Tabs defaultValue={defaultTab}>
           <TabsList variant="line">
             <TabsTrigger value="vehicles">
               Vehicles ({participant.vehicles.length})

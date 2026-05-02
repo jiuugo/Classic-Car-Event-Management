@@ -42,21 +42,86 @@ export async function createParticipant(data: {
   }
 }
 
-export async function searchParticipants(query: string) {
+function getBestRegistrationStatus(
+  registrations: { status: "PENDING" | "PAID" | "CANCELLED" }[]
+): "PENDING" | "PAID" | "CANCELLED" | null {
+  if (registrations.some((r) => r.status === "PAID")) return "PAID"
+  if (registrations.some((r) => r.status === "PENDING")) return "PENDING"
+  if (registrations.some((r) => r.status === "CANCELLED")) return "CANCELLED"
+  return null
+}
+
+export async function getParticipants(showUnpaid?: boolean) {
   try {
+    const where: any = {}
+
+    if (!showUnpaid) {
+      where.registrations = {
+        some: {
+          status: "PAID",
+        },
+      }
+    }
+
     const items = await prisma.participant.findMany({
-      where: {
-        OR: [
-          { full_name: { contains: query, mode: "insensitive" } },
-          { national_id: { contains: query, mode: "insensitive" } },
-          { email: { contains: query, mode: "insensitive" } },
-        ],
-      },
+      where,
       take: 50,
       orderBy: { full_name: "asc" },
+      include: {
+        registrations: { select: { status: true } },
+      },
     })
 
-    return { success: true, data: items }
+    const data = items.map((p) => ({
+      ...p,
+      registration_status: getBestRegistrationStatus(p.registrations),
+    }))
+
+    return { success: true, data }
+  } catch (err) {
+    return {
+      success: false,
+      error: mapPrismaError(err).message ?? "Server error",
+    }
+  }
+}
+
+export async function searchParticipants(
+  query: string,
+  showUnpaid?: boolean
+) {
+  try {
+    const where: any = {
+      OR: [
+        { full_name: { contains: query, mode: "insensitive" } },
+        { national_id: { contains: query, mode: "insensitive" } },
+        { email: { contains: query, mode: "insensitive" } },
+      ],
+    }
+
+    if (!showUnpaid) {
+      where.registrations = {
+        some: {
+          status: "PAID",
+        },
+      }
+    }
+
+    const items = await prisma.participant.findMany({
+      where,
+      take: 50,
+      orderBy: { full_name: "asc" },
+      include: {
+        registrations: { select: { status: true } },
+      },
+    })
+
+    const data = items.map((p) => ({
+      ...p,
+      registration_status: getBestRegistrationStatus(p.registrations),
+    }))
+
+    return { success: true, data }
   } catch (err) {
     return {
       success: false,
