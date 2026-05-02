@@ -11,4 +11,5 @@ export type VehicleRow = {
     entry_number: number | null
     checkin_date: string | null // ISO string or null
   } | null
+  registration_status: "PENDING" | "PAID" | "CANCELLED" | null
 }
