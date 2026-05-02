@@ -5,7 +5,7 @@ CREATE TYPE "Role" AS ENUM ('ADMIN', 'STAFF');
 CREATE TYPE "RegistrationStatus" AS ENUM ('PENDING', 'PAID', 'CANCELLED');
 
 -- CreateEnum
-CREATE TYPE "PaymentProvider" AS ENUM ('STRIPE', 'PAYPAL');
+CREATE TYPE "PaymentProvider" AS ENUM ('STRIPE', 'PAYPAL', 'MANUAL');
 
 -- CreateEnum
 CREATE TYPE "PaymentStatus" AS ENUM ('COMPLETED', 'FAILED');
@@ -47,6 +47,9 @@ CREATE TABLE "registration" (
     "id" TEXT NOT NULL,
     "participant_id" TEXT NOT NULL,
     "status" "RegistrationStatus" NOT NULL DEFAULT 'PENDING',
+    "stripe_session_id" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "registration_pkey" PRIMARY KEY ("id")
 );
@@ -93,6 +96,9 @@ CREATE UNIQUE INDEX "vehicle_license_plate_key" ON "vehicle"("license_plate");
 
 -- CreateIndex
 CREATE INDEX "vehicle_license_plate_idx" ON "vehicle"("license_plate");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "registration_stripe_session_id_key" ON "registration"("stripe_session_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "registration_item_vehicle_id_key" ON "registration_item"("vehicle_id");

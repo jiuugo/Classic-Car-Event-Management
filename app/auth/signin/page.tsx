@@ -14,13 +14,16 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export default function SignInPage({
+export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: { callbackUrl?: string; error?: string }
+  // 2. Wrap the searchParams type in a Promise
+  searchParams: Promise<{ callbackUrl?: string; error?: string }>
 }) {
-  const callbackUrl = searchParams.callbackUrl ?? "/dashboard"
-  const error = searchParams.error
+  const resolvedParams = await searchParams
+
+  const callbackUrl = resolvedParams.callbackUrl ?? "/dashboard"
+  const error = resolvedParams.error
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-10 p-4">
