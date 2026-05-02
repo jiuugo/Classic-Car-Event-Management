@@ -2,7 +2,6 @@
 
 import * as React from "react"
 
-import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -22,11 +21,8 @@ import {
   CameraIcon,
   FileTextIcon,
   GearIcon,
-  QuestionIcon,
-  MagnifyingGlassIcon,
-  DatabaseIcon,
   ChartLineIcon,
-  CommandIcon,
+  CarIcon,
 } from "@phosphor-icons/react"
 import Link from "next/link"
 
@@ -44,7 +40,7 @@ export function AppSidebar({
   const navUser = {
     name: user.name,
     email: user.email,
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "",
   }
 
   const navMain = [
@@ -90,29 +86,6 @@ export function AppSidebar({
           },
         ]
       : []),
-    {
-      title: "Get Help",
-      url: "#",
-      icon: <QuestionIcon />,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: <MagnifyingGlassIcon />,
-    },
-  ]
-
-  const documents = [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: <DatabaseIcon />,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: <ChartLineIcon />,
-    },
   ]
 
   return (
@@ -125,8 +98,8 @@ export function AppSidebar({
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
               <Link href="/">
-                <CommandIcon className="size-5!" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <CarIcon className="size-5!" />
+                <span className="text-base font-semibold">Clasicos Robla</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -134,7 +107,6 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
-        <NavDocuments items={documents} label="Resources" />
         <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
