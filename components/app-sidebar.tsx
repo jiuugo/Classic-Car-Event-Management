@@ -54,11 +54,11 @@ export function AppSidebar({
       url: "/dashboard/checkin",
       icon: <CameraIcon />,
     },
-    {
-      title: "Raffle Room",
-      url: "/dashboard/raffle",
-      icon: <FileTextIcon />,
-    },
+    // {
+    //   title: "Raffle Room",
+    //   url: "/dashboard/raffle",
+    //   icon: <FileTextIcon />,
+    // },
     {
       title: "Participants",
       url: "/dashboard/participants",

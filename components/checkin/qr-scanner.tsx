@@ -12,20 +12,20 @@ function getCameraErrorMessage(err: unknown): {
   message: string
   isInsecureContext: boolean
 } {
-  const msg =
-    typeof err === "string" ? err : (err as any)?.message ?? ""
+  const msg = typeof err === "string" ? err : ((err as any)?.message ?? "")
 
   const insecure =
     !window.isSecureContext ||
     msg.toLowerCase().includes("insecure") ||
     msg.toLowerCase().includes("permission denied") ||
-    (navigator.mediaDevices === undefined && window.location.protocol === "http:")
+    (navigator.mediaDevices === undefined &&
+      window.location.protocol === "http:")
 
   if (insecure) {
     return {
       title: "Se requiere HTTPS",
       message:
-        "El navegador bloquea el acceso a la cámara en conexiones no seguras (HTTP). Para probar en tu móvil, ejecuta 'pnpm tunnel' en otra terminal y abre la URL HTTPS que se genere.",
+        "El navegador bloquea el acceso a la cámara en conexiones no seguras (HTTP).",
       isInsecureContext: true,
     }
   }
@@ -33,8 +33,7 @@ function getCameraErrorMessage(err: unknown): {
   if (msg.toLowerCase().includes("notfound")) {
     return {
       title: "Cámara no detectada",
-      message:
-        "No se encontró ninguna cámara en este dispositivo.",
+      message: "No se encontró ninguna cámara en este dispositivo.",
       isInsecureContext: false,
     }
   }
