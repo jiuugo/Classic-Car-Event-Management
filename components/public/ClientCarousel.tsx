@@ -29,7 +29,7 @@ export default function ClientCarousel({ images = [] }: Props) {
       <CarouselContent>
         {images.map((src, index) => (
           <CarouselItem key={index}>
-            <div className="h-140 w-full overflow-hidden">
+            <div className="relative aspect-video w-full overflow-hidden">
               <Image
                 src={src}
                 alt={`Imagen de la galería ${index + 1}`}
