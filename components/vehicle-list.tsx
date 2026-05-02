@@ -52,10 +52,8 @@ function StatusBadge({
 
 function rowClassName(row: VehicleRow) {
   if (row.registration_status === "PAID") return ""
-  if (row.registration_status === "PENDING")
-    return "bg-yellow-500/5"
-  if (row.registration_status === "CANCELLED")
-    return "bg-red-500/5"
+  if (row.registration_status === "PENDING") return "bg-yellow-500/5"
+  if (row.registration_status === "CANCELLED") return "bg-red-500/5"
   return "bg-gray-500/5"
 }
 
@@ -66,7 +64,12 @@ export default function VehicleList({
 }: {
   vehicles: VehicleRow[]
   brands: string[]
-  currentFilters: { brand?: string; status?: string; showUnpaid?: boolean }
+  currentFilters: {
+    q?: string
+    brand?: string
+    status?: string
+    showUnpaid?: boolean
+  }
 }) {
   const router = useRouter()
 
@@ -84,6 +87,15 @@ export default function VehicleList({
     const params = new URLSearchParams()
     const merged = { ...currentFilters, showUnpaid: checked }
     for (const [k, v] of Object.entries(merged)) {
+      if (v && v !== "false") params.set(k, String(v))
+    }
+    router.push(`/dashboard/vehicles?${params.toString()}`)
+  }
+
+  function clearSearch() {
+    const params = new URLSearchParams()
+    for (const [k, v] of Object.entries(currentFilters)) {
+      if (k === "q") continue
       if (v && v !== "false") params.set(k, String(v))
     }
     router.push(`/dashboard/vehicles?${params.toString()}`)
@@ -223,10 +235,24 @@ export default function VehicleList({
               checked={currentFilters.showUnpaid ?? false}
               onCheckedChange={(v) => toggleShowUnpaid(!!v)}
             />
-            <Label htmlFor="showUnpaid" className="text-sm cursor-pointer">
+            <Label htmlFor="showUnpaid" className="cursor-pointer text-sm">
               Mostrar no pagados
             </Label>
           </div>
+
+          {/* Active search chip */}
+          {currentFilters.q && (
+            <div className="flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
+              <span>Search: {currentFilters.q}</span>
+              <button
+                onClick={clearSearch}
+                className="ml-1 rounded-full p-0.5 hover:bg-primary/20"
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            </div>
+          )}
         </div>
 
         <DataTable

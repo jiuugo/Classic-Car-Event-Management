@@ -5,18 +5,26 @@ import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { requireStaffOrAdmin } from "@/lib/auth"
 import { mapPrismaError } from "@/lib/errors"
-import type { RegistrationRow, RegistrationDetail } from "@/lib/types/registration.types"
+import type {
+  RegistrationRow,
+  RegistrationDetail,
+} from "@/lib/types/registration.types"
 import type { Prisma } from "@/app/generated/prisma/client"
 
 export async function getRegistrations(filters?: {
   status?: string
   paymentStatus?: string
   email?: string
-}): Promise<{ success: true; data: RegistrationRow[] } | { success: false; error: string }> {
+}): Promise<
+  { success: true; data: RegistrationRow[] } | { success: false; error: string }
+> {
   try {
     const where: Prisma.RegistrationWhereInput = {}
 
-    if (filters?.status && ["PENDING", "PAID", "CANCELLED"].includes(filters.status)) {
+    if (
+      filters?.status &&
+      ["PENDING", "PAID", "CANCELLED"].includes(filters.status)
+    ) {
       where.status = filters.status as "PENDING" | "PAID" | "CANCELLED"
     }
 
@@ -52,8 +60,12 @@ export async function getRegistrations(filters?: {
         status: r.status as "PENDING" | "PAID" | "CANCELLED",
         vehicleCount: r._count.items,
         totalAmount: payment ? String(payment.amount) : null,
-        paymentProvider: payment ? (payment.provider as "STRIPE" | "PAYPAL" | "MANUAL") : null,
-        paymentStatus: payment ? (payment.status as "COMPLETED" | "FAILED") : null,
+        paymentProvider: payment
+          ? (payment.provider as "STRIPE" | "PAYPAL" | "MANUAL")
+          : null,
+        paymentStatus: payment
+          ? (payment.status as "COMPLETED" | "FAILED")
+          : null,
         createdAt: r.created_at.toISOString(),
       }
     })
@@ -79,7 +91,10 @@ export async function getRegistrations(filters?: {
 
 export async function getRegistrationById(
   id: string
-): Promise<{ success: true; data: RegistrationDetail } | { success: false; error: string }> {
+): Promise<
+  | { success: true; data: RegistrationDetail }
+  | { success: false; error: string }
+> {
   try {
     const registration = await prisma.registration.findUnique({
       where: { id },
@@ -90,7 +105,12 @@ export async function getRegistrationById(
         items: {
           include: {
             vehicle: {
-              select: { id: true, brand: true, model: true, license_plate: true },
+              select: {
+                id: true,
+                brand: true,
+                model: true,
+                license_plate: true,
+              },
             },
           },
         },
@@ -119,7 +139,9 @@ export async function getRegistrationById(
       items: registration.items.map((item) => ({
         id: item.id,
         entry_number: item.entry_number,
-        checkin_date: item.checkin_date ? item.checkin_date.toISOString() : null,
+        checkin_date: item.checkin_date
+          ? item.checkin_date.toISOString()
+          : null,
         vehicle: {
           id: item.vehicle.id,
           brand: item.vehicle.brand,
@@ -167,7 +189,9 @@ export async function updateRegistrationStatus(
   } catch (err) {
     return {
       success: false,
-      error: mapPrismaError(err).message ?? (err instanceof Error ? err.message : "Server error"),
+      error:
+        mapPrismaError(err).message ??
+        (err instanceof Error ? err.message : "Server error"),
     }
   }
 }
@@ -207,7 +231,9 @@ export async function markRegistrationAsPaid(
   } catch (err) {
     return {
       success: false,
-      error: mapPrismaError(err).message ?? (err instanceof Error ? err.message : "Server error"),
+      error:
+        mapPrismaError(err).message ??
+        (err instanceof Error ? err.message : "Server error"),
     }
   }
 }
@@ -250,7 +276,9 @@ export async function cancelRegistration(
   } catch (err) {
     return {
       success: false,
-      error: mapPrismaError(err).message ?? (err instanceof Error ? err.message : "Server error"),
+      error:
+        mapPrismaError(err).message ??
+        (err instanceof Error ? err.message : "Server error"),
     }
   }
 }

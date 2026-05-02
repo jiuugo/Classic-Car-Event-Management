@@ -1,5 +1,8 @@
 import Link from "next/link"
-import { getParticipants, searchParticipants } from "@/app/actions/participants.server"
+import {
+  getParticipants,
+  searchParticipants,
+} from "@/app/actions/participants.server"
 import ParticipantList from "@/components/participant-list"
 import { Button } from "@/components/ui/button"
 import { Plus } from "@phosphor-icons/react/dist/ssr"
@@ -39,7 +42,11 @@ export default async function Page(props: {
       </div>
 
       <div className="mt-4">
-        <ParticipantList participants={participants} q={q} showUnpaid={showUnpaid} />
+        <ParticipantList
+          participants={participants}
+          q={q}
+          showUnpaid={showUnpaid}
+        />
       </div>
     </div>
   )

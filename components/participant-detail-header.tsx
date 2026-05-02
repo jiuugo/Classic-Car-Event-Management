@@ -2,10 +2,7 @@
 
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
-import {
-  Avatar,
-  AvatarFallback,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -143,25 +140,27 @@ export default function ParticipantDetailHeader({
         {/* Detail fields */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               National ID
             </p>
-            <p className="mt-1 text-sm font-medium">{participant.national_id}</p>
+            <p className="mt-1 text-sm font-medium">
+              {participant.national_id}
+            </p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               Vehicles
             </p>
             <p className="mt-1 text-sm font-medium">{vehicleCount}</p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               Registrations
             </p>
             <p className="mt-1 text-sm font-medium">{registrationCount}</p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               Checked-in Vehicles
             </p>
             <div className="mt-1 flex items-center gap-2">
@@ -180,7 +179,7 @@ export default function ParticipantDetailHeader({
         {/* QR Token */}
         <div className="flex items-center gap-3">
           <div className="flex-1">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               QR Token
             </p>
             <code className="mt-1 block rounded bg-muted px-2 py-1 font-mono text-xs break-all">

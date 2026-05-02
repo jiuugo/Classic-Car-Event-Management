@@ -55,7 +55,9 @@ export function DashboardQuickActions() {
       }
 
       if (result.failed.length > 0) {
-        toast.warning(`${result.failed.length} inscripción(es) fallaron al reconciliar`)
+        toast.warning(
+          `${result.failed.length} inscripción(es) fallaron al reconciliar`
+        )
       }
     } catch {
       toast.error("Error de conexión al reconciliar")
@@ -74,7 +76,7 @@ export function DashboardQuickActions() {
         <Link href="/dashboard/checkin">
           <Button
             variant="outline"
-            className="w-full justify-start gap-3 h-12 text-left"
+            className="h-12 w-full justify-start gap-3 text-left"
           >
             <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <CameraIcon className="size-4" weight="duotone" />
@@ -92,7 +94,7 @@ export function DashboardQuickActions() {
         <Link href="/dashboard/raffle">
           <Button
             variant="outline"
-            className="w-full justify-start gap-3 h-12 text-left"
+            className="h-12 w-full justify-start gap-3 text-left"
           >
             <span className="flex size-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
               <FileTextIcon className="size-4" weight="duotone" />
@@ -110,7 +112,7 @@ export function DashboardQuickActions() {
         <Link href="/dashboard/participants">
           <Button
             variant="outline"
-            className="w-full justify-start gap-3 h-12 text-left"
+            className="h-12 w-full justify-start gap-3 text-left"
           >
             <span className="flex size-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
               <UsersIcon className="size-4" weight="duotone" />
@@ -127,7 +129,7 @@ export function DashboardQuickActions() {
 
         <Button
           variant="outline"
-          className="w-full justify-start gap-3 h-12 text-left"
+          className="h-12 w-full justify-start gap-3 text-left"
           onClick={handleReconcile}
           disabled={isReconciling}
         >
@@ -165,7 +167,7 @@ export function DashboardRecentRegistrations({
           <CardDescription>Latest sign-ups</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground py-8 text-center">
+          <p className="py-8 text-center text-sm text-muted-foreground">
             No registrations yet.
           </p>
         </CardContent>
@@ -186,8 +188,8 @@ export function DashboardRecentRegistrations({
               key={reg.id}
               className="flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2"
             >
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">
                   {reg.participantName}
                 </p>
                 <p className="text-xs text-muted-foreground">

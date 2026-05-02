@@ -37,7 +37,7 @@ export default function Participate() {
           <h2 className="mb-2 font-serif text-3xl font-black tracking-tighter md:text-4xl">
             Proceso de Inscripción
           </h2>
-          <p className="text-muted-foreground text-xs font-bold tracking-[0.2em] uppercase">
+          <p className="text-xs font-bold tracking-[0.2em] text-muted-foreground uppercase">
             Cuatro pasos para asegurar tu plaza
           </p>
         </div>
@@ -48,7 +48,7 @@ export default function Participate() {
             return (
               <div
                 key={idx}
-                className="border-primary rounded-sm border-t-4 bg-card p-10 text-center shadow-sm"
+                className="rounded-sm border-t-4 border-primary bg-card p-10 text-center shadow-sm"
               >
                 <div className="mb-4 flex justify-center">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -61,7 +61,7 @@ export default function Participate() {
                 <h5 className="mb-2 font-bold tracking-tight uppercase">
                   {step.title}
                 </h5>
-                <p className="text-muted-foreground text-sm">{step.desc}</p>
+                <p className="text-sm text-muted-foreground">{step.desc}</p>
               </div>
             )
           })}
@@ -70,7 +70,7 @@ export default function Participate() {
         <div className="mt-12 flex justify-center">
           <a
             href="/register"
-            className="hover:bg-primary/90 rounded-sm bg-primary px-12 py-4 text-sm font-black tracking-widest text-primary-foreground uppercase shadow-2xl transition-colors"
+            className="rounded-sm bg-primary px-12 py-4 text-sm font-black tracking-widest text-primary-foreground uppercase shadow-2xl transition-colors hover:bg-primary/90"
           >
             Comenzar Inscripción Ahora
           </a>

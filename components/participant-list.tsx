@@ -44,10 +44,8 @@ function StatusBadge({
 
 function rowClassName(row: ParticipantRow) {
   if (row.registration_status === "PAID") return ""
-  if (row.registration_status === "PENDING")
-    return "bg-yellow-500/5"
-  if (row.registration_status === "CANCELLED")
-    return "bg-red-500/5"
+  if (row.registration_status === "PENDING") return "bg-yellow-500/5"
+  if (row.registration_status === "CANCELLED") return "bg-red-500/5"
   return "bg-gray-500/5"
 }
 
@@ -114,7 +112,7 @@ export default function ParticipantList({
                 checked={showUnpaid ?? false}
                 onCheckedChange={(v) => toggleShowUnpaid(!!v)}
               />
-              <Label htmlFor="showUnpaid" className="text-sm cursor-pointer">
+              <Label htmlFor="showUnpaid" className="cursor-pointer text-sm">
                 Mostrar no pagados
               </Label>
             </div>
