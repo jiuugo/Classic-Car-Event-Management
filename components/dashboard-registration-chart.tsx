@@ -67,9 +67,7 @@ export function DashboardRegistrationChart({
           <CardDescription>Breakdown by payment status</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center py-12">
-          <p className="text-sm text-muted-foreground">
-            No registrations yet.
-          </p>
+          <p className="text-sm text-muted-foreground">No registrations yet.</p>
         </CardContent>
       </Card>
     )

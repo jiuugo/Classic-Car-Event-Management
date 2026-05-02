@@ -16,10 +16,18 @@ async function main() {
 
   // --- Dashboard Users ---
   await prisma.dashboardUser.create({
-    data: { email: "admin@example.com", password_hash: hashedPassword, role: "ADMIN" },
+    data: {
+      email: "admin@example.com",
+      password_hash: hashedPassword,
+      role: "ADMIN",
+    },
   })
   await prisma.dashboardUser.create({
-    data: { email: "staff@example.com", password_hash: hashedPassword, role: "STAFF" },
+    data: {
+      email: "staff@example.com",
+      password_hash: hashedPassword,
+      role: "STAFF",
+    },
   })
   console.log("Created 2 dashboard users")
 

@@ -17,9 +17,11 @@ export default async function SuccessPage({ searchParams }: Props) {
   if (session_id) {
     try {
       const session = await stripe.checkout.sessions.retrieve(session_id)
-      vehicleCount = Number(session.metadata?.vehicles
-        ? JSON.parse(session.metadata.vehicles).length
-        : 0)
+      vehicleCount = Number(
+        session.metadata?.vehicles
+          ? JSON.parse(session.metadata.vehicles).length
+          : 0
+      )
       totalPaid = ((session.amount_total ?? 0) / 100).toFixed(2)
       email = session.customer_email ?? session.metadata?.email ?? ""
 
@@ -40,9 +42,9 @@ export default async function SuccessPage({ searchParams }: Props) {
       <div className="mx-auto max-w-lg text-center">
         {/* Animated check */}
         <div className="mb-6 flex justify-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 animate-in zoom-in duration-500">
+          <div className="flex h-20 w-20 animate-in items-center justify-center rounded-full bg-green-100 duration-500 zoom-in">
             <svg
-              className="h-10 w-10 text-green-600 animate-in fade-in duration-700"
+              className="h-10 w-10 animate-in text-green-600 duration-700 fade-in"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -77,14 +79,18 @@ export default async function SuccessPage({ searchParams }: Props) {
               )}
               {vehicleCount > 0 && (
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Vehículos inscritos</span>
+                  <span className="text-muted-foreground">
+                    Vehículos inscritos
+                  </span>
                   <span className="font-semibold">{vehicleCount}</span>
                 </div>
               )}
               {totalPaid && (
                 <div className="flex items-center justify-between border-t pt-3">
                   <span className="font-medium">Total pagado</span>
-                  <span className="text-lg font-black text-primary">{totalPaid} €</span>
+                  <span className="text-lg font-black text-primary">
+                    {totalPaid} €
+                  </span>
                 </div>
               )}
             </CardContent>

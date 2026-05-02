@@ -24,28 +24,32 @@ export function DashboardKpiCards({ stats }: { stats: DashboardStats }) {
       value: stats.totalParticipants.toLocaleString(),
       icon: <UsersIcon className="size-4" weight="duotone" />,
       footer: `${stats.totalVehicles} vehicle${stats.totalVehicles !== 1 ? "s" : ""} registered`,
-      accent: "text-blue-600 bg-blue-500/10 dark:text-blue-400 dark:bg-blue-500/20",
+      accent:
+        "text-blue-600 bg-blue-500/10 dark:text-blue-400 dark:bg-blue-500/20",
     },
     {
       label: "Registered Vehicles",
       value: stats.totalVehicles.toLocaleString(),
       icon: <CarIcon className="size-4" weight="duotone" />,
       footer: `${stats.checkedInVehicles} checked in of ${stats.totalRegistrationItems} total items`,
-      accent: "text-emerald-600 bg-emerald-500/10 dark:text-emerald-400 dark:bg-emerald-500/20",
+      accent:
+        "text-emerald-600 bg-emerald-500/10 dark:text-emerald-400 dark:bg-emerald-500/20",
     },
     {
       label: "Total Revenue",
       value: `${stats.totalRevenue.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`,
       icon: <CurrencyDollarIcon className="size-4" weight="duotone" />,
       footer: `${stats.paymentsByStatus.COMPLETED} completed payment${stats.paymentsByStatus.COMPLETED !== 1 ? "s" : ""}`,
-      accent: "text-amber-600 bg-amber-500/10 dark:text-amber-400 dark:bg-amber-500/20",
+      accent:
+        "text-amber-600 bg-amber-500/10 dark:text-amber-400 dark:bg-amber-500/20",
     },
     {
       label: "Live Attendance",
       value: `${stats.liveAttendanceRate}%`,
       icon: <ChartBarIcon className="size-4" weight="duotone" />,
       footer: `${stats.checkedInVehicles} of ${stats.totalRegistrationItems} vehicles on site`,
-      accent: "text-purple-600 bg-purple-500/10 dark:text-purple-400 dark:bg-purple-500/20",
+      accent:
+        "text-purple-600 bg-purple-500/10 dark:text-purple-400 dark:bg-purple-500/20",
     },
   ]
 
@@ -58,7 +62,9 @@ export function DashboardKpiCards({ stats }: { stats: DashboardStats }) {
         >
           <CardHeader>
             <CardDescription className="flex items-center gap-2">
-              <span className={`flex size-6 items-center justify-center rounded-md ${card.accent}`}>
+              <span
+                className={`flex size-6 items-center justify-center rounded-md ${card.accent}`}
+              >
                 {card.icon}
               </span>
               {card.label}

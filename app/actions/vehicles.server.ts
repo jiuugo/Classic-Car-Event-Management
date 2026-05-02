@@ -20,7 +20,9 @@ export type VehicleFilters = {
  */
 export async function getVehicles(
   filters?: VehicleFilters
-): Promise<{ success: true; data: VehicleRow[] } | { success: false; error: string }> {
+): Promise<
+  { success: true; data: VehicleRow[] } | { success: false; error: string }
+> {
   try {
     const where: any = {}
 
@@ -50,7 +52,7 @@ export async function getVehicles(
       ]
     }
 
-    if (!filters?.showUnpaid) {
+    if (!filters?.showUnpaid && !filters?.licensePlate) {
       where.registration_item = {
         ...where.registration_item,
         registration: { status: "PAID" },
@@ -89,8 +91,7 @@ export async function getVehicles(
               : null,
           }
         : null,
-      registration_status:
-        v.registration_item?.registration?.status ?? null,
+      registration_status: v.registration_item?.registration?.status ?? null,
     }))
 
     return { success: true, data }
@@ -122,7 +123,7 @@ export async function getVehicleById(id: string) {
   try {
     const vehicle = await prisma.vehicle.findUnique({
       where: { id },
-      include: { participant: true, registration_item: true }
+      include: { participant: true, registration_item: true },
     })
 
     return { success: true, data: vehicle }
