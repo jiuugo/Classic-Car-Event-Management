@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -80,10 +81,18 @@ export default function ParticipantRegistrationsTab({
                   <ReceiptIcon className="size-4 text-muted-foreground" />
                   Registration
                 </CardTitle>
-                <Badge variant={config.variant} className="gap-1">
-                  {config.icon}
-                  {config.label}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/dashboard/registrations/${reg.id}`}
+                    className="text-xs text-primary underline-offset-4 hover:underline"
+                  >
+                    View details →
+                  </Link>
+                  <Badge variant={config.variant} className="gap-1">
+                    {config.icon}
+                    {config.label}
+                  </Badge>
+                </div>
               </div>
               <p className="font-mono text-xs text-muted-foreground">
                 {reg.id}
