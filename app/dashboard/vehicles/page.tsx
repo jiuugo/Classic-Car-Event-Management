@@ -3,6 +3,7 @@ import VehicleList from "@/components/vehicle-list"
 
 export default async function Page(props: {
   searchParams?: Promise<{
+    q?: string
     brand?: string
     status?: string
     showUnpaid?: string
@@ -10,12 +11,14 @@ export default async function Page(props: {
 }) {
   const searchParams = props.searchParams ? await props.searchParams : {}
 
+  const q = searchParams.q ?? undefined
   const brand = searchParams.brand ?? undefined
   const status = searchParams.status as "present" | "absent" | undefined
   const showUnpaid = searchParams.showUnpaid === "true"
 
   const [vehiclesResult, brands] = await Promise.all([
     getVehicles({
+      licensePlate: q,
       brand,
       attendance: status,
       showUnpaid,
@@ -37,7 +40,7 @@ export default async function Page(props: {
         <VehicleList
           vehicles={vehicles}
           brands={brands}
-          currentFilters={{ brand, status, showUnpaid }}
+          currentFilters={{ q, brand, status, showUnpaid }}
         />
       </div>
     </div>

@@ -27,7 +27,11 @@ export async function POST(request: Request) {
 
     if (!result.success) {
       return NextResponse.json(
-        { success: false, error: result.error, fieldErrors: result.fieldErrors },
+        {
+          success: false,
+          error: result.error,
+          fieldErrors: result.fieldErrors,
+        },
         { status: result.code === "P2002" ? 409 : 400 }
       )
     }

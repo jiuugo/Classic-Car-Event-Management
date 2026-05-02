@@ -13,7 +13,8 @@ export default async function ParticipantDetailPage(props: {
 }) {
   const { id } = await props.params
   const searchParams = props.searchParams ? await props.searchParams : {}
-  const defaultTab = searchParams.tab === "registrations" ? "registrations" : "vehicles"
+  const defaultTab =
+    searchParams.tab === "registrations" ? "registrations" : "vehicles"
 
   const result = await getParticipantById(id)
 
@@ -85,7 +86,10 @@ export default async function ParticipantDetailPage(props: {
           </TabsList>
 
           <TabsContent value="vehicles" className="mt-4">
-            <ParticipantVehiclesTab vehicles={participant.vehicles} />
+            <ParticipantVehiclesTab
+              vehicles={participant.vehicles}
+              registrations={participant.registrations}
+            />
           </TabsContent>
 
           <TabsContent value="registrations" className="mt-4">

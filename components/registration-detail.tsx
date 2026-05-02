@@ -130,7 +130,7 @@ export default function RegistrationDetail({
       {/* Back link */}
       <Button variant="ghost" size="sm" className="w-fit" asChild>
         <Link href="/dashboard/registrations">
-          <ArrowLeftIcon className="size-4 mr-1" />
+          <ArrowLeftIcon className="mr-1 size-4" />
           Back to registrations
         </Link>
       </Button>
@@ -138,7 +138,10 @@ export default function RegistrationDetail({
       {/* Header */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-3">
-          <ReceiptIcon className="size-6 text-muted-foreground" weight="duotone" />
+          <ReceiptIcon
+            className="size-6 text-muted-foreground"
+            weight="duotone"
+          />
           <h2 className="text-xl font-semibold">Registration Detail</h2>
         </div>
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
@@ -150,12 +153,14 @@ export default function RegistrationDetail({
             {status.label}
           </Badge>
           <span>
-            Created {new Date(registration.createdAt).toLocaleDateString("es-ES")}
+            Created{" "}
+            {new Date(registration.createdAt).toLocaleDateString("es-ES")}
           </span>
         </div>
         {registration.stripe_session_id && (
           <p className="text-xs text-muted-foreground">
-            Stripe Session: <code className="font-mono">{registration.stripe_session_id}</code>
+            Stripe Session:{" "}
+            <code className="font-mono">{registration.stripe_session_id}</code>
           </p>
         )}
       </div>
@@ -198,7 +203,7 @@ export default function RegistrationDetail({
                   <Sheet open={markPaidOpen} onOpenChange={setMarkPaidOpen}>
                     <SheetTrigger asChild>
                       <Button variant="default" size="sm" disabled={isPending}>
-                        <CheckCircleIcon className="size-4 mr-1" />
+                        <CheckCircleIcon className="mr-1 size-4" />
                         Mark as Paid
                       </Button>
                     </SheetTrigger>
@@ -209,7 +214,10 @@ export default function RegistrationDetail({
                           Enter the payment amount to confirm this registration.
                         </SheetDescription>
                       </SheetHeader>
-                      <form onSubmit={handleMarkPaid} className="mt-6 flex flex-col gap-4">
+                      <form
+                        onSubmit={handleMarkPaid}
+                        className="mt-6 flex flex-col gap-4"
+                      >
                         <div className="flex flex-col gap-2">
                           <Label htmlFor="amount">Amount (€)</Label>
                           <Input
@@ -237,7 +245,7 @@ export default function RegistrationDetail({
                     disabled={isPending}
                     onClick={handleCancel}
                   >
-                    <XCircleIcon className="size-4 mr-1" />
+                    <XCircleIcon className="mr-1 size-4" />
                     Cancel Registration
                   </Button>
                 </>
@@ -250,7 +258,7 @@ export default function RegistrationDetail({
                   disabled={isPending}
                   onClick={handleReopen}
                 >
-                  <ClockIcon className="size-4 mr-1" />
+                  <ClockIcon className="mr-1 size-4" />
                   Reopen Registration
                 </Button>
               )}
@@ -291,7 +299,7 @@ export default function RegistrationDetail({
                         className="size-4 shrink-0 text-muted-foreground"
                         weight="duotone"
                       />
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium">
                           {item.vehicle.brand} {item.vehicle.model}
                         </p>
@@ -344,7 +352,7 @@ export default function RegistrationDetail({
                         className="size-4 shrink-0 text-muted-foreground"
                         weight="duotone"
                       />
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium">
                           {Number(payment.amount).toFixed(2)} €
                         </p>

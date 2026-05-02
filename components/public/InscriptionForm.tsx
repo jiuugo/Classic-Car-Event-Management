@@ -69,7 +69,9 @@ export default function InscriptionForm() {
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
-  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({})
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
+    {}
+  )
 
   const [participant, setParticipant] = useState({
     full_name: "",
@@ -98,17 +100,23 @@ export default function InscriptionForm() {
       ParticipantStepSchema.parse(d)
       setFieldErrors((prev) => {
         const n = { ...prev }
-        delete n.full_name; delete n.email; delete n.national_id
+        delete n.full_name
+        delete n.email
+        delete n.national_id
         return n
       })
       return true
     } catch (err) {
       if (err instanceof ZodError) {
         const errs: FieldErrors = {}
-        err.issues.forEach((i) => { errs[i.path[0] as string] ??= i.message })
+        err.issues.forEach((i) => {
+          errs[i.path[0] as string] ??= i.message
+        })
         setFieldErrors((prev) => {
           const n = { ...prev }
-          delete n.full_name; delete n.email; delete n.national_id
+          delete n.full_name
+          delete n.email
+          delete n.national_id
           return { ...n, ...errs }
         })
       }
@@ -124,7 +132,9 @@ export default function InscriptionForm() {
     // Clear old vehicle errors
     setFieldErrors((prev) => {
       const n = { ...prev }
-      Object.keys(n).forEach((k) => { if (k.startsWith("vehicles[")) delete n[k] })
+      Object.keys(n).forEach((k) => {
+        if (k.startsWith("vehicles[")) delete n[k]
+      })
       return n
     })
 
@@ -151,11 +161,18 @@ export default function InscriptionForm() {
   const validateTerms = () => {
     try {
       TermsStepSchema.parse({ accept_terms: acceptTerms })
-      setFieldErrors((prev) => { const n = { ...prev }; delete n.accept_terms; return n })
+      setFieldErrors((prev) => {
+        const n = { ...prev }
+        delete n.accept_terms
+        return n
+      })
       return true
     } catch (err) {
       if (err instanceof ZodError) {
-        setFieldErrors((prev) => ({ ...prev, accept_terms: err.issues[0]?.message ?? "Requerido" }))
+        setFieldErrors((prev) => ({
+          ...prev,
+          accept_terms: err.issues[0]?.message ?? "Requerido",
+        }))
       }
       return false
     }
@@ -199,7 +216,10 @@ export default function InscriptionForm() {
     const v = max ? value.slice(0, max) : value
     setVehicles((prev) => {
       const next = [...prev]
-      next[idx] = { ...next[idx], [field]: field === "license_plate" ? v.toUpperCase() : v }
+      next[idx] = {
+        ...next[idx],
+        [field]: field === "license_plate" ? v.toUpperCase() : v,
+      }
       const key = `vehicles[${idx}].${field}`
       if (touchedFields[key]) validateVehicles(next)
       return next
@@ -219,7 +239,9 @@ export default function InscriptionForm() {
       // clear related errors
       setFieldErrors((prev) => {
         const n = { ...prev }
-        Object.keys(n).forEach((k) => { if (k.startsWith(`vehicles[${idx}]`)) delete n[k] })
+        Object.keys(n).forEach((k) => {
+          if (k.startsWith(`vehicles[${idx}]`)) delete n[k]
+        })
         return n
       })
     }
@@ -260,7 +282,10 @@ export default function InscriptionForm() {
     if (currentStep === 2) {
       vehicles.forEach((_, idx) => {
         ;["brand", "model", "license_plate"].forEach((f) =>
-          setTouchedFields((prev) => ({ ...prev, [`vehicles[${idx}].${f}`]: true }))
+          setTouchedFields((prev) => ({
+            ...prev,
+            [`vehicles[${idx}].${f}`]: true,
+          }))
         )
       })
       if (!validateVehicles()) return
@@ -335,12 +360,19 @@ export default function InscriptionForm() {
                   {isCompleted ? (
                     <CheckCircle weight="bold" className="h-5 w-5" />
                   ) : (
-                    <Icon weight={isActive ? "bold" : "regular"} className="h-5 w-5" />
+                    <Icon
+                      weight={isActive ? "bold" : "regular"}
+                      className="h-5 w-5"
+                    />
                   )}
                 </div>
                 <span
                   className={`text-xs font-semibold tracking-wide transition-colors duration-300 ${
-                    isActive ? "text-primary" : isCompleted ? "text-primary/70" : "text-zinc-400"
+                    isActive
+                      ? "text-primary"
+                      : isCompleted
+                        ? "text-primary/70"
+                        : "text-zinc-400"
                   }`}
                 >
                   {step.title}
@@ -360,7 +392,10 @@ export default function InscriptionForm() {
 
       {/* ---- Price badge ---- */}
       <div className="mb-4 flex items-center justify-end gap-2">
-        <Badge variant="secondary" className="gap-1 px-3 py-1 text-sm font-semibold">
+        <Badge
+          variant="secondary"
+          className="gap-1 px-3 py-1 text-sm font-semibold"
+        >
           <CarSimple weight="fill" className="h-4 w-4" />
           {vehicles.length} {vehicles.length === 1 ? "vehículo" : "vehículos"}
         </Badge>
@@ -375,7 +410,7 @@ export default function InscriptionForm() {
         <CardContent className="p-6 pt-6 md:p-8">
           {/* === STEP 1 === */}
           {currentStep === 1 && (
-            <div className="grid gap-5 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="grid animate-in gap-5 duration-300 fade-in slide-in-from-right-4">
               <div>
                 <h3 className="text-xl font-bold">Datos del Participante</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -384,7 +419,10 @@ export default function InscriptionForm() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="full_name" className="flex items-center gap-1.5">
+                <Label
+                  htmlFor="full_name"
+                  className="flex items-center gap-1.5"
+                >
                   <User className="h-3.5 w-3.5 text-muted-foreground" />
                   Nombre completo
                 </Label>
@@ -392,13 +430,15 @@ export default function InscriptionForm() {
                   id="full_name"
                   value={participant.full_name}
                   maxLength={MAX_LENGTHS.full_name}
-                  onChange={(e) => updateParticipant("full_name", e.target.value)}
+                  onChange={(e) =>
+                    updateParticipant("full_name", e.target.value)
+                  }
                   onBlur={() => handleBlur("full_name")}
                   placeholder="Juan García García"
                   aria-invalid={!!getFieldError("full_name")}
                 />
                 {getFieldError("full_name") && (
-                  <p className="text-xs font-medium text-destructive animate-in fade-in duration-200">
+                  <p className="animate-in text-xs font-medium text-destructive duration-200 fade-in">
                     {getFieldError("full_name")}
                   </p>
                 )}
@@ -420,14 +460,17 @@ export default function InscriptionForm() {
                   aria-invalid={!!getFieldError("email")}
                 />
                 {getFieldError("email") && (
-                  <p className="text-xs font-medium text-destructive animate-in fade-in duration-200">
+                  <p className="animate-in text-xs font-medium text-destructive duration-200 fade-in">
                     {getFieldError("email")}
                   </p>
                 )}
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="national_id" className="flex items-center gap-1.5">
+                <Label
+                  htmlFor="national_id"
+                  className="flex items-center gap-1.5"
+                >
                   <IdentificationCard className="h-3.5 w-3.5 text-muted-foreground" />
                   DNI / NIE
                 </Label>
@@ -435,13 +478,15 @@ export default function InscriptionForm() {
                   id="national_id"
                   value={participant.national_id}
                   maxLength={MAX_LENGTHS.national_id}
-                  onChange={(e) => updateParticipant("national_id", e.target.value)}
+                  onChange={(e) =>
+                    updateParticipant("national_id", e.target.value)
+                  }
                   onBlur={() => handleBlur("national_id")}
                   placeholder="12345678A"
                   aria-invalid={!!getFieldError("national_id")}
                 />
                 {getFieldError("national_id") && (
-                  <p className="text-xs font-medium text-destructive animate-in fade-in duration-200">
+                  <p className="animate-in text-xs font-medium text-destructive duration-200 fade-in">
                     {getFieldError("national_id")}
                   </p>
                 )}
@@ -451,23 +496,26 @@ export default function InscriptionForm() {
 
           {/* === STEP 2 === */}
           {currentStep === 2 && (
-            <div className="grid gap-5 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="grid animate-in gap-5 duration-300 fade-in slide-in-from-right-4">
               <div>
                 <h3 className="text-xl font-bold">Tus Vehículos</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Añade los vehículos que participarán. Cada vehículo tiene un coste de{" "}
-                  <strong>{PRICE_PER_VEHICLE} €</strong>.
+                  Añade los vehículos que participarán. Cada vehículo tiene un
+                  coste de <strong>{PRICE_PER_VEHICLE} €</strong>.
                 </p>
               </div>
 
               {vehicles.map((vehicle, idx) => (
                 <div
                   key={idx}
-                  className="relative rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 transition-all animate-in fade-in slide-in-from-bottom-2 duration-200"
+                  className="relative animate-in rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 transition-all duration-200 fade-in slide-in-from-bottom-2"
                 >
                   <div className="mb-3 flex items-center justify-between">
                     <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                      <CarSimple weight="fill" className="h-4 w-4 text-primary" />
+                      <CarSimple
+                        weight="fill"
+                        className="h-4 w-4 text-primary"
+                      />
                       Vehículo {idx + 1}
                     </span>
                     {vehicles.length > 1 && (
@@ -486,48 +534,66 @@ export default function InscriptionForm() {
 
                   <div className="grid gap-3 sm:grid-cols-3">
                     <div className="space-y-1">
-                      <Label htmlFor={`brand-${idx}`} className="text-xs">Marca</Label>
+                      <Label htmlFor={`brand-${idx}`} className="text-xs">
+                        Marca
+                      </Label>
                       <Input
                         id={`brand-${idx}`}
                         value={vehicle.brand}
                         maxLength={MAX_LENGTHS.brand}
-                        onChange={(e) => updateVehicle(idx, "brand", e.target.value)}
+                        onChange={(e) =>
+                          updateVehicle(idx, "brand", e.target.value)
+                        }
                         onBlur={() => handleVehicleBlur(idx, "brand")}
                         placeholder="Seat"
                         aria-invalid={!!getVehicleError(idx, "brand")}
                       />
                       {getVehicleError(idx, "brand") && (
-                        <p className="text-xs font-medium text-destructive">{getVehicleError(idx, "brand")}</p>
+                        <p className="text-xs font-medium text-destructive">
+                          {getVehicleError(idx, "brand")}
+                        </p>
                       )}
                     </div>
                     <div className="space-y-1">
-                      <Label htmlFor={`model-${idx}`} className="text-xs">Modelo</Label>
+                      <Label htmlFor={`model-${idx}`} className="text-xs">
+                        Modelo
+                      </Label>
                       <Input
                         id={`model-${idx}`}
                         value={vehicle.model}
                         maxLength={MAX_LENGTHS.model}
-                        onChange={(e) => updateVehicle(idx, "model", e.target.value)}
+                        onChange={(e) =>
+                          updateVehicle(idx, "model", e.target.value)
+                        }
                         onBlur={() => handleVehicleBlur(idx, "model")}
                         placeholder="Ibiza"
                         aria-invalid={!!getVehicleError(idx, "model")}
                       />
                       {getVehicleError(idx, "model") && (
-                        <p className="text-xs font-medium text-destructive">{getVehicleError(idx, "model")}</p>
+                        <p className="text-xs font-medium text-destructive">
+                          {getVehicleError(idx, "model")}
+                        </p>
                       )}
                     </div>
                     <div className="space-y-1">
-                      <Label htmlFor={`plate-${idx}`} className="text-xs">Matrícula</Label>
+                      <Label htmlFor={`plate-${idx}`} className="text-xs">
+                        Matrícula
+                      </Label>
                       <Input
                         id={`plate-${idx}`}
                         value={vehicle.license_plate}
                         maxLength={MAX_LENGTHS.license_plate}
-                        onChange={(e) => updateVehicle(idx, "license_plate", e.target.value)}
+                        onChange={(e) =>
+                          updateVehicle(idx, "license_plate", e.target.value)
+                        }
                         onBlur={() => handleVehicleBlur(idx, "license_plate")}
                         placeholder="1234 ABC"
                         aria-invalid={!!getVehicleError(idx, "license_plate")}
                       />
                       {getVehicleError(idx, "license_plate") && (
-                        <p className="text-xs font-medium text-destructive">{getVehicleError(idx, "license_plate")}</p>
+                        <p className="text-xs font-medium text-destructive">
+                          {getVehicleError(idx, "license_plate")}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -550,7 +616,7 @@ export default function InscriptionForm() {
 
           {/* === STEP 3 === */}
           {currentStep === 3 && (
-            <div className="grid gap-5 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="grid animate-in gap-5 duration-300 fade-in slide-in-from-right-4">
               <div>
                 <h3 className="text-xl font-bold">Resumen de tu inscripción</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -565,7 +631,11 @@ export default function InscriptionForm() {
                   Participante
                 </h4>
                 <div className="grid gap-1 text-sm text-muted-foreground">
-                  <p><span className="font-medium text-foreground">{participant.full_name}</span></p>
+                  <p>
+                    <span className="font-medium text-foreground">
+                      {participant.full_name}
+                    </span>
+                  </p>
                   <p>{participant.email}</p>
                   <p>DNI/NIE: {participant.national_id}</p>
                 </div>
@@ -579,18 +649,29 @@ export default function InscriptionForm() {
                 </h4>
                 <div className="divide-y divide-zinc-200">
                   {vehicles.map((v, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-2 first:pt-0 last:pb-0">
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between py-2 first:pt-0 last:pb-0"
+                    >
                       <span className="text-sm">
-                        <span className="font-medium text-foreground">{v.brand} {v.model}</span>
-                        <span className="ml-2 text-muted-foreground">({v.license_plate})</span>
+                        <span className="font-medium text-foreground">
+                          {v.brand} {v.model}
+                        </span>
+                        <span className="ml-2 text-muted-foreground">
+                          ({v.license_plate})
+                        </span>
                       </span>
-                      <span className="text-sm font-semibold">{PRICE_PER_VEHICLE} €</span>
+                      <span className="text-sm font-semibold">
+                        {PRICE_PER_VEHICLE} €
+                      </span>
                     </div>
                   ))}
                 </div>
                 <div className="mt-3 flex items-center justify-between border-t border-zinc-300 pt-3">
                   <span className="text-sm font-bold">Total</span>
-                  <span className="text-lg font-black text-primary">{totalPrice} €</span>
+                  <span className="text-lg font-black text-primary">
+                    {totalPrice} €
+                  </span>
                 </div>
               </div>
 
@@ -617,7 +698,7 @@ export default function InscriptionForm() {
                 </label>
               </div>
               {getFieldError("accept_terms") && (
-                <p className="text-xs font-medium text-destructive animate-in fade-in duration-200">
+                <p className="animate-in text-xs font-medium text-destructive duration-200 fade-in">
                   {getFieldError("accept_terms")}
                 </p>
               )}
