@@ -67,7 +67,9 @@ export default function AdminInscriptionForm() {
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
-  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({})
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
+    {}
+  )
 
   const [participant, setParticipant] = useState({
     full_name: "",
@@ -366,7 +368,7 @@ export default function AdminInscriptionForm() {
         <CardContent className="p-6 pt-6 md:p-8">
           {/* === STEP 1 === */}
           {currentStep === 1 && (
-            <div className="grid gap-5 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="grid animate-in gap-5 duration-300 fade-in slide-in-from-right-4">
               <div>
                 <h3 className="text-xl font-bold">Datos del Participante</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -375,7 +377,10 @@ export default function AdminInscriptionForm() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="full_name" className="flex items-center gap-1.5">
+                <Label
+                  htmlFor="full_name"
+                  className="flex items-center gap-1.5"
+                >
                   <User className="h-3.5 w-3.5 text-muted-foreground" />
                   Nombre completo
                 </Label>
@@ -383,13 +388,15 @@ export default function AdminInscriptionForm() {
                   id="full_name"
                   value={participant.full_name}
                   maxLength={MAX_LENGTHS.full_name}
-                  onChange={(e) => updateParticipant("full_name", e.target.value)}
+                  onChange={(e) =>
+                    updateParticipant("full_name", e.target.value)
+                  }
                   onBlur={() => handleBlur("full_name")}
                   placeholder="Juan García García"
                   aria-invalid={!!getFieldError("full_name")}
                 />
                 {getFieldError("full_name") && (
-                  <p className="text-xs font-medium text-destructive animate-in fade-in duration-200">
+                  <p className="animate-in text-xs font-medium text-destructive duration-200 fade-in">
                     {getFieldError("full_name")}
                   </p>
                 )}
@@ -411,7 +418,7 @@ export default function AdminInscriptionForm() {
                   aria-invalid={!!getFieldError("email")}
                 />
                 {getFieldError("email") && (
-                  <p className="text-xs font-medium text-destructive animate-in fade-in duration-200">
+                  <p className="animate-in text-xs font-medium text-destructive duration-200 fade-in">
                     {getFieldError("email")}
                   </p>
                 )}
@@ -437,7 +444,7 @@ export default function AdminInscriptionForm() {
                   aria-invalid={!!getFieldError("national_id")}
                 />
                 {getFieldError("national_id") && (
-                  <p className="text-xs font-medium text-destructive animate-in fade-in duration-200">
+                  <p className="animate-in text-xs font-medium text-destructive duration-200 fade-in">
                     {getFieldError("national_id")}
                   </p>
                 )}
@@ -447,7 +454,7 @@ export default function AdminInscriptionForm() {
 
           {/* === STEP 2 === */}
           {currentStep === 2 && (
-            <div className="grid gap-5 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="grid animate-in gap-5 duration-300 fade-in slide-in-from-right-4">
               <div>
                 <h3 className="text-xl font-bold">Vehículos</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -459,7 +466,7 @@ export default function AdminInscriptionForm() {
               {vehicles.map((vehicle, idx) => (
                 <div
                   key={idx}
-                  className="relative rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 transition-all animate-in fade-in slide-in-from-bottom-2 duration-200"
+                  className="relative animate-in rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 transition-all duration-200 fade-in slide-in-from-bottom-2"
                 >
                   <div className="mb-3 flex items-center justify-between">
                     <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
@@ -567,7 +574,7 @@ export default function AdminInscriptionForm() {
 
           {/* === STEP 3 === */}
           {currentStep === 3 && (
-            <div className="grid gap-5 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="grid animate-in gap-5 duration-300 fade-in slide-in-from-right-4">
               <div>
                 <h3 className="text-xl font-bold">Resumen de la inscripción</h3>
                 <p className="mt-1 text-sm text-muted-foreground">

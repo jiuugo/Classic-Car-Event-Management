@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -20,7 +21,11 @@ import type {
 
 const statusConfig: Record<
   string,
-  { label: string; variant: "default" | "outline" | "destructive" | "secondary"; icon: React.ReactNode }
+  {
+    label: string
+    variant: "default" | "outline" | "destructive" | "secondary"
+    icon: React.ReactNode
+  }
 > = {
   PENDING: {
     label: "Pending",
@@ -76,13 +81,18 @@ export default function ParticipantRegistrationsTab({
                   <ReceiptIcon className="size-4 text-muted-foreground" />
                   Registration
                 </CardTitle>
-                <Badge
-                  variant={config.variant}
-                  className="gap-1"
-                >
-                  {config.icon}
-                  {config.label}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/dashboard/registrations/${reg.id}`}
+                    className="text-xs text-primary underline-offset-4 hover:underline"
+                  >
+                    View details →
+                  </Link>
+                  <Badge variant={config.variant} className="gap-1">
+                    {config.icon}
+                    {config.label}
+                  </Badge>
+                </div>
               </div>
               <p className="font-mono text-xs text-muted-foreground">
                 {reg.id}
@@ -93,7 +103,7 @@ export default function ParticipantRegistrationsTab({
               {/* Registration Items */}
               {reg.items.length > 0 && (
                 <div>
-                  <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <p className="mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
                     Vehicles in this registration
                   </p>
                   <div className="space-y-2">
@@ -109,7 +119,7 @@ export default function ParticipantRegistrationsTab({
                 <>
                   <Separator />
                   <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    <p className="mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
                       Payments
                     </p>
                     <div className="space-y-2">
@@ -137,28 +147,28 @@ export default function ParticipantRegistrationsTab({
   )
 }
 
-function RegistrationItemRow({
-  item,
-}: {
-  item: ParticipantRegistrationItem
-}) {
+function RegistrationItemRow({ item }: { item: ParticipantRegistrationItem }) {
   const isCheckedIn = !!item.checkin_date
 
   return (
     <div className="flex items-center gap-3 rounded-lg border bg-muted/30 px-3 py-2">
-      <CarIcon className="size-4 shrink-0 text-muted-foreground" weight="duotone" />
-      <div className="flex-1 min-w-0">
+      <CarIcon
+        className="size-4 shrink-0 text-muted-foreground"
+        weight="duotone"
+      />
+      <div className="min-w-0 flex-1">
         <p className="text-sm font-medium">
           {item.vehicle.brand} {item.vehicle.model}
         </p>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <code className="font-mono">{item.vehicle.license_plate}</code>
-          {item.entry_number != null && (
-            <span>· Bib #{item.entry_number}</span>
-          )}
+          {item.entry_number != null && <span>· Bib #{item.entry_number}</span>}
         </div>
       </div>
-      <Badge variant={isCheckedIn ? "default" : "outline"} className="shrink-0 text-[10px]">
+      <Badge
+        variant={isCheckedIn ? "default" : "outline"}
+        className="shrink-0 text-[10px]"
+      >
         {isCheckedIn ? "Present" : "Absent"}
       </Badge>
     </div>
@@ -171,14 +181,15 @@ function PaymentRow({ payment }: { payment: ParticipantPayment }) {
 
   return (
     <div className="flex items-center gap-3 rounded-lg border bg-muted/30 px-3 py-2">
-      <CreditCardIcon className="size-4 shrink-0 text-muted-foreground" weight="duotone" />
-      <div className="flex-1 min-w-0">
+      <CreditCardIcon
+        className="size-4 shrink-0 text-muted-foreground"
+        weight="duotone"
+      />
+      <div className="min-w-0 flex-1">
         <p className="text-sm font-medium">
           {Number(payment.amount).toFixed(2)} €
         </p>
-        <p className="text-xs text-muted-foreground">
-          via {payment.provider}
-        </p>
+        <p className="text-xs text-muted-foreground">via {payment.provider}</p>
       </div>
       <Badge variant={config.variant} className="shrink-0 text-[10px]">
         {config.label}

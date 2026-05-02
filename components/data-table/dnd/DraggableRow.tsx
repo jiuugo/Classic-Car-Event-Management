@@ -8,9 +8,11 @@ import { TableRow } from "@/components/ui/table"
 export default function DraggableRow({
   row,
   children,
+  className,
 }: {
   row: any
   children: React.ReactNode
+  className?: string
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: row.id })
@@ -21,7 +23,7 @@ export default function DraggableRow({
   }
 
   return (
-    <TableRow ref={setNodeRef as any} style={style}>
+    <TableRow ref={setNodeRef as any} style={style} className={className}>
       {React.Children.map(children as any, (child: any) => {
         // If the child is the drag cell, attach listeners/attributes to its first child element
         if (child?.props?.["data-drag-cell"]) {

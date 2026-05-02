@@ -3,7 +3,7 @@ import React from "react"
 export default function Sponsors() {
   return (
     <section
-      className="bg-muted border-border border-y py-20"
+      className="border-y border-border bg-muted py-20"
       id="patrocinadores"
     >
       <div className="container mx-auto px-6 md:px-12">
@@ -11,7 +11,7 @@ export default function Sponsors() {
           <h2 className="mb-2 font-serif text-2xl font-black tracking-tighter">
             Colaboradores & Patrocinadores
           </h2>
-          <p className="text-muted-foreground text-xs font-bold tracking-[0.2em] uppercase">
+          <p className="text-xs font-bold tracking-[0.2em] text-muted-foreground uppercase">
             Gracias a quienes hacen posible este evento
           </p>
         </div>

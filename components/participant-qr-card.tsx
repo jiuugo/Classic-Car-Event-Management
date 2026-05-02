@@ -4,11 +4,7 @@ import React, { useEffect, useRef } from "react"
 import QRCode from "qrcode"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-export default function ParticipantQrCard({
-  qrToken,
-}: {
-  qrToken: string
-}) {
+export default function ParticipantQrCard({ qrToken }: { qrToken: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {

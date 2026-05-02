@@ -24,9 +24,12 @@ export const TermsStepSchema = z.object({
   }),
 })
 
-export const InscriptionSchema = ParticipantStepSchema.merge(VehiclesArraySchema).merge(TermsStepSchema)
+export const InscriptionSchema =
+  ParticipantStepSchema.merge(VehiclesArraySchema).merge(TermsStepSchema)
 
-export const ManualInscriptionSchema = ParticipantStepSchema.merge(VehiclesArraySchema).extend({
+export const ManualInscriptionSchema = ParticipantStepSchema.merge(
+  VehiclesArraySchema
+).extend({
   amount: z.number().min(0, "El importe debe ser 0 o mayor"),
 })
 

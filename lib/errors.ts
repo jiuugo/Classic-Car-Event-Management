@@ -18,7 +18,12 @@ export function mapPrismaError(error: unknown): {
       const target = e.meta?.target
 
       // Debug: log the raw Prisma meta so we can see what format it arrives in
-      console.log("[mapPrismaError] P2002 meta:", JSON.stringify(e.meta), "| message:", e.message)
+      console.log(
+        "[mapPrismaError] P2002 meta:",
+        JSON.stringify(e.meta),
+        "| message:",
+        e.message
+      )
 
       const known = ["email", "national_id", "license_plate", "qr_token"]
 
