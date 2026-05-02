@@ -1,10 +1,6 @@
 "use client"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,7 +52,9 @@ export function NavUser({
                 {user.avatar && (
                   <AvatarImage src={user.avatar} alt={user.name} />
                 )}
-                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -79,7 +77,9 @@ export function NavUser({
                   {user.avatar && (
                     <AvatarImage src={user.avatar} alt={user.name} />
                   )}
-                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
@@ -90,7 +90,9 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/auth/signin" })}>
+            <DropdownMenuItem
+              onClick={() => signOut({ callbackUrl: "/auth/signin" })}
+            >
               <SignOutIcon />
               Cerrar sesión
             </DropdownMenuItem>

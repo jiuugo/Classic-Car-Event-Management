@@ -182,7 +182,7 @@ export default function RegistrationList({
       cell: ({ row }) => (
         <Button variant="ghost" size="sm" asChild>
           <Link href={`/dashboard/registrations/${row.original.id}`}>
-            <EyeIcon className="size-4 mr-1" />
+            <EyeIcon className="mr-1 size-4" />
             View
           </Link>
         </Button>
@@ -196,7 +196,8 @@ export default function RegistrationList({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>Registrations & Payments</CardTitle>
           <div className="text-sm text-muted-foreground">
-            {registrations.length} registration{registrations.length !== 1 ? "s" : ""}
+            {registrations.length} registration
+            {registrations.length !== 1 ? "s" : ""}
           </div>
         </div>
       </CardHeader>

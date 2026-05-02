@@ -86,13 +86,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
-import { DotsSixVerticalIcon, CheckCircleIcon, SpinnerIcon, DotsThreeVerticalIcon, ColumnsIcon, CaretDownIcon, PlusIcon, CaretDoubleLeftIcon, CaretLeftIcon, CaretRightIcon, CaretDoubleRightIcon, TrendUpIcon } from "@phosphor-icons/react"
+  DotsSixVerticalIcon,
+  CheckCircleIcon,
+  SpinnerIcon,
+  DotsThreeVerticalIcon,
+  ColumnsIcon,
+  CaretDownIcon,
+  PlusIcon,
+  CaretDoubleLeftIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
+  CaretDoubleRightIcon,
+  TrendUpIcon,
+} from "@phosphor-icons/react"
 
 export const schema = z.object({
   id: z.number(),
@@ -183,8 +191,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         {row.original.status === "Done" ? (
           <CheckCircleIcon className="fill-green-500 dark:fill-green-400" />
         ) : (
-          <SpinnerIcon
-          />
+          <SpinnerIcon />
         )}
         {row.original.status}
       </Badge>
@@ -286,8 +293,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
             size="icon"
           >
-            <DotsThreeVerticalIcon
-            />
+            <DotsThreeVerticalIcon />
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
@@ -463,8 +469,7 @@ export function DataTable({
             </DropdownMenuContent>
           </DropdownMenu>
           <Button variant="outline" size="sm">
-            <PlusIcon
-            />
+            <PlusIcon />
             <span className="hidden lg:inline">Add Section</span>
           </Button>
         </div>
@@ -568,8 +573,7 @@ export function DataTable({
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to first page</span>
-                <CaretDoubleLeftIcon
-                />
+                <CaretDoubleLeftIcon />
               </Button>
               <Button
                 variant="outline"
@@ -579,8 +583,7 @@ export function DataTable({
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to previous page</span>
-                <CaretLeftIcon
-                />
+                <CaretLeftIcon />
               </Button>
               <Button
                 variant="outline"
@@ -590,8 +593,7 @@ export function DataTable({
                 disabled={!table.getCanNextPage()}
               >
                 <span className="sr-only">Go to next page</span>
-                <CaretRightIcon
-                />
+                <CaretRightIcon />
               </Button>
               <Button
                 variant="outline"
@@ -601,8 +603,7 @@ export function DataTable({
                 disabled={!table.getCanNextPage()}
               >
                 <span className="sr-only">Go to last page</span>
-                <CaretDoubleRightIcon
-                />
+                <CaretDoubleRightIcon />
               </Button>
             </div>
           </div>

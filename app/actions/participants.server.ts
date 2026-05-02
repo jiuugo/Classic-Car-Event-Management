@@ -86,10 +86,7 @@ export async function getParticipants(showUnpaid?: boolean) {
   }
 }
 
-export async function searchParticipants(
-  query: string,
-  showUnpaid?: boolean
-) {
+export async function searchParticipants(query: string, showUnpaid?: boolean) {
   try {
     const where: any = {
       OR: [
