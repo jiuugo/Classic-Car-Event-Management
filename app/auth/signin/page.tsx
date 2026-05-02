@@ -1,6 +1,8 @@
 import { signIn } from "@/auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
+import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -21,7 +23,16 @@ export default function SignInPage({
   const error = searchParams.error
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-10 p-4">
+      <Link href="/">
+        <Image
+          src="/images/logo.png"
+          alt="Villa de la Robla Logo"
+          className="h-40 w-auto object-contain"
+          width={1920}
+          height={1080}
+        />
+      </Link>
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Iniciar sesión</CardTitle>
@@ -62,12 +73,7 @@ export default function SignInPage({
             </div>
             <div className="grid gap-2">
               <Label htmlFor="password">Contraseña</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-              />
+              <Input id="password" name="password" type="password" required />
             </div>
             {error && (
               <p className="text-sm text-red-600">
@@ -80,6 +86,12 @@ export default function SignInPage({
           </form>
         </CardContent>
       </Card>
+      <Link
+        href="/"
+        className="text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+      >
+        Volver a Inicio
+      </Link>
     </div>
   )
 }
