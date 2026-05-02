@@ -7,13 +7,13 @@ export default function Gallery() {
     "/images/gallery-3.webp",
   ]
   return (
-    <section className="bg-surface-container-lowest py-12">
+    <section className="bg-muted py-12" id="galeria">
       <div className="container mx-auto px-6 md:px-12">
         <div className="mb-6">
           <h2 className="font-serif text-3xl font-black">
             Galería de Excelencia
           </h2>
-          <p className="text-on-surface-variant">Patrimonio en movimiento.</p>
+          <p className="text-muted-foreground">Patrimonio en movimiento.</p>
         </div>
 
         <div className="mx-auto max-w-7xl">

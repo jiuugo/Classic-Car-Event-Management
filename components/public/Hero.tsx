@@ -3,11 +3,11 @@ import Image from "next/image"
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-svh items-center overflow-hidden pt-16">
+    <section className="relative flex min-h-[calc(100svh-4rem)] items-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <Image
           alt="Hero Image"
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover object-bottom"
           src="/images/hero.webp"
           width={1920}
           height={1080}
@@ -32,13 +32,13 @@ export default function Hero() {
             el corazón de Villa de la Robla.
           </p>
 
-          <div className="flex flex-wrap gap-4 pt-4">
-            <Button asChild>
-              <a href="/register" className="px-8 py-4">
-                Inscribir mi Vehículo
-              </a>
+          <div className="flex flex-wrap items-end gap-4 pt-4">
+            <Button asChild size="lg" className="h-auto px-10 py-6 text-lg">
+              <a href="/register">Inscribir mi Vehículo</a>
             </Button>
-            <Button variant="secondary">Ver Galería</Button>
+            <Button variant="secondary" asChild>
+              <a href="#galeria">Ver Galería</a>
+            </Button>
           </div>
         </div>
       </div>

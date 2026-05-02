@@ -2,7 +2,7 @@ import Image from "next/image"
 
 export default function Program() {
   return (
-    <section className="bg-zinc-950 py-12 text-white" id="cronograma">
+    <section className="bg-zinc-950 py-24 text-white" id="cronograma">
       <div className="container mx-auto px-6 md:px-12">
         <div className="mb-8 flex items-center gap-4">
           <h2 className="font-serif text-3xl font-bold tracking-tighter italic md:text-4xl">
@@ -11,9 +11,14 @@ export default function Program() {
           <div className="h-[1px] flex-grow bg-white/20"></div>
         </div>
 
+        <p className="mb-12 max-w-2xl text-sm text-zinc-500">
+          Un día completo dedicado a los clásicos. Disfruta de la ruta, la
+          gastronomía local y la compañía de otros aficionados.
+        </p>
+
         <div className="grid gap-8 md:grid-cols-2">
           <div className="space-y-0">
-            <div className="group flex items-start gap-6 border-b border-white/10 px-4 py-6 transition-colors hover:bg-white/5">
+            <div className="group flex items-start gap-6 border-b border-white/10 px-4 py-10 transition-colors hover:bg-white/5">
               <span className="text-surface-tint w-24 font-serif text-2xl italic">
                 09:30
               </span>
@@ -27,7 +32,7 @@ export default function Program() {
               </div>
             </div>
 
-            <div className="group flex items-start gap-6 border-b border-white/10 px-4 py-6 transition-colors hover:bg-white/5">
+            <div className="group flex items-start gap-6 border-b border-white/10 px-4 py-10 transition-colors hover:bg-white/5">
               <span className="text-surface-tint w-24 font-serif text-2xl italic">
                 11:00
               </span>
@@ -41,7 +46,7 @@ export default function Program() {
               </div>
             </div>
 
-            <div className="group flex items-start gap-6 border-b border-white/10 px-4 py-6 transition-colors hover:bg-white/5">
+            <div className="group flex items-start gap-6 border-b border-white/10 px-4 py-10 transition-colors hover:bg-white/5">
               <span className="text-surface-tint w-24 font-serif text-2xl italic">
                 14:30
               </span>
@@ -56,7 +61,7 @@ export default function Program() {
             </div>
           </div>
 
-          <div className="group relative">
+          <div className="group relative min-h-[500px]">
             <Image
               alt="Event Visual"
               className="h-full w-full rounded-sm object-cover opacity-60 transition-opacity duration-500 group-hover:opacity-80"
