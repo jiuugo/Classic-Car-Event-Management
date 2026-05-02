@@ -35,3 +35,12 @@ export type ParticipantRegistration = {
   items: ParticipantRegistrationItem[]
   payments: ParticipantPayment[]
 }
+
+export type ParticipantRow = {
+  id: string
+  full_name: string
+  email: string
+  national_id: string
+  qr_token: string
+  registration_status: "PENDING" | "PAID" | "CANCELLED" | null
+}

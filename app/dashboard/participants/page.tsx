@@ -1,26 +1,24 @@
 import Link from "next/link"
-import prisma from "@/lib/prisma"
-import { searchParticipants } from "@/app/actions/participants.server"
+import { getParticipants, searchParticipants } from "@/app/actions/participants.server"
 import ParticipantList from "@/components/participant-list"
 import { Button } from "@/components/ui/button"
 import { Plus } from "@phosphor-icons/react/dist/ssr"
 
 export default async function Page(props: {
-  searchParams?: Promise<{ q?: string }>
+  searchParams?: Promise<{ q?: string; showUnpaid?: string }>
 }) {
   const searchParams = props.searchParams ? await props.searchParams : {}
   const q = searchParams.q ?? undefined
+  const showUnpaid = searchParams.showUnpaid === "true"
 
   let participants: any[] = []
 
   if (q) {
-    const res = await searchParticipants(q)
+    const res = await searchParticipants(q, showUnpaid)
     participants = res?.success ? (res.data ?? []) : []
   } else {
-    participants = await prisma.participant.findMany({
-      take: 50,
-      orderBy: { full_name: "asc" },
-    })
+    const res = await getParticipants(showUnpaid)
+    participants = res?.success ? (res.data ?? []) : []
   }
 
   return (
@@ -41,7 +39,7 @@ export default async function Page(props: {
       </div>
 
       <div className="mt-4">
-        <ParticipantList participants={participants} q={q} />
+        <ParticipantList participants={participants} q={q} showUnpaid={showUnpaid} />
       </div>
     </div>
   )

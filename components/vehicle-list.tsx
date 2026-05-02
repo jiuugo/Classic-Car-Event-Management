@@ -5,6 +5,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
@@ -18,6 +20,45 @@ import type { ColumnDef } from "@tanstack/react-table"
 import type { VehicleRow } from "@/lib/types/vehicle.types"
 import VehicleRowActions from "./vehicle-row-actions"
 
+function StatusBadge({
+  status,
+  participantId,
+}: {
+  status: VehicleRow["registration_status"]
+  participantId: string
+}) {
+  const badge = (() => {
+    switch (status) {
+      case "PAID":
+        return <Badge variant="default">Pagado</Badge>
+      case "PENDING":
+        return <Badge variant="secondary">Pendiente</Badge>
+      case "CANCELLED":
+        return <Badge variant="destructive">Cancelado</Badge>
+      default:
+        return <Badge variant="outline">Sin registro</Badge>
+    }
+  })()
+
+  return (
+    <Link
+      href={`/dashboard/participants/${participantId}?tab=registrations`}
+      className="hover:underline"
+    >
+      {badge}
+    </Link>
+  )
+}
+
+function rowClassName(row: VehicleRow) {
+  if (row.registration_status === "PAID") return ""
+  if (row.registration_status === "PENDING")
+    return "bg-yellow-500/5"
+  if (row.registration_status === "CANCELLED")
+    return "bg-red-500/5"
+  return "bg-gray-500/5"
+}
+
 export default function VehicleList({
   vehicles,
   brands,
@@ -25,7 +66,7 @@ export default function VehicleList({
 }: {
   vehicles: VehicleRow[]
   brands: string[]
-  currentFilters: { brand?: string; status?: string }
+  currentFilters: { brand?: string; status?: string; showUnpaid?: boolean }
 }) {
   const router = useRouter()
 
@@ -34,7 +75,16 @@ export default function VehicleList({
     const params = new URLSearchParams()
     const merged = { ...currentFilters, [key]: value }
     for (const [k, v] of Object.entries(merged)) {
-      if (v) params.set(k, v)
+      if (v && v !== "false") params.set(k, String(v))
+    }
+    router.push(`/dashboard/vehicles?${params.toString()}`)
+  }
+
+  function toggleShowUnpaid(checked: boolean) {
+    const params = new URLSearchParams()
+    const merged = { ...currentFilters, showUnpaid: checked }
+    for (const [k, v] of Object.entries(merged)) {
+      if (v && v !== "false") params.set(k, String(v))
     }
     router.push(`/dashboard/vehicles?${params.toString()}`)
   }
@@ -82,6 +132,17 @@ export default function VehicleList({
           <span className="text-muted-foreground">—</span>
         )
       },
+    },
+    {
+      id: "registration_status",
+      header: "Inscripción",
+      accessorFn: (row) => row.registration_status ?? "none",
+      cell: ({ row }) => (
+        <StatusBadge
+          status={row.original.registration_status}
+          participantId={row.original.participant.id}
+        />
+      ),
     },
     {
       id: "status",
@@ -154,6 +215,18 @@ export default function VehicleList({
               </SelectGroup>
             </SelectContent>
           </Select>
+
+          {/* Show unpaid toggle */}
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="showUnpaid"
+              checked={currentFilters.showUnpaid ?? false}
+              onCheckedChange={(v) => toggleShowUnpaid(!!v)}
+            />
+            <Label htmlFor="showUnpaid" className="text-sm cursor-pointer">
+              Mostrar no pagados
+            </Label>
+          </div>
         </div>
 
         <DataTable
@@ -161,6 +234,7 @@ export default function VehicleList({
           columns={columns}
           enablePagination
           pageSize={20}
+          getRowClassName={rowClassName}
         />
       </CardContent>
     </Card>
