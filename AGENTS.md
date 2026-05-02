@@ -6,6 +6,7 @@
 - **Tailwind CSS v4** + `@tailwindcss/postcss` (NOT `tailwind.config.js`)
 - **shadcn/ui** v4 (style: `radix-maia`, icons: `phosphor`) — add via `npx shadcn@latest add <name>`
 - **Prisma 7** + PostgreSQL (`pg` pool via `@prisma/adapter-pg`, NOT Prisma Accelerate/Postgres)
+- **Auth.js v5** (NextAuth) — credentials provider against `DashboardUser` table, JWT sessions
 - **Stripe** (Checkout Sessions + webhook)
 - **pnpm** (package manager)
 
@@ -18,6 +19,7 @@
 | `pnpm format` | Prettier (double quotes, no semis, trailing commas es5, 80 width) |
 | `pnpm typecheck` | `tsc --noEmit` — run after lint, before build |
 | `pnpm build` | Next build (fails if typecheck fails) |
+| `pnpm tunnel` | Exposes dev server via `localtunnel` (port 3000) |
 
 ### Prisma
 
@@ -29,6 +31,8 @@ pnpm tsx prisma/seed.ts       # seed (uses PrismaClient with pg adapter)
 ```
 
 Prisma config is at `prisma.config.ts` (not `prisma/schema.prisma` headers). The seed script loads `dotenv/config` itself. Migrations use `npx tsx prisma/seed.ts` as the seed command.
+
+Seed creates two dashboard users: `admin@example.com / password` and `staff@example.com / password`.
 
 ## Architecture
 
@@ -47,9 +51,11 @@ Prisma config is at `prisma.config.ts` (not `prisma/schema.prisma` headers). The
 
 ## Auth
 
-- **Dev mode** reads `DEV_USER_ROLE` (ADMIN/STAFF) and `DEV_USER_EMAIL` env vars — no real login.
-- **Production** session cookie lookup is a TODO stub — will be implemented with NextAuth.js.
+- **Auth.js v5** is fully implemented with a Credentials provider (bcrypt against `DashboardUser` table) and JWT session strategy.
+- Sign-in page: `/auth/signin`
+- Session provider wraps the app in `app/providers.tsx`
 - Helpers: `requireAdmin()`, `requireStaffOrAdmin()` — throw on failure.
+- Route: `app/api/auth/[...nextauth]/route.ts` exports `handlers` from `auth.ts`.
 
 ## Server action pattern (widespread convention)
 
@@ -78,6 +84,7 @@ DATABASE_URL=postgresql://...
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 RECONCILE_SECRET=...
+AUTH_SECRET=...               # required by Auth.js v5
 ```
 
 `.env` is gitignored. Stripe keys are test keys in dev.
@@ -102,6 +109,7 @@ RECONCILE_SECRET=...
 ## Code style
 
 - **Prettier:** double quotes, no semicolons, trailing commas `es5`, print width 80, `prettier-plugin-tailwindcss` with `tailwindFunctions: ["cn", "cva"]`
+- **ESLint:** `@typescript-eslint/no-explicit-any` is explicitly turned off in `eslint.config.mjs`.
 - **CSS:** Tailwind v4 `@theme inline` block + CSS variables in `app/globals.css`. Dark mode via `.dark` class + `next-themes` `<ThemeProvider>`.
 - **Icons:** `@phosphor-icons/react`
 - **Tables:** `@tanstack/react-table` + custom `DataTable` component at `components/data-table.tsx`
@@ -112,5 +120,6 @@ RECONCILE_SECRET=...
 
 - `Participant.qr_token` has a **hash index** for < 800ms scan lookups.
 - `Vehicle.license_plate` has a **B-tree index**.
+- `RegistrationItem.entry_number` has `@unique` and is used as raffle ticket number.
 - Dashboard stats query runs ~11 Prisma queries in parallel via `Promise.all()`.
 - **No real data** in the database — safe to delete/modify anything for any reason.
