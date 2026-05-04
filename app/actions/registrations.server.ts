@@ -246,7 +246,7 @@ export async function cancelRegistration(
 
     const reg = await prisma.registration.findUnique({
       where: { id },
-      select: { status: true },
+      select: { status: true, stripe_session_id: true },
     })
 
     if (!reg) {
@@ -257,6 +257,17 @@ export async function cancelRegistration(
       return {
         success: false,
         error: "Cannot cancel a paid registration. Refund the payment first.",
+      }
+    }
+
+    // Expire the Stripe Checkout session so the user can't complete payment
+    // after the registration has been cancelled.
+    if (reg.stripe_session_id) {
+      try {
+        const stripeClient = (await import("@/lib/stripe")).default
+        await stripeClient.checkout.sessions.expire(reg.stripe_session_id)
+      } catch {
+        // ignore — session may already be expired, completed, or invalid
       }
     }
 

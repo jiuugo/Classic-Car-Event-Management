@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import stripe from "@/lib/stripe"
+import prisma from "@/lib/prisma"
 import { reconcileBySessionId } from "@/app/actions/inscription.server"
 
 interface Props {
@@ -17,13 +18,17 @@ export default async function SuccessPage({ searchParams }: Props) {
   if (session_id) {
     try {
       const session = await stripe.checkout.sessions.retrieve(session_id)
-      vehicleCount = Number(
-        session.metadata?.vehicles
-          ? JSON.parse(session.metadata.vehicles).length
-          : 0
-      )
       totalPaid = ((session.amount_total ?? 0) / 100).toFixed(2)
-      email = session.customer_email ?? session.metadata?.email ?? ""
+      email = session.customer_email ?? ""
+
+      // Derive vehicle count from the database (source of truth).
+      if (session.metadata?.registration_id) {
+        const reg = await prisma.registration.findUnique({
+          where: { id: session.metadata.registration_id },
+          include: { _count: { select: { items: true } } },
+        })
+        vehicleCount = reg?._count.items ?? 0
+      }
 
       // Safety net: if the webhook failed (DB was down, network error, etc.),
       // reconcile the payment status right here. This is idempotent — if the
