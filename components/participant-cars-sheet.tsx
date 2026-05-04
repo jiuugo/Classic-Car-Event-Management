@@ -79,7 +79,9 @@ export default function ParticipantCarsSheet({
 
   const selectAll = () => {
     const map: Record<string, boolean> = {}
-    items.forEach((it) => (map[it.id] = true))
+    items.forEach((it) => {
+      if (it.registration?.status === "PAID") map[it.id] = true
+    })
     setSelected(map)
   }
 
@@ -194,37 +196,52 @@ export default function ParticipantCarsSheet({
           )}
 
           <ul className="mt-3 space-y-3">
-            {items.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between rounded border p-3"
-              >
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    checked={!!selected[item.id]}
-                    onCheckedChange={() => toggle(item.id)}
-                    aria-label={`Select item ${item.entry_number ?? item.id}`}
-                  />
-                  <div>
-                    <div className="text-sm font-semibold">
-                      {item.vehicle?.license_plate ?? "—"}{" "}
-                      {item.vehicle?.brand ? `· ${item.vehicle.brand}` : ""}
-                    </div>
-                    <div className="text-xs text-zinc-600">
-                      Bib: {item.entry_number ?? "—"}
+            {items.map((item) => {
+              const isPaid = item.registration?.status === "PAID"
+              return (
+                <li
+                  key={item.id}
+                  className="flex items-center justify-between rounded border p-3"
+                >
+                  <div className="flex items-center gap-3">
+                    {isPaid ? (
+                      <Checkbox
+                        checked={!!selected[item.id]}
+                        onCheckedChange={() => toggle(item.id)}
+                        aria-label={`Select item ${item.entry_number ?? item.id}`}
+                      />
+                    ) : (
+                      <div className="size-4" />
+                    )}
+                    <div>
+                      <div className="text-sm font-semibold">
+                        {item.vehicle?.license_plate ?? "—"}{" "}
+                        {item.vehicle?.brand ? `· ${item.vehicle.brand}` : ""}
+                      </div>
+                      <div className="text-xs text-zinc-600">
+                        Bib: {item.entry_number ?? "—"}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="text-sm">
-                  {item.checkin_date ? (
-                    <Badge variant="default">Present</Badge>
-                  ) : (
-                    <Badge variant="outline">Not present</Badge>
-                  )}
-                </div>
-              </li>
-            ))}
+                  <div className="text-sm">
+                    {isPaid ? (
+                      item.checkin_date ? (
+                        <Badge variant="default">Present</Badge>
+                      ) : (
+                        <Badge variant="outline">Not present</Badge>
+                      )
+                    ) : (
+                      <Badge variant="secondary">
+                        {item.registration?.status === "PENDING"
+                          ? "Pago pendiente"
+                          : "Inscripción cancelada"}
+                      </Badge>
+                    )}
+                  </div>
+                </li>
+              )
+            })}
           </ul>
         </div>
 
