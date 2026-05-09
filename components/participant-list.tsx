@@ -44,9 +44,9 @@ function StatusBadge({
 
 function rowClassName(row: ParticipantRow) {
   if (row.registration_status === "PAID") return ""
-  if (row.registration_status === "PENDING") return "bg-yellow-500/5"
-  if (row.registration_status === "CANCELLED") return "bg-red-500/5"
-  return "bg-gray-500/5"
+  if (row.registration_status === "PENDING") return "bg-yellow-500/5 dark:bg-yellow-500/20"
+  if (row.registration_status === "CANCELLED") return "bg-red-500/5 dark:bg-red-500/20"
+  return "bg-gray-500/5 dark:bg-gray-500/20"
 }
 
 export default function ParticipantList({

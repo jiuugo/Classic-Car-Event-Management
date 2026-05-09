@@ -181,16 +181,16 @@ export default function ParticipantCarsSheet({
             <Button variant="outline" size="sm" onClick={clearSelection}>
               Clear
             </Button>
-            <div className="ml-auto text-sm text-zinc-600">
+            <div className="ml-auto text-sm text-muted-foreground">
               {items.length} items
             </div>
           </div>
 
           {loading && <div>Loading...</div>}
-          {error && <div className="text-sm text-red-500">{error}</div>}
+          {error && <div className="text-sm text-destructive">{error}</div>}
 
           {!loading && !error && allItemsEmpty && (
-            <div className="text-sm text-zinc-600">
+            <div className="text-sm text-muted-foreground">
               No registered cars found.
             </div>
           )}
@@ -218,7 +218,7 @@ export default function ParticipantCarsSheet({
                         {item.vehicle?.license_plate ?? "—"}{" "}
                         {item.vehicle?.brand ? `· ${item.vehicle.brand}` : ""}
                       </div>
-                      <div className="text-xs text-zinc-600">
+                      <div className="text-xs text-muted-foreground">
                         Bib: {item.entry_number ?? "—"}
                       </div>
                     </div>
@@ -245,9 +245,9 @@ export default function ParticipantCarsSheet({
           </ul>
         </div>
 
-        <div className="sticky right-0 bottom-0 left-0 border-t bg-white p-4">
+        <div className="sticky right-0 bottom-0 left-0 border-t bg-background p-4">
           <div className="mx-auto flex max-w-3xl items-center gap-3">
-            <div className="text-sm text-zinc-600">
+            <div className="text-sm text-muted-foreground">
               {selectedCount} selected
             </div>
             <div className="ml-auto flex gap-2">

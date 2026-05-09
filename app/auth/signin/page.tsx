@@ -79,7 +79,7 @@ export default async function SignInPage({
               <Input id="password" name="password" type="password" required />
             </div>
             {error && (
-              <p className="text-sm text-red-600">
+              <p className="text-sm text-destructive">
                 Credenciales inválidas. Inténtalo de nuevo.
               </p>
             )}
