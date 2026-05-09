@@ -34,7 +34,7 @@ export async function POST(request: Request) {
           error: result.error,
           fieldErrors: result.fieldErrors,
         },
-        { status: result.code === "P2002" ? 409 : 400 }
+        { status: 400 }
       )
     }
 

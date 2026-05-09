@@ -40,16 +40,61 @@ export async function submitInscription(
     const regId = registrationId ?? randomUUID()
 
     await prisma.$transaction(async (tx) => {
-      const participant = await tx.participant.create({
-        data: {
-          id: randomUUID(),
-          full_name: parsed.full_name,
-          email: parsed.email,
-          national_id: parsed.national_id,
-          qr_token: randomUUID(),
+      // 1. Find or create participant
+      let participant = await tx.participant.findFirst({
+        where: {
+          OR: [
+            { email: parsed.email },
+            { national_id: parsed.national_id },
+          ],
         },
       })
 
+      if (participant) {
+        // Update name to latest submission
+        await tx.participant.update({
+          where: { id: participant.id },
+          data: {
+            full_name: parsed.full_name,
+            // Sync both identifiers so they match the latest form submission
+            email: parsed.email,
+            national_id: parsed.national_id,
+          },
+        })
+
+        // Cancel all PENDING registrations from this participant.
+        // This cascade-deletes their RegistrationItems, freeing the
+        // vehicle_id @unique slot so we can re-link them below.
+        await tx.registration.updateMany({
+          where: {
+            participant_id: participant.id,
+            status: "PENDING",
+          },
+          data: { status: "CANCELLED" },
+        })
+
+        // Delete orphaned RegistrationItems from the just-cancelled registrations
+        await tx.registrationItem.deleteMany({
+          where: {
+            registration: {
+              participant_id: participant.id,
+              status: "CANCELLED",
+            },
+          },
+        })
+      } else {
+        participant = await tx.participant.create({
+          data: {
+            id: randomUUID(),
+            full_name: parsed.full_name,
+            email: parsed.email,
+            national_id: parsed.national_id,
+            qr_token: randomUUID(),
+          },
+        })
+      }
+
+      // 2. Create the new Registration (PENDING)
       await tx.registration.create({
         data: {
           id: regId,
@@ -58,16 +103,37 @@ export async function submitInscription(
         },
       })
 
+      // 3. Upsert vehicles and create RegistrationItems
       for (const v of parsed.vehicles) {
-        const vehicle = await tx.vehicle.create({
-          data: {
-            id: randomUUID(),
-            participant_id: participant.id,
-            brand: v.brand,
-            model: v.model,
-            license_plate: v.license_plate,
-          },
+        // Check if a vehicle with this plate already exists
+        const existingVehicle = await tx.vehicle.findUnique({
+          where: { license_plate: v.license_plate },
         })
+
+        let vehicle
+        if (existingVehicle) {
+          // Ownership check: plate must belong to this participant
+          if (existingVehicle.participant_id !== participant.id) {
+            throw new Error(
+              `La matrícula ${v.license_plate} ya está registrada por otro participante.`
+            )
+          }
+          // Update vehicle details in case brand/model changed
+          vehicle = await tx.vehicle.update({
+            where: { id: existingVehicle.id },
+            data: { brand: v.brand, model: v.model },
+          })
+        } else {
+          vehicle = await tx.vehicle.create({
+            data: {
+              id: randomUUID(),
+              participant_id: participant.id,
+              brand: v.brand,
+              model: v.model,
+              license_plate: v.license_plate,
+            },
+          })
+        }
 
         await tx.registrationItem.create({
           data: {
@@ -86,24 +152,21 @@ export async function submitInscription(
       return { success: false, error: firstError || "Validation error" }
     }
 
+    // Handle our own thrown errors (e.g. vehicle ownership check)
+    if (err instanceof Error && !("code" in err)) {
+      return { success: false, error: err.message }
+    }
+
     const { message, fields, code } = mapPrismaError(err)
 
     // Map DB column names to form field keys and friendly messages
     const dbToFormKey: Record<string, string> = {
-      national_id: "national_id",
-      email: "email",
       license_plate: "license_plate",
-      qr_token: "qr_token",
     }
 
     const friendlyPerField: Record<string, string> = {
-      email:
-        "Este email ya está registrado. Si es tu cuenta, intenta iniciar sesión o usa otro email. Si crees que es un error, contacta con la organización.",
-      national_id:
-        "Ya existe una inscripción con este DNI/NIE. Si crees que es un error, contacta con la organización para que lo revisen.",
       license_plate:
-        "Esta matrícula ya está registrada en otra inscripción. Si es tu vehículo y crees que es un error, contacta con la organización.",
-      qr_token: "Ya existe un participante con este identificador",
+        "Esta matrícula ya está registrada por otro participante. Si es tu vehículo y crees que es un error, contacta con la organización.",
     }
 
     let fieldErrors: Record<string, string> | undefined = undefined
@@ -302,6 +365,7 @@ export type ManualInscriptionResult = {
  * Creates a full inscription directly by staff/admin.
  * Registration is created as PAID with a MANUAL payment record.
  * No Stripe interaction occurs.
+ * Reuses existing participant and vehicles when possible.
  */
 export async function createManualInscription(
   data: ManualInscriptionInput
@@ -313,16 +377,58 @@ export async function createManualInscription(
     const regId = randomUUID()
 
     await prisma.$transaction(async (tx) => {
-      const participant = await tx.participant.create({
-        data: {
-          id: randomUUID(),
-          full_name: parsed.full_name,
-          email: parsed.email,
-          national_id: parsed.national_id,
-          qr_token: randomUUID(),
+      // 1. Find or create participant
+      let participant = await tx.participant.findFirst({
+        where: {
+          OR: [
+            { email: parsed.email },
+            { national_id: parsed.national_id },
+          ],
         },
       })
 
+      if (participant) {
+        // Update name to latest submission
+        await tx.participant.update({
+          where: { id: participant.id },
+          data: {
+            full_name: parsed.full_name,
+            email: parsed.email,
+            national_id: parsed.national_id,
+          },
+        })
+
+        // Cancel all PENDING registrations from this participant
+        await tx.registration.updateMany({
+          where: {
+            participant_id: participant.id,
+            status: "PENDING",
+          },
+          data: { status: "CANCELLED" },
+        })
+
+        // Delete orphaned RegistrationItems from the just-cancelled registrations
+        await tx.registrationItem.deleteMany({
+          where: {
+            registration: {
+              participant_id: participant.id,
+              status: "CANCELLED",
+            },
+          },
+        })
+      } else {
+        participant = await tx.participant.create({
+          data: {
+            id: randomUUID(),
+            full_name: parsed.full_name,
+            email: parsed.email,
+            national_id: parsed.national_id,
+            qr_token: randomUUID(),
+          },
+        })
+      }
+
+      // 2. Create the new Registration (PAID for manual inscriptions)
       await tx.registration.create({
         data: {
           id: regId,
@@ -331,16 +437,34 @@ export async function createManualInscription(
         },
       })
 
+      // 3. Upsert vehicles and create RegistrationItems
       for (const v of parsed.vehicles) {
-        const vehicle = await tx.vehicle.create({
-          data: {
-            id: randomUUID(),
-            participant_id: participant.id,
-            brand: v.brand,
-            model: v.model,
-            license_plate: v.license_plate,
-          },
+        const existingVehicle = await tx.vehicle.findUnique({
+          where: { license_plate: v.license_plate },
         })
+
+        let vehicle
+        if (existingVehicle) {
+          if (existingVehicle.participant_id !== participant.id) {
+            throw new Error(
+              `La matrícula ${v.license_plate} ya está registrada por otro participante.`
+            )
+          }
+          vehicle = await tx.vehicle.update({
+            where: { id: existingVehicle.id },
+            data: { brand: v.brand, model: v.model },
+          })
+        } else {
+          vehicle = await tx.vehicle.create({
+            data: {
+              id: randomUUID(),
+              participant_id: participant.id,
+              brand: v.brand,
+              model: v.model,
+              license_plate: v.license_plate,
+            },
+          })
+        }
 
         await tx.registrationItem.create({
           data: {
@@ -376,23 +500,20 @@ export async function createManualInscription(
       return { success: false, error: firstError || "Validation error" }
     }
 
+    // Handle our own thrown errors (e.g. vehicle ownership check)
+    if (err instanceof Error && !("code" in err)) {
+      return { success: false, error: err.message }
+    }
+
     const { message, fields, code } = mapPrismaError(err)
 
     const dbToFormKey: Record<string, string> = {
-      national_id: "national_id",
-      email: "email",
       license_plate: "license_plate",
-      qr_token: "qr_token",
     }
 
     const friendlyPerField: Record<string, string> = {
-      email:
-        "Este email ya está registrado. Si es tu cuenta, intenta iniciar sesión o usa otro email. Si crees que es un error, contacta con la organización.",
-      national_id:
-        "Ya existe una inscripción con este DNI/NIE. Si crees que es un error, contacta con la organización para que lo revisen.",
       license_plate:
-        "Esta matrícula ya está registrada en otra inscripción. Si es tu vehículo y crees que es un error, contacta con la organización.",
-      qr_token: "Ya existe un participante con este identificador",
+        "Esta matrícula ya está registrada por otro participante. Si es tu vehículo y crees que es un error, contacta con la organización.",
     }
 
     let fieldErrors: Record<string, string> | undefined = undefined

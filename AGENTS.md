@@ -19,7 +19,6 @@
 | `pnpm format` | Prettier (double quotes, no semis, trailing commas es5, 80 width) |
 | `pnpm typecheck` | `tsc --noEmit` — run after lint, before build |
 | `pnpm build` | Next build (fails if typecheck fails) |
-| `pnpm tunnel` | Exposes dev server via `localtunnel` (port 3000) |
 
 ### Prisma
 
