@@ -14,6 +14,7 @@ export default async function SuccessPage({ searchParams }: Props) {
   let vehicleCount = 0
   let totalPaid = ""
   let email = ""
+  let qrToken = ""
 
   if (session_id) {
     try {
@@ -21,18 +22,18 @@ export default async function SuccessPage({ searchParams }: Props) {
       totalPaid = ((session.amount_total ?? 0) / 100).toFixed(2)
       email = session.customer_email ?? ""
 
-      // Derive vehicle count from the database (source of truth).
       if (session.metadata?.registration_id) {
         const reg = await prisma.registration.findUnique({
           where: { id: session.metadata.registration_id },
-          include: { _count: { select: { items: true } } },
+          include: {
+            _count: { select: { items: true } },
+            participant: true,
+          },
         })
         vehicleCount = reg?._count.items ?? 0
+        qrToken = reg?.participant?.qr_token ?? ""
       }
 
-      // Safety net: if the webhook failed (DB was down, network error, etc.),
-      // reconcile the payment status right here. This is idempotent — if the
-      // webhook already confirmed it, this is a no-op.
       if (session.payment_status === "paid") {
         const amountEur = (session.amount_total ?? 0) / 100
         await reconcileBySessionId(session.id, amountEur)
@@ -102,21 +103,27 @@ export default async function SuccessPage({ searchParams }: Props) {
           </Card>
         )}
 
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-sm text-zinc-500">
-              Puedes consultar el estado de tu inscripción desde el panel de
-              control o usando tu código QR el día del evento.
-            </p>
-          </CardContent>
-        </Card>
+        {qrToken && (
+          <Card className="mb-8">
+            <CardContent className="flex flex-col items-center gap-3 pt-6">
+              <div className="rounded-lg border bg-background p-3 shadow-sm">
+                <img
+                  src={`/api/qr?token=${encodeURIComponent(qrToken)}`}
+                  alt="Código QR de acceso"
+                  className="size-[200px]"
+                />
+              </div>
+              <p className="text-sm text-zinc-500">
+                Presenta este código QR el día del evento para acceder al
+                recinto. También lo recibirás por email.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
-        <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+        <div className="mt-8 flex justify-center">
           <Button asChild>
             <Link href="/">Volver al inicio</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/checkin">Consultar mi inscripción</Link>
           </Button>
         </div>
       </div>
