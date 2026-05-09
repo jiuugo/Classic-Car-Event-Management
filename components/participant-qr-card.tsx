@@ -28,7 +28,7 @@ export default function ParticipantQrCard({ qrToken }: { qrToken: string }) {
         <CardTitle className="text-sm font-medium">QR Code</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-3">
-        <div className="rounded-lg border bg-white p-3 shadow-sm">
+        <div className="rounded-lg border bg-background p-3 shadow-sm">
           <canvas ref={canvasRef} className="size-[200px]" />
         </div>
         <p className="text-center text-xs text-muted-foreground">
