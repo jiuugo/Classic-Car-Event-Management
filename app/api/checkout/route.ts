@@ -5,10 +5,12 @@ import { submitInscription } from "@/app/actions/inscription.server"
 import type { InscriptionInput } from "@/lib/validation/registration.schema"
 import { InscriptionSchema } from "@/lib/validation/registration.schema"
 
-const PRICE_PER_VEHICLE_CENTS = 1000 // 10 €
-
 export async function POST(request: Request) {
   try {
+    if (!process.env.STRIPE_PRICE_ID) {
+      throw new Error("Missing STRIPE_PRICE_ID – add it to .env")
+    }
+
     const payload: InscriptionInput = await request.json()
 
     // Validate before anything
@@ -38,28 +40,22 @@ export async function POST(request: Request) {
 
     // 2) Create Stripe Checkout session with registration_id in metadata.
     //    If this fails the registration stays PENDING — harmless, admin can clean up.
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
-      customer_email: parsed.email,
-      line_items: [
-        {
-          price_data: {
-            currency: "eur",
-            unit_amount: PRICE_PER_VEHICLE_CENTS,
-            product_data: {
-              name: "Inscripción vehículo clásico",
-              description:
-                "Entrada para la Concentración de Clásicos Villa de la Robla",
-            },
+    const session = await stripe.checkout.sessions.create(
+      {
+        mode: "payment",
+        customer_email: parsed.email,
+        line_items: [
+          {
+            price: process.env.STRIPE_PRICE_ID,
+            quantity: vehicleCount,
           },
-          quantity: vehicleCount,
-        },
-      ],
-      metadata: { registration_id: registrationId },
-      success_url: `${origin}/register/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/register?cancelled=true`,
-    })
+        ],
+        metadata: { registration_id: registrationId },
+        success_url: `${origin}/register/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/register?cancelled=true`,
+      },
+      { idempotencyKey: `checkout-${registrationId}` }
+    )
 
     // 3) Store the Stripe session ID on the registration for reconciliation lookups.
     //    Non-critical — if this fails the webhook still works via metadata.

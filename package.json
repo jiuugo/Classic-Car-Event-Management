@@ -1,6 +1,6 @@
 {
   "name": "gestion-concentracion-clasicos-shadcn",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "private": true,
   "scripts": {
@@ -38,6 +38,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "recharts": "3.8.0",
+    "resend": "^6.12.2",
     "shadcn": "^4.1.2",
     "sonner": "^2.0.7",
     "stripe": "^22.1.0",

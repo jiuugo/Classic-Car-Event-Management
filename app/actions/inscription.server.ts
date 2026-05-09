@@ -12,6 +12,8 @@ import {
   ManualInscriptionInput,
 } from "@/lib/validation/registration.schema"
 import { mapPrismaError } from "@/lib/errors"
+import { sendEmail } from "@/lib/email"
+import { generateConfirmationEmailHtml } from "@/lib/email-templates"
 
 export type InscriptionResult = {
   success: boolean
@@ -152,6 +154,53 @@ export async function confirmPayment(
         },
       })
     })
+
+    // Send confirmation email — non-blocking: payment is already confirmed
+    try {
+      const reg = await prisma.registration.findUnique({
+        where: { id: registrationId },
+        include: {
+          participant: true,
+          items: {
+            include: { vehicle: true },
+          },
+        },
+      })
+
+      if (reg?.participant) {
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ""
+        const qrImageUrl = siteUrl
+          ? `${siteUrl}/api/qr?token=${encodeURIComponent(reg.participant.qr_token)}`
+          : ""
+
+        const html = generateConfirmationEmailHtml({
+          participantName: reg.participant.full_name,
+          email: reg.participant.email,
+          nationalId: reg.participant.national_id,
+          qrImageUrl,
+          vehicles: reg.items.map((i) => ({
+            brand: i.vehicle.brand,
+            model: i.vehicle.model,
+            license_plate: i.vehicle.license_plate,
+            entry_number: i.entry_number,
+          })),
+          totalPaid: amountEur.toFixed(2),
+          registrationId: reg.id,
+        })
+
+        await sendEmail({
+          to: reg.participant.email,
+          subject: "Inscripción confirmada — II Concentración de coches clásicos Villa de la Robla",
+          html,
+          idempotencyKey: `registration-confirm/${reg.id}`,
+        })
+      }
+    } catch (emailErr) {
+      console.error(
+        "[confirmPayment] Failed to send confirmation email:",
+        emailErr
+      )
+    }
 
     return { success: true }
   } catch (err: unknown) {

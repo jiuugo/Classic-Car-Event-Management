@@ -94,14 +94,18 @@ export function QrScanner({ onScan }: { onScan: (token: string) => void }) {
 
     return () => {
       if (scannerRef.current) {
-        scannerRef.current
-          .stop()
-          .catch(() => {
-            // ignore cleanup errors
-          })
-          .finally(() => {
-            scannerRef.current = null
-          })
+        try {
+          scannerRef.current
+            .stop()
+            .catch(() => {
+              // ignore cleanup errors
+            })
+            .finally(() => {
+              scannerRef.current = null
+            })
+        } catch {
+          scannerRef.current = null
+        }
       }
     }
   }, [])

@@ -19,7 +19,6 @@ import {
   ListIcon,
   UsersIcon,
   CameraIcon,
-  FileTextIcon,
   GearIcon,
   ChartLineIcon,
   CarIcon,

@@ -327,7 +327,7 @@ export default function AdminInscriptionForm() {
                       ? "border-primary bg-primary text-primary-foreground"
                       : isActive
                         ? "border-primary bg-primary/10 text-primary"
-                        : "border-zinc-300 text-zinc-400"
+                        : "border-muted-foreground/30 text-muted-foreground"
                   }`}
                 >
                   {isCompleted ? (
@@ -345,7 +345,7 @@ export default function AdminInscriptionForm() {
                       ? "text-primary"
                       : isCompleted
                         ? "text-primary/70"
-                        : "text-zinc-400"
+                        : "text-muted-foreground"
                   }`}
                 >
                   {step.title}
@@ -354,7 +354,7 @@ export default function AdminInscriptionForm() {
               {index < STEPS.length - 1 && (
                 <div
                   className={`mx-3 h-0.5 w-10 transition-colors duration-500 sm:w-20 md:mx-5 md:w-28 ${
-                    isCompleted ? "bg-primary" : "bg-zinc-200"
+                    isCompleted ? "bg-primary" : "bg-muted-foreground/20"
                   }`}
                 />
               )}
@@ -364,7 +364,7 @@ export default function AdminInscriptionForm() {
       </div>
 
       {/* ---- Card ---- */}
-      <Card className="border-zinc-200 shadow-md">
+      <Card className="border-border shadow-md">
         <CardContent className="p-6 pt-6 md:p-8">
           {/* === STEP 1 === */}
           {currentStep === 1 && (
@@ -466,7 +466,7 @@ export default function AdminInscriptionForm() {
               {vehicles.map((vehicle, idx) => (
                 <div
                   key={idx}
-                  className="relative animate-in rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 transition-all duration-200 fade-in slide-in-from-bottom-2"
+                  className="relative animate-in rounded-lg border border-border bg-muted/50 p-4 transition-all duration-200 fade-in slide-in-from-bottom-2"
                 >
                   <div className="mb-3 flex items-center justify-between">
                     <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
@@ -583,7 +583,7 @@ export default function AdminInscriptionForm() {
               </div>
 
               {/* Participant summary */}
-              <div className="rounded-lg border border-zinc-200 bg-zinc-50/50 p-4">
+              <div className="rounded-lg border border-border bg-muted/50 p-4">
                 <h4 className="mb-2 flex items-center gap-1.5 text-sm font-semibold">
                   <User weight="bold" className="h-4 w-4 text-primary" />
                   Participante
@@ -600,12 +600,12 @@ export default function AdminInscriptionForm() {
               </div>
 
               {/* Vehicles summary */}
-              <div className="rounded-lg border border-zinc-200 bg-zinc-50/50 p-4">
+              <div className="rounded-lg border border-border bg-muted/50 p-4">
                 <h4 className="mb-2 flex items-center gap-1.5 text-sm font-semibold">
                   <Car weight="bold" className="h-4 w-4 text-primary" />
                   Vehículos ({vehicles.length})
                 </h4>
-                <div className="divide-y divide-zinc-200">
+                <div className="divide-y divide-border">
                   {vehicles.map((v, idx) => (
                     <div
                       key={idx}
@@ -625,7 +625,7 @@ export default function AdminInscriptionForm() {
               </div>
 
               {/* Amount */}
-              <div className="rounded-lg border border-zinc-200 bg-zinc-50/50 p-4">
+              <div className="rounded-lg border border-border bg-muted/50 p-4">
                 <h4 className="mb-3 flex items-center gap-1.5 text-sm font-semibold">
                   <CurrencyEur weight="bold" className="h-4 w-4 text-primary" />
                   Importe de la inscripción

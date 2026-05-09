@@ -28,7 +28,12 @@ export default function ParticipantVehiclesTab({
   const vehicleItemMap = React.useMemo(() => {
     const map = new Map<
       string,
-      { id: string; entry_number: number | null; checkin_date: string | null }
+      {
+        id: string
+        entry_number: number | null
+        checkin_date: string | null
+        registrationStatus: "PENDING" | "PAID" | "CANCELLED"
+      }
     >()
     for (const reg of registrations) {
       for (const item of reg.items) {
@@ -36,6 +41,7 @@ export default function ParticipantVehiclesTab({
           id: item.id,
           entry_number: item.entry_number,
           checkin_date: item.checkin_date,
+          registrationStatus: reg.status,
         })
       }
     }
@@ -50,7 +56,7 @@ export default function ParticipantVehiclesTab({
     const map: Record<string, boolean> = {}
     vehicles.forEach((v) => {
       const item = vehicleItemMap.get(v.id)
-      if (item) map[item.id] = true
+      if (item && item.registrationStatus === "PAID") map[item.id] = true
     })
     setSelected(map)
   }
@@ -161,7 +167,7 @@ export default function ParticipantVehiclesTab({
               className="flex items-center justify-between rounded border p-3"
             >
               <div className="flex items-center gap-3">
-                {item ? (
+                {item && item.registrationStatus === "PAID" ? (
                   <Checkbox
                     checked={!!selected[item.id]}
                     onCheckedChange={() => toggle(item.id)}
@@ -183,10 +189,18 @@ export default function ParticipantVehiclesTab({
 
               <div className="flex items-center gap-3">
                 {item ? (
-                  item.checkin_date ? (
-                    <Badge variant="default">Present</Badge>
+                  item.registrationStatus === "PAID" ? (
+                    item.checkin_date ? (
+                      <Badge variant="default">Present</Badge>
+                    ) : (
+                      <Badge variant="outline">Not present</Badge>
+                    )
                   ) : (
-                    <Badge variant="outline">Not present</Badge>
+                    <Badge variant="secondary">
+                      {item.registrationStatus === "PENDING"
+                        ? "Pago pendiente"
+                        : "Inscripción cancelada"}
+                    </Badge>
                   )
                 ) : (
                   <span className="text-xs text-muted-foreground">
