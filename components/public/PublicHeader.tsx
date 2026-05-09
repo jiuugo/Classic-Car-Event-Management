@@ -6,6 +6,7 @@ import Image from "next/image"
 import { SignInIcon } from "@phosphor-icons/react"
 import { usePathname } from "next/navigation"
 import { useSession } from "next-auth/react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function PublicHeader() {
   const pathname = usePathname()
@@ -56,6 +57,7 @@ export default function PublicHeader() {
       )}
 
       <div className="flex items-center gap-2 md:gap-4">
+        <ThemeToggle className="hover:text-primary" />
         <Button
           asChild
           variant="ghost"
