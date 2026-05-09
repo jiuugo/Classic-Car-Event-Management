@@ -1,5 +1,3 @@
-import { Prisma } from "@/app/generated/prisma/client"
-
 export function mapPrismaError(error: unknown): {
   message: string
   code?: string
