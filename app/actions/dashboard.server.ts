@@ -21,6 +21,7 @@ export type DashboardStats = {
   }
   recentRegistrations: {
     id: string
+    participantId: string
     participantName: string
     status: "PENDING" | "PAID" | "CANCELLED"
     vehicleCount: number
@@ -64,7 +65,7 @@ export async function getDashboardStats(): Promise<
         take: 5,
         orderBy: { created_at: "desc" },
         include: {
-          participant: { select: { full_name: true } },
+          participant: { select: { id: true, full_name: true } },
           _count: { select: { items: true } },
         },
       }),
@@ -94,6 +95,7 @@ export async function getDashboardStats(): Promise<
       },
       recentRegistrations: recentRegs.map((r) => ({
         id: r.id,
+        participantId: r.participant.id,
         participantName: r.participant.full_name,
         status: r.status as "PENDING" | "PAID" | "CANCELLED",
         vehicleCount: r._count.items,
