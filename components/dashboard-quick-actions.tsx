@@ -189,19 +189,27 @@ export function DashboardRecentRegistrations({
               className="flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2"
             >
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">
+                <Link
+                  href={`/dashboard/participants/${reg.participantId}`}
+                  className="truncate text-sm font-medium text-primary underline-offset-4 hover:underline"
+                >
                   {reg.participantName}
-                </p>
+                </Link>
                 <p className="text-xs text-muted-foreground">
                   {reg.vehicleCount} vehicle{reg.vehicleCount !== 1 ? "s" : ""}
                 </p>
               </div>
-              <Badge
-                variant={statusVariant[reg.status] ?? "outline"}
-                className="shrink-0 text-[10px]"
+              <Link
+                href={`/dashboard/registrations/${reg.id}`}
+                className="hover:underline"
               >
-                {reg.status}
-              </Badge>
+                <Badge
+                  variant={statusVariant[reg.status] ?? "outline"}
+                  className="shrink-0 text-[10px]"
+                >
+                  {reg.status}
+                </Badge>
+              </Link>
             </div>
           ))}
         </div>
