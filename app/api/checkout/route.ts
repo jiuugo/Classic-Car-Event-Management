@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     // Stripe metadata AND use the same ID in the DB — no race condition.
     const registrationId = randomUUID()
 
-    const origin = new URL(request.url).origin
+    const origin = process.env.NEXT_PUBLIC_SITE_URL
 
     // 1) Create DB records FIRST (PENDING status).
     //    Data is persisted before the user ever reaches Stripe.
