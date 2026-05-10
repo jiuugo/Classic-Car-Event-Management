@@ -115,7 +115,7 @@ export async function submitInscription(
           // Ownership check: plate must belong to this participant
           if (existingVehicle.participant_id !== participant.id) {
             throw new Error(
-              `La matrícula ${v.license_plate} ya está registrada por otro participante.`
+              `La matrícula ${v.license_plate} ya está registrada a nombre de otro participante. Si es tu vehículo, contacta con la organización.`
             )
           }
           // Update vehicle details in case brand/model changed
@@ -149,7 +149,7 @@ export async function submitInscription(
   } catch (err: unknown) {
     if (err instanceof ZodError) {
       const firstError = err.issues?.[0]?.message
-      return { success: false, error: firstError || "Validation error" }
+      return { success: false, error: firstError || "Los datos enviados no son válidos. Revisa el formulario." }
     }
 
     // Handle our own thrown errors (e.g. vehicle ownership check)
@@ -166,7 +166,7 @@ export async function submitInscription(
 
     const friendlyPerField: Record<string, string> = {
       license_plate:
-        "Esta matrícula ya está registrada por otro participante. Si es tu vehículo y crees que es un error, contacta con la organización.",
+        "Esta matrícula ya pertenece a otro participante. Si es tu vehículo y crees que es un error, contacta con la organización.",
     }
 
     let fieldErrors: Record<string, string> | undefined = undefined
@@ -267,7 +267,7 @@ export async function confirmPayment(
 
     return { success: true }
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error"
+    const message = err instanceof Error ? err.message : "Error inesperado."
     return { success: false, error: message }
   }
 }
@@ -447,7 +447,7 @@ export async function createManualInscription(
         if (existingVehicle) {
           if (existingVehicle.participant_id !== participant.id) {
             throw new Error(
-              `La matrícula ${v.license_plate} ya está registrada por otro participante.`
+              `La matrícula ${v.license_plate} ya está registrada a nombre de otro participante. Si es tu vehículo, contacta con la organización.`
             )
           }
           vehicle = await tx.vehicle.update({
@@ -497,7 +497,7 @@ export async function createManualInscription(
   } catch (err: unknown) {
     if (err instanceof ZodError) {
       const firstError = err.issues?.[0]?.message
-      return { success: false, error: firstError || "Validation error" }
+      return { success: false, error: firstError || "Los datos enviados no son válidos. Revisa el formulario." }
     }
 
     // Handle our own thrown errors (e.g. vehicle ownership check)
@@ -513,7 +513,7 @@ export async function createManualInscription(
 
     const friendlyPerField: Record<string, string> = {
       license_plate:
-        "Esta matrícula ya está registrada por otro participante. Si es tu vehículo y crees que es un error, contacta con la organización.",
+        "Esta matrícula ya pertenece a otro participante. Si es tu vehículo y crees que es un error, contacta con la organización.",
     }
 
     let fieldErrors: Record<string, string> | undefined = undefined

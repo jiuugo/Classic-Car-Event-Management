@@ -317,15 +317,22 @@ export default function InscriptionForm() {
         const data = await res.json()
 
         if (!res.ok) {
-          setError(data.error || "Error al iniciar el pago")
-          toast.error(data.error || "Error al iniciar el pago")
+          setError(data.error || "No se ha podido iniciar el pago. Inténtalo de nuevo.")
+          toast.error(data.error || "No se ha podido iniciar el pago. Inténtalo de nuevo.")
           return
         }
 
         // Redirect to Stripe Checkout
         window.location.href = data.url
       } catch (err) {
-        const msg = err instanceof Error ? err.message : "Error desconocido"
+        const isNetwork =
+          err instanceof TypeError &&
+          /fetch|network|connect|abort|timeout/i.test(
+            err.message ?? ""
+          )
+        const msg = isNetwork
+          ? "No se ha podido conectar con el servidor. Comprueba tu conexión a internet e inténtalo de nuevo."
+          : "Ha ocurrido un error inesperado. Inténtalo de nuevo."
         setError(msg)
         toast.error(msg)
       }
