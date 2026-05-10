@@ -317,8 +317,12 @@ export default function InscriptionForm() {
         const data = await res.json()
 
         if (!res.ok) {
-          setError(data.error || "No se ha podido iniciar el pago. Inténtalo de nuevo.")
-          toast.error(data.error || "No se ha podido iniciar el pago. Inténtalo de nuevo.")
+          setError(
+            data.error || "No se ha podido iniciar el pago. Inténtalo de nuevo."
+          )
+          toast.error(
+            data.error || "No se ha podido iniciar el pago. Inténtalo de nuevo."
+          )
           return
         }
 
@@ -327,9 +331,7 @@ export default function InscriptionForm() {
       } catch (err) {
         const isNetwork =
           err instanceof TypeError &&
-          /fetch|network|connect|abort|timeout/i.test(
-            err.message ?? ""
-          )
+          /fetch|network|connect|abort|timeout/i.test(err.message ?? "")
         const msg = isNetwork
           ? "No se ha podido conectar con el servidor. Comprueba tu conexión a internet e inténtalo de nuevo."
           : "Ha ocurrido un error inesperado. Inténtalo de nuevo."
