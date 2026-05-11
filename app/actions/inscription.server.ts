@@ -528,3 +528,89 @@ export async function createManualInscription(
     return { success: false, error: message, fieldErrors, code }
   }
 }
+
+/**
+ * Resends the confirmation email (with QR code) to a participant.
+ * Uses the most recent PAID registration for the email content.
+ * Only callable by staff or admin.
+ */
+export async function resendConfirmationEmail(
+  participantId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await requireStaffOrAdmin()
+
+    const participant = await prisma.participant.findUnique({
+      where: { id: participantId },
+      include: {
+        registrations: {
+          where: { status: "PAID" },
+          orderBy: { created_at: "desc" },
+          take: 1,
+          include: {
+            items: { include: { vehicle: true } },
+            payments: { where: { status: "COMPLETED" } },
+          },
+        },
+      },
+    })
+
+    if (!participant) {
+      return { success: false, error: "Participante no encontrado" }
+    }
+
+    const registration = participant.registrations[0]
+    if (!registration) {
+      return {
+        success: false,
+        error:
+          "Este participante no tiene ninguna inscripción pagada. No se puede reenviar el email.",
+      }
+    }
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ""
+    const qrImageUrl = siteUrl
+      ? `${siteUrl}/api/qr?token=${encodeURIComponent(participant.qr_token)}`
+      : ""
+
+    const totalPaid = registration.payments
+      .reduce((sum, p) => sum + Number(p.amount), 0)
+      .toFixed(2)
+
+    const html = generateConfirmationEmailHtml({
+      participantName: participant.full_name,
+      email: participant.email,
+      nationalId: participant.national_id,
+      qrImageUrl,
+      vehicles: registration.items.map((i) => ({
+        brand: i.vehicle.brand,
+        model: i.vehicle.model,
+        license_plate: i.vehicle.license_plate,
+        entry_number: i.entry_number,
+      })),
+      totalPaid,
+      registrationId: registration.id,
+    })
+
+    const emailResult = await sendEmail({
+      to: participant.email,
+      subject:
+        "Inscripción confirmada — II Concentración de coches clásicos Villa de la Robla",
+      html,
+      idempotencyKey: `resend-qr/${participantId}/${Date.now()}`,
+    })
+
+    if (!emailResult.success) {
+      return {
+        success: false,
+        error: emailResult.error ?? "Error al enviar el email",
+      }
+    }
+
+    return { success: true }
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Error inesperado al reenviar email"
+    return { success: false, error: message }
+  }
+}

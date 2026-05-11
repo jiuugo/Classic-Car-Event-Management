@@ -20,7 +20,9 @@ import {
   EnvelopeIcon,
   CopyIcon,
   ArrowLeftIcon,
+  SpinnerGapIcon,
 } from "@phosphor-icons/react"
+import { resendConfirmationEmail } from "@/app/actions/inscription.server"
 import ParticipantEditForm from "./participant-edit-form"
 import type { ParticipantDetail } from "@/lib/types/participant.types"
 
@@ -41,6 +43,7 @@ export default function ParticipantDetailHeader({
 }) {
   const router = useRouter()
   const [editOpen, setEditOpen] = useState(false)
+  const [resending, setResending] = useState(false)
 
   const handleCopyToken = async () => {
     try {
@@ -48,6 +51,26 @@ export default function ParticipantDetailHeader({
       toast.success("Token QR copiado al portapapeles")
     } catch {
       toast.error("Error al copiar el token")
+    }
+  }
+
+  const hasPaidRegistration = participant.registrations.some(
+    (r) => r.status === "PAID"
+  )
+
+  const handleResendQr = async () => {
+    setResending(true)
+    try {
+      const result = await resendConfirmationEmail(participant.id)
+      if (result.success) {
+        toast.success("Email de confirmación reenviado")
+      } else {
+        toast.error(result.error ?? "Error al reenviar el email")
+      }
+    } catch {
+      toast.error("Error inesperado al reenviar el email")
+    } finally {
+      setResending(false)
     }
   }
 
@@ -121,16 +144,25 @@ export default function ParticipantDetailHeader({
               </SheetContent>
             </Sheet>
 
-            {/* Resend QR (placeholder) */}
+            {/* Resend QR */}
             <Button
               variant="outline"
               size="sm"
               className="gap-1.5"
-              disabled
-              title="Próximamente"
+              disabled={!hasPaidRegistration || resending}
+              title={
+                hasPaidRegistration
+                  ? "Reenviar email de confirmación con QR"
+                  : "No hay inscripciones pagadas"
+              }
+              onClick={handleResendQr}
             >
-              <EnvelopeIcon className="size-4" />
-              Reenviar QR
+              {resending ? (
+                <SpinnerGapIcon className="size-4 animate-spin" />
+              ) : (
+                <EnvelopeIcon className="size-4" />
+              )}
+              {resending ? "Enviando…" : "Reenviar QR"}
             </Button>
           </div>
         </div>
