@@ -1,6 +1,6 @@
 {
   "name": "gestion-concentracion-clasicos-shadcn",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "type": "module",
   "private": true,
   "scripts": {
