@@ -140,7 +140,7 @@ export default function ParticipantVehiclesTab({
   return (
     <div className="flex flex-col gap-4">
       {/* Toolbar */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-sm font-medium text-muted-foreground">
           Vehículos Registrados
         </h3>
@@ -222,16 +222,17 @@ export default function ParticipantVehiclesTab({
 
       {/* Bottom action bar */}
       <div className="sticky bottom-0 mt-2 border-t bg-background p-4">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <span className="text-sm text-muted-foreground">
             {selectedCount} seleccionados
           </span>
-          <div className="ml-auto flex gap-2">
+          <div className="flex w-full flex-col gap-2 sm:ml-auto sm:w-auto sm:flex-row">
             <Button
               variant="ghost"
               size="sm"
               onClick={clearSelection}
               disabled={selectedCount === 0}
+              className="w-full sm:w-auto"
             >
               Limpiar
             </Button>
@@ -239,6 +240,7 @@ export default function ParticipantVehiclesTab({
               onClick={handleAction}
               disabled={isPending || selectedCount === 0}
               variant={selectedCount === 0 ? "outline" : "default"}
+              className="w-full sm:w-auto"
             >
               {isPending ? "Procesando..." : actionLabel}
             </Button>

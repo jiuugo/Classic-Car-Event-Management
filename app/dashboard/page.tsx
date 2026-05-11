@@ -32,7 +32,7 @@ export default async function DashboardPage() {
       <DashboardKpiCards stats={stats} />
 
       {/* Charts + Quick actions row */}
-      <div className="grid gap-6 px-4 lg:grid-cols-3 lg:px-6">
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* Registration donut chart */}
         <DashboardRegistrationChart stats={stats} />
 
@@ -44,7 +44,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Recent registrations */}
-      <div className="px-4 lg:px-6">
+      <div>
         <DashboardRecentRegistrations
           registrations={stats.recentRegistrations}
         />

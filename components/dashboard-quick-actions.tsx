@@ -73,7 +73,7 @@ export function DashboardQuickActions() {
         <CardDescription>Accede a las operaciones del evento</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-2">
-        <Link href="/dashboard/checkin">
+        <Link href="/dashboard/checkin" className="block">
           <Button
             variant="outline"
             className="h-12 w-full justify-start gap-3 text-left"
@@ -91,7 +91,7 @@ export function DashboardQuickActions() {
           </Button>
         </Link>
 
-        <Link href="/dashboard/participants">
+        <Link href="/dashboard/participants" className="block">
           <Button
             variant="outline"
             className="h-12 w-full justify-start gap-3 text-left"
