@@ -107,7 +107,7 @@ export default function CheckinPage() {
     return (
       <div className="px-4 pb-8 lg:px-6">
         <div className="mb-6">
-          <h2 className="text-lg font-semibold">Check-in Hub</h2>
+          <h2 className="text-lg font-semibold">Registro de entrada</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Escanea un código QR o busca por matrícula / DNI para registrar la
             entrada de vehículos.

@@ -28,9 +28,9 @@ export default async function Page(props: {
     <div className="p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold">Participants</h2>
+          <h2 className="text-lg font-semibold">Participantes</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Manage participants and add walk-ins.
+            Gestiona los participantes y añade inscripciones presenciales.
           </p>
         </div>
         <Button asChild>

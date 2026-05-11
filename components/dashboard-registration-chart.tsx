@@ -18,15 +18,15 @@ import type { DashboardStats } from "@/app/actions/dashboard.server"
 
 const chartConfig: ChartConfig = {
   PAID: {
-    label: "Paid",
+    label: "Pagado",
     color: "oklch(0.65 0.15 160)",
   },
   PENDING: {
-    label: "Pending",
+    label: "Pendiente",
     color: "oklch(0.75 0.15 70)",
   },
   CANCELLED: {
-    label: "Cancelled",
+    label: "Cancelado",
     color: "oklch(0.60 0.20 25)",
   },
 }
@@ -38,17 +38,17 @@ export function DashboardRegistrationChart({
 }) {
   const data = [
     {
-      name: "Paid",
+      name: "Pagado",
       value: stats.registrationsByStatus.PAID,
       fill: chartConfig.PAID.color!,
     },
     {
-      name: "Pending",
+      name: "Pendiente",
       value: stats.registrationsByStatus.PENDING,
       fill: chartConfig.PENDING.color!,
     },
     {
-      name: "Cancelled",
+      name: "Cancelado",
       value: stats.registrationsByStatus.CANCELLED,
       fill: chartConfig.CANCELLED.color!,
     },
@@ -63,11 +63,11 @@ export function DashboardRegistrationChart({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Registration Status</CardTitle>
-          <CardDescription>Breakdown by payment status</CardDescription>
+          <CardTitle>Estado de Inscripciones</CardTitle>
+          <CardDescription>Desglose por estado de pago</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center py-12">
-          <p className="text-sm text-muted-foreground">No registrations yet.</p>
+          <p className="text-sm text-muted-foreground">Aún no hay inscripciones.</p>
         </CardContent>
       </Card>
     )
@@ -76,8 +76,8 @@ export function DashboardRegistrationChart({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Registration Status</CardTitle>
-        <CardDescription>Breakdown by payment status</CardDescription>
+        <CardTitle>Estado de Inscripciones</CardTitle>
+        <CardDescription>Desglose por estado de pago</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer
@@ -123,7 +123,7 @@ export function DashboardRegistrationChart({
                           y={(viewBox.cy ?? 0) + 24}
                           className="fill-muted-foreground text-sm"
                         >
-                          Registrations
+                           Inscripciones
                         </tspan>
                       </text>
                     )

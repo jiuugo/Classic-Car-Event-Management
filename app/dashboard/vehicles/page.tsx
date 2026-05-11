@@ -30,10 +30,10 @@ export default async function Page(props: {
 
   return (
     <div className="p-6">
-      <h2 className="text-lg font-semibold">Vehicle Fleet</h2>
+      <h2 className="text-lg font-semibold">Flota de Vehículos</h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Directory of all registered vehicles. Filter by brand or attendance
-        status.
+        Directorio de todos los vehículos registrados. Filtra por marca o estado
+        de asistencia.
       </p>
 
       <div className="mt-4">

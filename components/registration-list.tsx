@@ -33,17 +33,17 @@ const statusConfig: Record<
   }
 > = {
   PENDING: {
-    label: "Pending",
+    label: "Pendiente",
     variant: "outline",
     icon: <ClockIcon className="size-3" />,
   },
   PAID: {
-    label: "Paid",
+    label: "Pagado",
     variant: "default",
     icon: <CheckCircleIcon className="size-3" />,
   },
   CANCELLED: {
-    label: "Cancelled",
+    label: "Cancelado",
     variant: "destructive",
     icon: <XCircleIcon className="size-3" />,
   },
@@ -53,8 +53,8 @@ const paymentStatusConfig: Record<
   string,
   { label: string; variant: "default" | "destructive" | "outline" }
 > = {
-  COMPLETED: { label: "Completed", variant: "default" },
-  FAILED: { label: "Failed", variant: "destructive" },
+  COMPLETED: { label: "Completado", variant: "default" },
+  FAILED: { label: "Fallido", variant: "destructive" },
 }
 
 export default function RegistrationList({
@@ -81,7 +81,7 @@ export default function RegistrationList({
   const columns: ColumnDef<RegistrationRow>[] = [
     {
       id: "id",
-      header: "Order ID",
+      header: "ID Pedido",
       accessorFn: (row) => row.id,
       cell: ({ row }) => (
         <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
@@ -91,7 +91,7 @@ export default function RegistrationList({
     },
     {
       id: "participantName",
-      header: "Buyer",
+      header: "Comprador",
       accessorFn: (row) => row.participantName,
       cell: ({ row }) => (
         <Link
@@ -108,7 +108,7 @@ export default function RegistrationList({
     },
     {
       id: "status",
-      header: "Status",
+      header: "Estado",
       accessorFn: (row) => row.status,
       cell: ({ row }) => {
         const config = statusConfig[row.original.status] ?? statusConfig.PENDING
@@ -122,11 +122,11 @@ export default function RegistrationList({
     },
     {
       accessorKey: "vehicleCount",
-      header: "Vehicles",
+      header: "Vehículos",
     },
     {
       id: "totalAmount",
-      header: "Amount",
+      header: "Importe",
       accessorFn: (row) => row.totalAmount,
       cell: ({ row }) => {
         const amount = row.original.totalAmount
@@ -139,7 +139,7 @@ export default function RegistrationList({
     },
     {
       id: "paymentProvider",
-      header: "Provider",
+      header: "Proveedor",
       accessorFn: (row) => row.paymentProvider,
       cell: ({ row }) => {
         const provider = row.original.paymentProvider
@@ -154,7 +154,7 @@ export default function RegistrationList({
     },
     {
       id: "paymentStatus",
-      header: "Payment",
+      header: "Pago",
       accessorFn: (row) => row.paymentStatus,
       cell: ({ row }) => {
         const ps = row.original.paymentStatus
@@ -169,7 +169,7 @@ export default function RegistrationList({
     },
     {
       accessorKey: "createdAt",
-      header: "Created",
+      header: "Creado",
       cell: ({ row }) => (
         <span className="text-sm text-muted-foreground">
           {new Date(row.original.createdAt).toLocaleDateString("es-ES")}
@@ -178,12 +178,12 @@ export default function RegistrationList({
     },
     {
       id: "actions",
-      header: "Actions",
+      header: "Acciones",
       cell: ({ row }) => (
         <Button variant="ghost" size="sm" asChild>
           <Link href={`/dashboard/registrations/${row.original.id}`}>
             <EyeIcon className="mr-1 size-4" />
-            View
+            Ver
           </Link>
         </Button>
       ),
@@ -194,10 +194,12 @@ export default function RegistrationList({
     <Card>
       <CardHeader>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <CardTitle>Registrations & Payments</CardTitle>
+          <CardTitle>Inscripciones y Pagos</CardTitle>
           <div className="text-sm text-muted-foreground">
-            {registrations.length} registration
-            {registrations.length !== 1 ? "s" : ""}
+            {registrations.length}{" "}
+            {registrations.length === 1
+              ? "inscripción"
+              : "inscripciones"}
           </div>
         </div>
       </CardHeader>
@@ -210,14 +212,14 @@ export default function RegistrationList({
             onValueChange={(v) => updateFilter("status", v === "all" ? "" : v)}
           >
             <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="All statuses" />
+              <SelectValue placeholder="Todos los estados" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="all">All statuses</SelectItem>
-                <SelectItem value="PENDING">Pending</SelectItem>
-                <SelectItem value="PAID">Paid</SelectItem>
-                <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                <SelectItem value="all">Todos los estados</SelectItem>
+                <SelectItem value="PENDING">Pendiente</SelectItem>
+                <SelectItem value="PAID">Pagado</SelectItem>
+                <SelectItem value="CANCELLED">Cancelado</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -229,14 +231,14 @@ export default function RegistrationList({
             }
           >
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="All payments" />
+              <SelectValue placeholder="Todos los pagos" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="all">All payments</SelectItem>
-                <SelectItem value="COMPLETED">Completed</SelectItem>
-                <SelectItem value="FAILED">Failed</SelectItem>
-                <SelectItem value="none">No payment</SelectItem>
+                <SelectItem value="all">Todos los pagos</SelectItem>
+                <SelectItem value="COMPLETED">Completado</SelectItem>
+                <SelectItem value="FAILED">Fallido</SelectItem>
+                <SelectItem value="none">Sin pago</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

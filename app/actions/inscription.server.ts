@@ -287,7 +287,7 @@ export async function reconcileBySessionId(
     })
 
     if (!registration) {
-      return { success: false, error: "Registration not found" }
+      return { success: false, error: "Inscripción no encontrada" }
     }
 
     if (registration.status === "PAID") {
@@ -296,7 +296,7 @@ export async function reconcileBySessionId(
 
     return confirmPayment(registration.id, amountEur)
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error"
+    const message = err instanceof Error ? err.message : "Error desconocido"
     return { success: false, error: message }
   }
 }

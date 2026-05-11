@@ -45,9 +45,9 @@ export default function ParticipantDetailHeader({
   const handleCopyToken = async () => {
     try {
       await navigator.clipboard.writeText(participant.qr_token)
-      toast.success("QR token copied to clipboard")
+      toast.success("Token QR copiado al portapapeles")
     } catch {
-      toast.error("Failed to copy token")
+      toast.error("Error al copiar el token")
     }
   }
 
@@ -69,7 +69,7 @@ export default function ParticipantDetailHeader({
         onClick={() => router.push("/dashboard/participants")}
       >
         <ArrowLeftIcon className="size-4" />
-        Back to Participants
+        Volver a Participantes
       </Button>
 
       {/* Identity Card */}
@@ -98,15 +98,15 @@ export default function ParticipantDetailHeader({
               <SheetTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-1.5">
                   <PencilSimpleIcon className="size-4" />
-                  Edit
+                  Editar
                 </Button>
               </SheetTrigger>
 
               <SheetContent side="right">
                 <SheetHeader>
-                  <SheetTitle>Edit participant</SheetTitle>
+                  <SheetTitle>Editar participante</SheetTitle>
                   <SheetDescription>
-                    Update participant information below.
+                    Actualiza los datos del participante.
                   </SheetDescription>
                 </SheetHeader>
                 <div className="p-6">
@@ -127,10 +127,10 @@ export default function ParticipantDetailHeader({
               size="sm"
               className="gap-1.5"
               disabled
-              title="Coming soon"
+              title="Próximamente"
             >
               <EnvelopeIcon className="size-4" />
-              Resend QR
+              Reenviar QR
             </Button>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function ParticipantDetailHeader({
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              National ID
+              DNI/NIE
             </p>
             <p className="mt-1 text-sm font-medium">
               {participant.national_id}
@@ -149,25 +149,25 @@ export default function ParticipantDetailHeader({
           </div>
           <div>
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              Vehicles
+              Vehículos
             </p>
             <p className="mt-1 text-sm font-medium">{vehicleCount}</p>
           </div>
           <div>
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              Registrations
+              Inscripciones
             </p>
             <p className="mt-1 text-sm font-medium">{registrationCount}</p>
           </div>
           <div>
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              Checked-in Vehicles
+              Vehículos Registrados
             </p>
             <div className="mt-1 flex items-center gap-2">
               <p className="text-sm font-medium">{checkedInCount}</p>
               {checkedInCount > 0 && (
                 <Badge variant="default" className="text-[10px]">
-                  Present
+                  Presente
                 </Badge>
               )}
             </div>
@@ -180,7 +180,7 @@ export default function ParticipantDetailHeader({
         <div className="flex items-center gap-3">
           <div className="flex-1">
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              QR Token
+              Token QR
             </p>
             <code className="mt-1 block rounded bg-muted px-2 py-1 font-mono text-xs break-all">
               {participant.qr_token}
@@ -193,7 +193,7 @@ export default function ParticipantDetailHeader({
             onClick={handleCopyToken}
           >
             <CopyIcon className="size-4" />
-            Copy
+            Copiar
           </Button>
         </div>
       </div>

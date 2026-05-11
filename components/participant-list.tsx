@@ -70,7 +70,7 @@ export default function ParticipantList({
   const columns: ColumnDef<ParticipantRow>[] = [
     {
       accessorKey: "full_name",
-      header: "Name",
+      header: "Nombre",
       cell: ({ row }) => (
         <Link
           href={`/dashboard/participants/${row.original.id}`}
@@ -81,7 +81,7 @@ export default function ParticipantList({
       ),
     },
     { accessorKey: "email", header: "Email" },
-    { accessorKey: "national_id", header: "National ID" },
+    { accessorKey: "national_id", header: "DNI/NIE" },
     {
       id: "registration_status",
       header: "Inscripción",
@@ -95,7 +95,7 @@ export default function ParticipantList({
     },
     {
       id: "actions",
-      header: "Actions",
+      header: "Acciones",
       cell: ({ row }) => <ParticipantRowActions participant={row.original} />,
     },
   ]
@@ -104,7 +104,7 @@ export default function ParticipantList({
     <Card>
       <CardHeader>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <CardTitle>Participants</CardTitle>
+          <CardTitle>Participantes</CardTitle>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Checkbox
@@ -117,7 +117,7 @@ export default function ParticipantList({
               </Label>
             </div>
             <div className="text-sm text-muted-foreground">
-              {participants.length} participants
+              {participants.length} participantes
             </div>
           </div>
         </div>

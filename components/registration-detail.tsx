@@ -43,17 +43,17 @@ const statusConfig: Record<
   }
 > = {
   PENDING: {
-    label: "Pending",
+    label: "Pendiente",
     variant: "outline",
     icon: <ClockIcon className="size-3" />,
   },
   PAID: {
-    label: "Paid",
+    label: "Pagado",
     variant: "default",
     icon: <CheckCircleIcon className="size-3" />,
   },
   CANCELLED: {
-    label: "Cancelled",
+    label: "Cancelado",
     variant: "destructive",
     icon: <XCircleIcon className="size-3" />,
   },
@@ -63,8 +63,8 @@ const paymentStatusConfig: Record<
   string,
   { label: string; variant: "default" | "destructive" }
 > = {
-  COMPLETED: { label: "Completed", variant: "default" },
-  FAILED: { label: "Failed", variant: "destructive" },
+  COMPLETED: { label: "Completado", variant: "default" },
+  FAILED: { label: "Fallido", variant: "destructive" },
 }
 
 export default function RegistrationDetail({
@@ -80,27 +80,27 @@ export default function RegistrationDetail({
   const status = statusConfig[registration.status]
 
   function handleCancel() {
-    if (!confirm("Are you sure you want to cancel this registration?")) return
+    if (!confirm("¿Seguro que quieres cancelar esta inscripción?")) return
     startTransition(async () => {
       const result = await cancelRegistration(registration.id)
       if (result.success) {
-        toast.success("Registration cancelled")
+        toast.success("Inscripción cancelada")
         router.refresh()
       } else {
-        toast.error(result.error ?? "Failed to cancel")
+        toast.error(result.error ?? "Error al cancelar")
       }
     })
   }
 
   function handleReopen() {
-    if (!confirm("Reopen this registration?")) return
+    if (!confirm("¿Reabrir esta inscripción?")) return
     startTransition(async () => {
       const result = await updateRegistrationStatus(registration.id, "PENDING")
       if (result.success) {
-        toast.success("Registration reopened")
+        toast.success("Inscripción reabierta")
         router.refresh()
       } else {
-        toast.error(result.error ?? "Failed to reopen")
+        toast.error(result.error ?? "Error al reabrir")
       }
     })
   }
@@ -109,18 +109,18 @@ export default function RegistrationDetail({
     e.preventDefault()
     const val = Number(amount)
     if (!amount || isNaN(val) || val <= 0) {
-      toast.error("Please enter a valid amount")
+      toast.error("Introduce un importe válido")
       return
     }
     startTransition(async () => {
       const result = await markRegistrationAsPaid(registration.id, val)
       if (result.success) {
-        toast.success("Registration marked as paid")
+        toast.success("Inscripción marcada como pagada")
         setMarkPaidOpen(false)
         setAmount("")
         router.refresh()
       } else {
-        toast.error(result.error ?? "Failed to update")
+        toast.error(result.error ?? "Error al actualizar")
       }
     })
   }
@@ -131,7 +131,7 @@ export default function RegistrationDetail({
       <Button variant="ghost" size="sm" className="w-fit" asChild>
         <Link href="/dashboard/registrations">
           <ArrowLeftIcon className="mr-1 size-4" />
-          Back to registrations
+          Volver a inscripciones
         </Link>
       </Button>
 
@@ -142,7 +142,7 @@ export default function RegistrationDetail({
             className="size-6 text-muted-foreground"
             weight="duotone"
           />
-          <h2 className="text-xl font-semibold">Registration Detail</h2>
+          <h2 className="text-xl font-semibold">Detalle de Inscripción</h2>
         </div>
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
           <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
@@ -153,13 +153,13 @@ export default function RegistrationDetail({
             {status.label}
           </Badge>
           <span>
-            Created{" "}
+            Creado{" "}
             {new Date(registration.createdAt).toLocaleDateString("es-ES")}
           </span>
         </div>
         {registration.stripe_session_id && (
           <p className="text-xs text-muted-foreground">
-            Stripe Session:{" "}
+            Sesión de Stripe:{" "}
             <code className="font-mono">{registration.stripe_session_id}</code>
           </p>
         )}
@@ -173,7 +173,7 @@ export default function RegistrationDetail({
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-medium">
                 <UserIcon className="size-4 text-muted-foreground" />
-                Participant
+                Participante
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
@@ -195,7 +195,7 @@ export default function RegistrationDetail({
           {/* Actions Card */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Actions</CardTitle>
+              <CardTitle className="text-sm font-medium">Acciones</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               {registration.status === "PENDING" && (
@@ -204,14 +204,15 @@ export default function RegistrationDetail({
                     <SheetTrigger asChild>
                       <Button variant="default" size="sm" disabled={isPending}>
                         <CheckCircleIcon className="mr-1 size-4" />
-                        Mark as Paid
+                        Marcar como Pagado
                       </Button>
                     </SheetTrigger>
                     <SheetContent side="right">
                       <SheetHeader>
-                        <SheetTitle>Mark as Paid</SheetTitle>
+                        <SheetTitle>Marcar como Pagado</SheetTitle>
                         <SheetDescription>
-                          Enter the payment amount to confirm this registration.
+                          Introduce el importe del pago para confirmar esta
+                          inscripción.
                         </SheetDescription>
                       </SheetHeader>
                       <form
@@ -219,7 +220,7 @@ export default function RegistrationDetail({
                         className="mt-6 flex flex-col gap-4"
                       >
                         <div className="flex flex-col gap-2">
-                          <Label htmlFor="amount">Amount (€)</Label>
+                          <Label htmlFor="amount">Importe (€)</Label>
                           <Input
                             id="amount"
                             name="amount"
@@ -233,7 +234,7 @@ export default function RegistrationDetail({
                           />
                         </div>
                         <Button type="submit" disabled={isPending}>
-                          Confirm Payment
+                          Confirmar Pago
                         </Button>
                       </form>
                     </SheetContent>
@@ -246,7 +247,7 @@ export default function RegistrationDetail({
                     onClick={handleCancel}
                   >
                     <XCircleIcon className="mr-1 size-4" />
-                    Cancel Registration
+                    Cancelar Inscripción
                   </Button>
                 </>
               )}
@@ -259,13 +260,13 @@ export default function RegistrationDetail({
                   onClick={handleReopen}
                 >
                   <ClockIcon className="mr-1 size-4" />
-                  Reopen Registration
+                  Reabrir Inscripción
                 </Button>
               )}
 
               {registration.status === "PAID" && (
                 <p className="text-xs text-muted-foreground italic">
-                  No actions available for paid registrations.
+                  No hay acciones disponibles para inscripciones pagadas.
                 </p>
               )}
             </CardContent>
@@ -279,13 +280,13 @@ export default function RegistrationDetail({
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-medium">
                 <CarIcon className="size-4 text-muted-foreground" />
-                Vehicles ({registration.items.length})
+                Vehículos ({registration.items.length})
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
               {registration.items.length === 0 ? (
                 <p className="text-sm text-muted-foreground italic">
-                  No vehicles in this registration.
+                  No hay vehículos en esta inscripción.
                 </p>
               ) : (
                 registration.items.map((item) => {
@@ -316,7 +317,7 @@ export default function RegistrationDetail({
                         variant={checkedIn ? "default" : "outline"}
                         className="shrink-0 text-[10px]"
                       >
-                        {checkedIn ? "Present" : "Absent"}
+                        {checkedIn ? "Presente" : "Ausente"}
                       </Badge>
                     </div>
                   )
@@ -330,13 +331,13 @@ export default function RegistrationDetail({
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-medium">
                 <CreditCardIcon className="size-4 text-muted-foreground" />
-                Payments ({registration.payments.length})
+                Pagos ({registration.payments.length})
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
               {registration.payments.length === 0 ? (
                 <p className="text-sm text-muted-foreground italic">
-                  No payments recorded.
+                  No hay pagos registrados.
                 </p>
               ) : (
                 registration.payments.map((payment) => {
@@ -357,7 +358,7 @@ export default function RegistrationDetail({
                           {Number(payment.amount).toFixed(2)} €
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          via {payment.provider}
+                          vía {payment.provider}
                         </p>
                       </div>
                       <Badge
