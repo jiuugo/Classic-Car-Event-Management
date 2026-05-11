@@ -49,27 +49,27 @@ export function AppSidebar({
       icon: <SquaresFourIcon />,
     },
     {
-      title: "Check-in Hub",
+      title: "Registro de entrada",
       url: "/dashboard/checkin",
       icon: <CameraIcon />,
     },
     // {
-    //   title: "Raffle Room",
+    //   title: "Sala de sorteo",
     //   url: "/dashboard/raffle",
     //   icon: <FileTextIcon />,
     // },
     {
-      title: "Participants",
+      title: "Participantes",
       url: "/dashboard/participants",
       icon: <UsersIcon />,
     },
     {
-      title: "Vehicles",
+      title: "Vehículos",
       url: "/dashboard/vehicles",
       icon: <ListIcon />,
     },
     {
-      title: "Registrations & Payments",
+      title: "Inscripciones y Pagos",
       url: "/dashboard/registrations",
       icon: <ChartLineIcon />,
     },
@@ -79,7 +79,7 @@ export function AppSidebar({
     ...(role === "ADMIN"
       ? [
           {
-            title: "Settings",
+            title: "Configuración",
             url: "/dashboard/settings",
             icon: <GearIcon />,
           },

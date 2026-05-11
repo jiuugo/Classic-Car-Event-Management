@@ -33,11 +33,11 @@ export default function VehicleEditForm({
         })
 
         if (!result.success) {
-          toast.error(result.error ?? "Failed to update vehicle")
+          toast.error(result.error ?? "Error al actualizar el vehículo")
           return
         }
 
-        toast.success("Vehicle updated")
+        toast.success("Vehículo actualizado")
         if (onClose) onClose()
         router.refresh()
       } catch (err) {
@@ -49,7 +49,7 @@ export default function VehicleEditForm({
   return (
     <form onSubmit={handleSubmit} className="grid gap-3">
       <div>
-        <Label>Brand</Label>
+        <Label>Marca</Label>
         <Input
           value={brand}
           onChange={(e) => setBrand(e.target.value)}
@@ -58,7 +58,7 @@ export default function VehicleEditForm({
       </div>
 
       <div>
-        <Label>Model</Label>
+        <Label>Modelo</Label>
         <Input
           value={model}
           onChange={(e) => setModel(e.target.value)}
@@ -67,7 +67,7 @@ export default function VehicleEditForm({
       </div>
 
       <div>
-        <Label>License Plate</Label>
+        <Label>Matrícula</Label>
         <Input
           value={licensePlate}
           onChange={(e) => setLicensePlate(e.target.value)}
@@ -77,14 +77,14 @@ export default function VehicleEditForm({
 
       <div className="mt-4 flex gap-2">
         <Button type="submit" disabled={isPending}>
-          Save
+          Guardar
         </Button>
         <Button
           variant="ghost"
           type="button"
           onClick={() => onClose && onClose()}
         >
-          Cancel
+          Cancelar
         </Button>
       </div>
     </form>

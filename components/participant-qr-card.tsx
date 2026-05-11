@@ -25,14 +25,14 @@ export default function ParticipantQrCard({ qrToken }: { qrToken: string }) {
   return (
     <Card className="w-full">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium">QR Code</CardTitle>
+        <CardTitle className="text-sm font-medium">Código QR</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-3">
         <div className="rounded-lg border bg-background p-3 shadow-sm">
           <canvas ref={canvasRef} className="size-[200px]" />
         </div>
         <p className="text-center text-xs text-muted-foreground">
-          Scan to identify this participant at the event.
+          Escanea para identificar a este participante en el evento.
         </p>
       </CardContent>
     </Card>

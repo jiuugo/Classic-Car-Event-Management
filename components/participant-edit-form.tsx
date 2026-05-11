@@ -33,11 +33,11 @@ export default function ParticipantEditForm({
         })
 
         if (!result.success) {
-          toast.error(result.error ?? "Failed to update participant")
+          toast.error(result.error ?? "Error al actualizar el participante")
           return
         }
 
-        toast.success("Participant updated")
+        toast.success("Participante actualizado")
         if (onClose) onClose()
         router.refresh()
       } catch (err) {
@@ -49,7 +49,7 @@ export default function ParticipantEditForm({
   return (
     <form onSubmit={handleSubmit} className="grid gap-3">
       <div>
-        <Label>Full name</Label>
+        <Label>Nombre completo</Label>
         <Input
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
@@ -68,7 +68,7 @@ export default function ParticipantEditForm({
       </div>
 
       <div>
-        <Label>National ID</Label>
+        <Label>DNI/NIE</Label>
         <Input
           value={nationalId}
           onChange={(e) => setNationalId(e.target.value)}
@@ -78,14 +78,14 @@ export default function ParticipantEditForm({
 
       <div className="mt-4 flex gap-2">
         <Button type="submit" disabled={isPending}>
-          Save
+          Guardar
         </Button>
         <Button
           variant="ghost"
           type="button"
           onClick={() => onClose && onClose()}
         >
-          Cancel
+          Cancelar
         </Button>
       </div>
     </form>

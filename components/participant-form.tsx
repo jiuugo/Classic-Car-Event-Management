@@ -22,7 +22,7 @@ export default function ParticipantForm({
     e.preventDefault()
 
     if (!fullName.trim() || !email.trim() || !nationalId.trim()) {
-      toast.error("Please complete all fields.")
+      toast.error("Completa todos los campos.")
       return
     }
 
@@ -35,11 +35,11 @@ export default function ParticipantForm({
         })
 
         if (!result.success) {
-          toast.error(result.error ?? "Failed to create participant")
+          toast.error(result.error ?? "Error al crear el participante")
           return
         }
 
-        toast.success("Participant created")
+        toast.success("Participante creado")
         setFullName("")
         setEmail("")
         setNationalId("")
@@ -53,18 +53,18 @@ export default function ParticipantForm({
   return (
     <Card size="sm">
       <CardHeader>
-        <CardTitle>Create Participant (Walk-in)</CardTitle>
+        <CardTitle>Crear Participante (Presencial)</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="grid gap-3">
           <div>
-            <Label>Full name</Label>
+            <Label>Nombre completo</Label>
             <Input
               name="full_name"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
-              placeholder="Full name"
+              placeholder="Nombre completo"
             />
           </div>
 
@@ -81,19 +81,19 @@ export default function ParticipantForm({
           </div>
 
           <div>
-            <Label>National ID</Label>
+            <Label>DNI/NIE</Label>
             <Input
               name="national_id"
               value={nationalId}
               onChange={(e) => setNationalId(e.target.value)}
               required
-              placeholder="National ID"
+              placeholder="DNI/NIE"
             />
           </div>
 
           <div className="mt-2">
             <Button type="submit" disabled={isPending}>
-              {isPending ? "Creating..." : "Create"}
+              {isPending ? "Creando..." : "Crear"}
             </Button>
           </div>
         </form>

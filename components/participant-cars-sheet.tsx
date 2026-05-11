@@ -41,13 +41,13 @@ export default function ParticipantCarsSheet({
       .then((result) => {
         if (!mounted) return
         if (!result.success) {
-          setError(result.error ?? "Failed to load participant data")
+          setError(result.error ?? "Error al cargar los datos del participante")
           return
         }
 
         const p = result.data
         if (!p) {
-          setError("Participant not found")
+          setError("Participante no encontrado")
           return
         }
 
@@ -91,7 +91,7 @@ export default function ParticipantCarsSheet({
 
   const handleAction = () => {
     if (selectedIds.length === 0) {
-      toast.error("Select at least one item.")
+      toast.error("Selecciona al menos un elemento.")
       return
     }
 
@@ -102,9 +102,9 @@ export default function ParticipantCarsSheet({
 
     if (selectedIds.length > 5) {
       const confirmed = confirm(
-        `You are about to ${
-          mode === "mark" ? "mark" : mode === "undo" ? "undo" : "toggle"
-        } ${selectedIds.length} items. Continue?`
+        `Estás a punto de ${
+          mode === "mark" ? "marcar" : mode === "undo" ? "deshacer" : "alternar"
+        } ${selectedIds.length} elementos. ¿Continuar?`
       )
       if (!confirmed) return
     }
@@ -117,7 +117,7 @@ export default function ParticipantCarsSheet({
         })
 
         if (res && (res as any).success) {
-          const msg = `${(res as any).updatedCount ?? selectedIds.length} item(s) updated.`
+          const msg = `${(res as any).updatedCount ?? selectedIds.length} elemento(s) actualizado(s).`
           toast.success(msg)
           // re-fetch items
           setLoading(true)
@@ -134,10 +134,10 @@ export default function ParticipantCarsSheet({
             setItems(allItems)
             clearSelection()
           } else {
-            setError(result.error ?? "Failed to refresh items")
+            setError(result.error ?? "Error al actualizar los elementos")
           }
         } else {
-          const err = ((res as any)?.error as string) ?? "Unknown error"
+          const err = ((res as any)?.error as string) ?? "Error desconocido"
           toast.error(err)
           setError(err)
         }
@@ -159,39 +159,39 @@ export default function ParticipantCarsSheet({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="sm">
-          Cars
+          Vehículos
         </Button>
       </SheetTrigger>
 
       <SheetContent side="right">
         <SheetHeader>
           <SheetTitle>
-            Cars{participantName ? ` — ${participantName}` : ""}
+            Vehículos{participantName ? ` — ${participantName}` : ""}
           </SheetTitle>
           <SheetDescription>
-            Registration items for this participant.
+            Elementos de inscripción de este participante.
           </SheetDescription>
         </SheetHeader>
 
         <div className="p-6 pb-32">
           <div className="mb-3 flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={selectAll}>
-              Select all
+              Seleccionar todos
             </Button>
             <Button variant="outline" size="sm" onClick={clearSelection}>
-              Clear
+              Limpiar
             </Button>
             <div className="ml-auto text-sm text-muted-foreground">
-              {items.length} items
+              {items.length} vehículos
             </div>
           </div>
 
-          {loading && <div>Loading...</div>}
+          {loading && <div>Cargando...</div>}
           {error && <div className="text-sm text-destructive">{error}</div>}
 
           {!loading && !error && allItemsEmpty && (
             <div className="text-sm text-muted-foreground">
-              No registered cars found.
+              No se encontraron vehículos registrados.
             </div>
           )}
 
@@ -227,9 +227,9 @@ export default function ParticipantCarsSheet({
                   <div className="text-sm">
                     {isPaid ? (
                       item.checkin_date ? (
-                        <Badge variant="default">Present</Badge>
+                        <Badge variant="default">Presente</Badge>
                       ) : (
-                        <Badge variant="outline">Not present</Badge>
+                        <Badge variant="outline">Ausente</Badge>
                       )
                     ) : (
                       <Badge variant="secondary">
@@ -248,11 +248,11 @@ export default function ParticipantCarsSheet({
         <div className="sticky right-0 bottom-0 left-0 border-t bg-background p-4">
           <div className="mx-auto flex max-w-3xl items-center gap-3">
             <div className="text-sm text-muted-foreground">
-              {selectedCount} selected
+              {selectedCount} seleccionados
             </div>
             <div className="ml-auto flex gap-2">
               <Button variant="ghost" size="sm" onClick={clearSelection}>
-                Clear
+                Limpiar
               </Button>
               <Button
                 onClick={handleAction}
@@ -260,22 +260,25 @@ export default function ParticipantCarsSheet({
                 variant={selectedCount === 0 ? "outline" : "default"}
               >
                 {isPending
-                  ? "Processing..."
+                  ? "Procesando..."
                   : (() => {
-                      if (selectedCount === 0) return "Select items"
+                      if (selectedCount === 0) return "Seleccionar elementos"
                       const selectedItems = items.filter(
                         (it) => selected[it.id]
                       )
-                      if (selectedItems.length === 0) return "Select items"
+                      if (selectedItems.length === 0)
+                        return "Seleccionar elementos"
                       const allChecked = selectedItems.every(
                         (it) => !!it.checkin_date
                       )
                       const allUnchecked = selectedItems.every(
                         (it) => !it.checkin_date
                       )
-                      if (allUnchecked) return "Mark selected as checked in"
-                      if (allChecked) return "Undo check-in for selected"
-                      return "Toggle check-in for selected"
+                      if (allUnchecked)
+                        return "Marcar como registrados"
+                      if (allChecked)
+                        return "Deshacer registro de seleccionados"
+                      return "Alternar registro de seleccionados"
                     })()}
               </Button>
             </div>

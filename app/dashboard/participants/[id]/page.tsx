@@ -78,10 +78,10 @@ export default async function ParticipantDetailPage(props: {
         <Tabs defaultValue={defaultTab}>
           <TabsList variant="line">
             <TabsTrigger value="vehicles">
-              Vehicles ({participant.vehicles.length})
+              Vehículos ({participant.vehicles.length})
             </TabsTrigger>
             <TabsTrigger value="registrations">
-              Registrations ({participant.registrations.length})
+              Inscripciones ({participant.registrations.length})
             </TabsTrigger>
           </TabsList>
 

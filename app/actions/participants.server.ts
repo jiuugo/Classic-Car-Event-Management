@@ -190,7 +190,7 @@ export async function deleteParticipant(id: string) {
       return {
         success: false,
         error:
-          "Cannot delete a participant with completed payments. Cancel or refund all payments first.",
+          "No se puede eliminar un participante con pagos completados. Cancela o reembolsa todos los pagos primero.",
       }
     }
 
