@@ -91,24 +91,6 @@ export function DashboardQuickActions() {
           </Button>
         </Link>
 
-        <Link href="/dashboard/raffle">
-          <Button
-            variant="outline"
-            className="h-12 w-full justify-start gap-3 text-left"
-          >
-            <span className="flex size-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
-              <FileTextIcon className="size-4" weight="duotone" />
-            </span>
-            <div className="flex-1">
-              <p className="text-sm font-medium">Raffle Room</p>
-              <p className="text-xs text-muted-foreground">
-                Draw winners from attendees
-              </p>
-            </div>
-            <ArrowRightIcon className="size-4 text-muted-foreground" />
-          </Button>
-        </Link>
-
         <Link href="/dashboard/participants">
           <Button
             variant="outline"
