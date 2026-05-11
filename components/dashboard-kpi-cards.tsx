@@ -20,18 +20,18 @@ import type { DashboardStats } from "@/app/actions/dashboard.server"
 export function DashboardKpiCards({ stats }: { stats: DashboardStats }) {
   const cards = [
     {
-      label: "Total Participantes",
-      value: stats.totalParticipants.toLocaleString(),
+      label: "Participantes Confirmados",
+      value: stats.confirmedParticipants.toLocaleString(),
       icon: <UsersIcon className="size-4" weight="duotone" />,
-      footer: `${stats.totalVehicles} vehículo${stats.totalVehicles !== 1 ? "s" : ""} registrado${stats.totalVehicles !== 1 ? "s" : ""}`,
+      footer: `${stats.registrationsByStatus.PAID} inscripción${stats.registrationsByStatus.PAID !== 1 ? "es" : ""} pagada${stats.registrationsByStatus.PAID !== 1 ? "s" : ""}`,
       accent:
         "text-blue-600 bg-blue-500/10 dark:text-blue-400 dark:bg-blue-500/20",
     },
     {
-      label: "Vehículos Registrados",
-      value: stats.totalVehicles.toLocaleString(),
+      label: "Vehículos Confirmados",
+      value: stats.confirmedVehicles.toLocaleString(),
       icon: <CarIcon className="size-4" weight="duotone" />,
-      footer: `${stats.checkedInVehicles} registrados de ${stats.totalRegistrationItems} vehículos totales`,
+      footer: `${stats.expectedVehicles} vehículo${stats.expectedVehicles !== 1 ? "s" : ""} esperado${stats.expectedVehicles !== 1 ? "s" : ""}`,
       accent:
         "text-emerald-600 bg-emerald-500/10 dark:text-emerald-400 dark:bg-emerald-500/20",
     },
@@ -47,7 +47,7 @@ export function DashboardKpiCards({ stats }: { stats: DashboardStats }) {
       label: "Asistencia en Vivo",
       value: `${stats.liveAttendanceRate}%`,
       icon: <ChartBarIcon className="size-4" weight="duotone" />,
-      footer: `${stats.checkedInVehicles} de ${stats.totalRegistrationItems} vehículos en el recinto`,
+      footer: `${stats.checkedInVehicles} de ${stats.expectedVehicles} vehículos en el recinto`,
       accent:
         "text-purple-600 bg-purple-500/10 dark:text-purple-400 dark:bg-purple-500/20",
     },

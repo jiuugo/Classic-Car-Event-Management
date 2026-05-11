@@ -15,12 +15,12 @@ export default async function DashboardPage() {
   const stats = result.success
     ? result.data
     : {
-        totalParticipants: 0,
-        totalVehicles: 0,
+        confirmedParticipants: 0,
+        confirmedVehicles: 0,
         totalRevenue: 0,
         liveAttendanceRate: 0,
         checkedInVehicles: 0,
-        totalRegistrationItems: 0,
+        expectedVehicles: 0,
         registrationsByStatus: { PENDING: 0, PAID: 0, CANCELLED: 0 },
         paymentsByStatus: { COMPLETED: 0, FAILED: 0 },
         recentRegistrations: [],

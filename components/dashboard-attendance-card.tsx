@@ -10,14 +10,15 @@ import {
 import type { DashboardStats } from "@/app/actions/dashboard.server"
 
 export function DashboardAttendanceCard({ stats }: { stats: DashboardStats }) {
-  const { checkedInVehicles, totalRegistrationItems, liveAttendanceRate } =
-    stats
+  const { checkedInVehicles, expectedVehicles, liveAttendanceRate } = stats
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Asistencia en Vivo</CardTitle>
-        <CardDescription>Vehículos actualmente en el recinto</CardDescription>
+        <CardDescription>
+          Vehículos confirmados actualmente en el recinto
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {/* Progress bar */}
@@ -27,7 +28,7 @@ export function DashboardAttendanceCard({ stats }: { stats: DashboardStats }) {
               {checkedInVehicles}
             </span>
             <span className="text-sm text-muted-foreground">
-              / {totalRegistrationItems} vehículos
+              / {expectedVehicles} vehículos confirmados
             </span>
           </div>
           <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
