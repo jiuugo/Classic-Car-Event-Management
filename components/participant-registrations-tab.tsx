@@ -162,7 +162,7 @@ function RegistrationItemRow({ item }: { item: ParticipantRegistrationItem }) {
         </p>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <code className="font-mono">{item.vehicle.license_plate}</code>
-          {item.entry_number != null && <span>· Bib #{item.entry_number}</span>}
+          {item.entry_number != null && <span>· Dorsal #{item.entry_number}</span>}
         </div>
       </div>
       <Badge

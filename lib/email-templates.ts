@@ -112,7 +112,7 @@ export function generateConfirmationEmailHtml(
                   <tr style="background:#f3f4f6;">
                     <th align="left" style="padding:10px 12px;font-size:12px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #e5e7eb;">Vehículo</th>
                     <th align="left" style="padding:10px 12px;font-size:12px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #e5e7eb;">Matrícula</th>
-                    <th align="center" style="padding:10px 12px;font-size:12px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #e5e7eb;">Nº Entrada</th>
+                    <th align="center" style="padding:10px 12px;font-size:12px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #e5e7eb;">Dorsal</th>
                   </tr>
                 </thead>
                 <tbody>

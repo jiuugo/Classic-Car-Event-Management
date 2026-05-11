@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { requireStaffOrAdmin } from "@/lib/auth"
 import { mapPrismaError } from "@/lib/errors"
+import { assignNextEntryNumbers } from "@/lib/entry-number"
 import type {
   RegistrationRow,
   RegistrationDetail,
@@ -218,6 +219,8 @@ export async function markRegistrationAsPaid(
           status: "COMPLETED",
         },
       })
+
+      await assignNextEntryNumbers(tx, id)
     })
 
     try {

@@ -14,6 +14,7 @@ import {
 import { mapPrismaError } from "@/lib/errors"
 import { sendEmail } from "@/lib/email"
 import { generateConfirmationEmailHtml } from "@/lib/email-templates"
+import { assignNextEntryNumbers } from "@/lib/entry-number"
 
 export type InscriptionResult = {
   success: boolean
@@ -216,6 +217,8 @@ export async function confirmPayment(
           status: "COMPLETED",
         },
       })
+
+      await assignNextEntryNumbers(tx, registrationId)
     })
 
     // Send confirmation email — non-blocking: payment is already confirmed
@@ -438,6 +441,11 @@ export async function createManualInscription(
       })
 
       // 3. Upsert vehicles and create RegistrationItems
+      const maxResult = await tx.registrationItem.aggregate({
+        _max: { entry_number: true },
+      })
+      let nextEntry = (maxResult._max.entry_number ?? 100) + 1
+
       for (const v of parsed.vehicles) {
         const existingVehicle = await tx.vehicle.findUnique({
           where: { license_plate: v.license_plate },
@@ -471,6 +479,7 @@ export async function createManualInscription(
             id: randomUUID(),
             registration_id: regId,
             vehicle_id: vehicle.id,
+            entry_number: nextEntry++,
           },
         })
       }

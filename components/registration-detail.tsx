@@ -309,7 +309,7 @@ export default function RegistrationDetail({
                             {item.vehicle.license_plate}
                           </code>
                           {item.entry_number != null && (
-                            <span>· Bib #{item.entry_number}</span>
+                            <span>· Dorsal #{item.entry_number}</span>
                           )}
                         </div>
                       </div>

@@ -219,7 +219,7 @@ export default function ParticipantCarsSheet({
                         {item.vehicle?.brand ? `· ${item.vehicle.brand}` : ""}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Bib: {item.entry_number ?? "—"}
+                        Dorsal: {item.entry_number ?? "—"}
                       </div>
                     </div>
                   </div>

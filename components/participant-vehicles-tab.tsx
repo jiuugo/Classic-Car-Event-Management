@@ -182,7 +182,7 @@ export default function ParticipantVehiclesTab({
                   </div>
                   <div className="text-xs text-muted-foreground">
                     {vehicle.license_plate}
-                    {item ? ` · Bib: ${item.entry_number ?? "—"}` : ""}
+                    {item ? ` · Dorsal: ${item.entry_number ?? "—"}` : ""}
                   </div>
                 </div>
               </div>
