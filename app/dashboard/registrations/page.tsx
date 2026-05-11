@@ -20,10 +20,10 @@ export default async function RegistrationsPage(props: {
 
   return (
     <div className="p-6">
-      <h2 className="text-lg font-semibold">Registrations & Payments</h2>
+      <h2 className="text-lg font-semibold">Inscripciones y Pagos</h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Billing control, payment dispute resolution, and capacity monitoring.
-        Filter by registration or payment status.
+        Control de facturación, resolución de disputas de pago y monitoreo de
+        capacidad. Filtra por estado de inscripción o pago.
       </p>
 
       <div className="mt-4">

@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useMemo, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -317,15 +318,24 @@ export default function InscriptionForm() {
         const data = await res.json()
 
         if (!res.ok) {
-          setError(data.error || "Error al iniciar el pago")
-          toast.error(data.error || "Error al iniciar el pago")
+          setError(
+            data.error || "No se ha podido iniciar el pago. Inténtalo de nuevo."
+          )
+          toast.error(
+            data.error || "No se ha podido iniciar el pago. Inténtalo de nuevo."
+          )
           return
         }
 
         // Redirect to Stripe Checkout
         window.location.href = data.url
       } catch (err) {
-        const msg = err instanceof Error ? err.message : "Error desconocido"
+        const isNetwork =
+          err instanceof TypeError &&
+          /fetch|network|connect|abort|timeout/i.test(err.message ?? "")
+        const msg = isNetwork
+          ? "No se ha podido conectar con el servidor. Comprueba tu conexión a internet e inténtalo de nuevo."
+          : "Ha ocurrido un error inesperado. Inténtalo de nuevo."
         setError(msg)
         toast.error(msg)
       }
@@ -690,9 +700,13 @@ export default function InscriptionForm() {
                   className="cursor-pointer text-sm leading-snug text-muted-foreground"
                 >
                   Acepto los{" "}
-                  <span className="font-medium text-foreground underline underline-offset-2">
+                  <Link
+                    href="/terminos"
+                    target="_blank"
+                    className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
+                  >
                     términos y condiciones
-                  </span>{" "}
+                  </Link>{" "}
                   del evento*
                 </label>
               </div>

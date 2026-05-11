@@ -10,14 +10,15 @@ import {
 import type { DashboardStats } from "@/app/actions/dashboard.server"
 
 export function DashboardAttendanceCard({ stats }: { stats: DashboardStats }) {
-  const { checkedInVehicles, totalRegistrationItems, liveAttendanceRate } =
-    stats
+  const { checkedInVehicles, expectedVehicles, liveAttendanceRate } = stats
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Live Attendance</CardTitle>
-        <CardDescription>Vehicles currently on site</CardDescription>
+        <CardTitle>Asistencia en Vivo</CardTitle>
+        <CardDescription>
+          Vehículos confirmados actualmente en el recinto
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {/* Progress bar */}
@@ -27,7 +28,7 @@ export function DashboardAttendanceCard({ stats }: { stats: DashboardStats }) {
               {checkedInVehicles}
             </span>
             <span className="text-sm text-muted-foreground">
-              / {totalRegistrationItems} items
+              / {expectedVehicles} vehículos confirmados
             </span>
           </div>
           <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
@@ -39,7 +40,7 @@ export function DashboardAttendanceCard({ stats }: { stats: DashboardStats }) {
             />
           </div>
           <p className="text-sm text-muted-foreground">
-            {liveAttendanceRate}% attendance rate
+            {liveAttendanceRate}% tasa de asistencia
           </p>
         </div>
 
@@ -49,13 +50,13 @@ export function DashboardAttendanceCard({ stats }: { stats: DashboardStats }) {
             <p className="text-2xl font-bold text-emerald-600 tabular-nums dark:text-emerald-400">
               {stats.paymentsByStatus.COMPLETED}
             </p>
-            <p className="text-xs text-muted-foreground">Completed payments</p>
+            <p className="text-xs text-muted-foreground">Pagos completados</p>
           </div>
           <div className="rounded-lg border bg-muted/30 p-3 text-center">
             <p className="text-2xl font-bold text-red-600 tabular-nums dark:text-red-400">
               {stats.paymentsByStatus.FAILED}
             </p>
-            <p className="text-xs text-muted-foreground">Failed payments</p>
+            <p className="text-xs text-muted-foreground">Pagos fallidos</p>
           </div>
         </div>
       </CardContent>

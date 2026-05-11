@@ -104,15 +104,15 @@ export default function VehicleList({
   const columns: ColumnDef<VehicleRow>[] = [
     {
       accessorKey: "brand",
-      header: "Brand",
+      header: "Marca",
     },
     {
       accessorKey: "model",
-      header: "Model",
+      header: "Modelo",
     },
     {
       accessorKey: "license_plate",
-      header: "License Plate",
+      header: "Matrícula",
       cell: ({ row }) => (
         <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm">
           {row.original.license_plate}
@@ -121,7 +121,7 @@ export default function VehicleList({
     },
     {
       id: "owner",
-      header: "Owner",
+      header: "Propietario",
       accessorFn: (row) => row.participant.full_name,
       cell: ({ row }) => (
         <Link
@@ -134,7 +134,7 @@ export default function VehicleList({
     },
     {
       id: "entry_number",
-      header: "Bib #",
+      header: "Dorsal",
       accessorFn: (row) => row.registration_item?.entry_number ?? null,
       cell: ({ row }) => {
         const num = row.original.registration_item?.entry_number
@@ -158,21 +158,21 @@ export default function VehicleList({
     },
     {
       id: "status",
-      header: "Status",
+      header: "Estado",
       accessorFn: (row) =>
         row.registration_item?.checkin_date ? "present" : "absent",
       cell: ({ row }) => {
         const checked = !!row.original.registration_item?.checkin_date
         return checked ? (
-          <Badge variant="default">Present</Badge>
+          <Badge variant="default">Presente</Badge>
         ) : (
-          <Badge variant="outline">Absent</Badge>
+          <Badge variant="outline">Ausente</Badge>
         )
       },
     },
     {
       id: "actions",
-      header: "Actions",
+      header: "Acciones",
       cell: ({ row }) => <VehicleRowActions vehicle={row.original} />,
     },
   ]
@@ -181,9 +181,9 @@ export default function VehicleList({
     <Card>
       <CardHeader>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <CardTitle>Vehicle Fleet</CardTitle>
+          <CardTitle>Flota de Vehículos</CardTitle>
           <div className="text-sm text-muted-foreground">
-            {vehicles.length} vehicle{vehicles.length !== 1 ? "s" : ""}
+            {vehicles.length} vehículo{vehicles.length !== 1 ? "s" : ""}
           </div>
         </div>
       </CardHeader>
@@ -197,11 +197,11 @@ export default function VehicleList({
             onValueChange={(v) => updateFilter("brand", v === "all" ? "" : v)}
           >
             <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="All brands" />
+              <SelectValue placeholder="Todas las marcas" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="all">All brands</SelectItem>
+                <SelectItem value="all">Todas las marcas</SelectItem>
                 {brands.map((b) => (
                   <SelectItem key={b} value={b}>
                     {b}
@@ -217,13 +217,13 @@ export default function VehicleList({
             onValueChange={(v) => updateFilter("status", v === "all" ? "" : v)}
           >
             <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="All statuses" />
+              <SelectValue placeholder="Todos los estados" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="all">All statuses</SelectItem>
-                <SelectItem value="present">Present</SelectItem>
-                <SelectItem value="absent">Absent</SelectItem>
+                <SelectItem value="all">Todos los estados</SelectItem>
+                <SelectItem value="present">Presente</SelectItem>
+                <SelectItem value="absent">Ausente</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -243,11 +243,11 @@ export default function VehicleList({
           {/* Active search chip */}
           {currentFilters.q && (
             <div className="flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
-              <span>Search: {currentFilters.q}</span>
+              <span>Búsqueda: {currentFilters.q}</span>
               <button
                 onClick={clearSearch}
                 className="ml-1 rounded-full p-0.5 hover:bg-primary/20"
-                aria-label="Clear search"
+                aria-label="Limpiar búsqueda"
               >
                 ×
               </button>

@@ -20,34 +20,34 @@ import type { DashboardStats } from "@/app/actions/dashboard.server"
 export function DashboardKpiCards({ stats }: { stats: DashboardStats }) {
   const cards = [
     {
-      label: "Total Participants",
-      value: stats.totalParticipants.toLocaleString(),
+      label: "Participantes Confirmados",
+      value: stats.confirmedParticipants.toLocaleString(),
       icon: <UsersIcon className="size-4" weight="duotone" />,
-      footer: `${stats.totalVehicles} vehicle${stats.totalVehicles !== 1 ? "s" : ""} registered`,
+      footer: `${stats.registrationsByStatus.PAID} inscripción${stats.registrationsByStatus.PAID !== 1 ? "es" : ""} pagada${stats.registrationsByStatus.PAID !== 1 ? "s" : ""}`,
       accent:
         "text-blue-600 bg-blue-500/10 dark:text-blue-400 dark:bg-blue-500/20",
     },
     {
-      label: "Registered Vehicles",
-      value: stats.totalVehicles.toLocaleString(),
+      label: "Vehículos Confirmados",
+      value: stats.confirmedVehicles.toLocaleString(),
       icon: <CarIcon className="size-4" weight="duotone" />,
-      footer: `${stats.checkedInVehicles} checked in of ${stats.totalRegistrationItems} total items`,
+      footer: `${stats.expectedVehicles} vehículo${stats.expectedVehicles !== 1 ? "s" : ""} esperado${stats.expectedVehicles !== 1 ? "s" : ""}`,
       accent:
         "text-emerald-600 bg-emerald-500/10 dark:text-emerald-400 dark:bg-emerald-500/20",
     },
     {
-      label: "Total Revenue",
+      label: "Ingresos Totales",
       value: `${stats.totalRevenue.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`,
       icon: <CurrencyDollarIcon className="size-4" weight="duotone" />,
-      footer: `${stats.paymentsByStatus.COMPLETED} completed payment${stats.paymentsByStatus.COMPLETED !== 1 ? "s" : ""}`,
+      footer: `${stats.paymentsByStatus.COMPLETED} pago${stats.paymentsByStatus.COMPLETED !== 1 ? "s" : ""} completado${stats.paymentsByStatus.COMPLETED !== 1 ? "s" : ""}`,
       accent:
         "text-amber-600 bg-amber-500/10 dark:text-amber-400 dark:bg-amber-500/20",
     },
     {
-      label: "Live Attendance",
+      label: "Asistencia en Vivo",
       value: `${stats.liveAttendanceRate}%`,
       icon: <ChartBarIcon className="size-4" weight="duotone" />,
-      footer: `${stats.checkedInVehicles} of ${stats.totalRegistrationItems} vehicles on site`,
+      footer: `${stats.checkedInVehicles} de ${stats.expectedVehicles} vehículos en el recinto`,
       accent:
         "text-purple-600 bg-purple-500/10 dark:text-purple-400 dark:bg-purple-500/20",
     },
@@ -74,7 +74,7 @@ export function DashboardKpiCards({ stats }: { stats: DashboardStats }) {
             </CardTitle>
             <CardAction>
               <Badge variant="outline" className="text-muted-foreground">
-                Live
+                En vivo
               </Badge>
             </CardAction>
           </CardHeader>

@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { requireStaffOrAdmin } from "@/lib/auth"
 import { mapPrismaError } from "@/lib/errors"
+import { assignNextEntryNumbers } from "@/lib/entry-number"
 import type {
   RegistrationRow,
   RegistrationDetail,
@@ -121,7 +122,7 @@ export async function getRegistrationById(
     })
 
     if (!registration) {
-      return { success: false, error: "Registration not found" }
+      return { success: false, error: "Inscripción no encontrada" }
     }
 
     const data: RegistrationDetail = {
@@ -218,6 +219,8 @@ export async function markRegistrationAsPaid(
           status: "COMPLETED",
         },
       })
+
+      await assignNextEntryNumbers(tx, id)
     })
 
     try {
@@ -250,13 +253,13 @@ export async function cancelRegistration(
     })
 
     if (!reg) {
-      return { success: false, error: "Registration not found" }
+      return { success: false, error: "Inscripción no encontrada" }
     }
 
     if (reg.status === "PAID") {
       return {
         success: false,
-        error: "Cannot cancel a paid registration. Refund the payment first.",
+        error: "No se puede cancelar una inscripción pagada. Reembolsa el pago primero.",
       }
     }
 

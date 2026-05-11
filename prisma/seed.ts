@@ -10,26 +10,46 @@ const adapter = new PrismaPg(pool)
 const prisma = new PrismaClient({ adapter })
 
 async function main() {
-  console.log("Seeding database with example data...")
+  const adminEmail =
+    process.env.SEED_ADMIN_EMAIL ?? "admin@example.com"
+  const adminPassword =
+    process.env.SEED_ADMIN_PASSWORD ?? "password"
+  const isProductionMode = process.env.SEED_MODE === "production"
 
-  const hashedPassword = await bcrypt.hash("password", 12)
+  console.log(
+    isProductionMode
+      ? "Seeding admin user for production..."
+      : "Seeding database with example data..."
+  )
+
+  const adminPasswordHash = await bcrypt.hash(adminPassword, 12)
 
   // --- Dashboard Users ---
   await prisma.dashboardUser.create({
     data: {
-      email: "admin@example.com",
-      password_hash: hashedPassword,
+      email: adminEmail,
+      password_hash: adminPasswordHash,
       role: "ADMIN",
     },
   })
-  await prisma.dashboardUser.create({
-    data: {
-      email: "staff@example.com",
-      password_hash: hashedPassword,
-      role: "STAFF",
-    },
-  })
-  console.log("Created 2 dashboard users")
+  if (!isProductionMode) {
+    const staffPasswordHash = await bcrypt.hash("password", 12)
+    await prisma.dashboardUser.create({
+      data: {
+        email: "staff@example.com",
+        password_hash: staffPasswordHash,
+        role: "STAFF",
+      },
+    })
+    console.log("Created 2 dashboard users")
+  } else {
+    console.log("Created admin dashboard user")
+  }
+
+  if (isProductionMode) {
+    console.log(`\nAdmin login:  ${adminEmail}`)
+    return
+  }
 
   // --- Participants ---
   const juan = await prisma.participant.create({
@@ -274,7 +294,7 @@ async function main() {
   console.log("Created 2 payments")
 
   console.log("\nSeed complete!")
-  console.log("  Admin login:  admin@example.com / password")
+  console.log(`  Admin login:  ${adminEmail} / ${adminPassword}`)
   console.log("  Staff login:  staff@example.com / password")
 }
 

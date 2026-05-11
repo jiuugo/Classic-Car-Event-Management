@@ -69,11 +69,11 @@ export function DashboardQuickActions() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Quick Actions</CardTitle>
-        <CardDescription>Jump to event-day operations</CardDescription>
+        <CardTitle>Acciones Rápidas</CardTitle>
+        <CardDescription>Accede a las operaciones del evento</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-2">
-        <Link href="/dashboard/checkin">
+        <Link href="/dashboard/checkin" className="block">
           <Button
             variant="outline"
             className="h-12 w-full justify-start gap-3 text-left"
@@ -82,34 +82,16 @@ export function DashboardQuickActions() {
               <CameraIcon className="size-4" weight="duotone" />
             </span>
             <div className="flex-1">
-              <p className="text-sm font-medium">Check-in Hub</p>
+              <p className="text-sm font-medium">Registro de entrada</p>
               <p className="text-xs text-muted-foreground">
-                Scan QR codes & register arrivals
+                Escanea QR y registra entradas
               </p>
             </div>
             <ArrowRightIcon className="size-4 text-muted-foreground" />
           </Button>
         </Link>
 
-        <Link href="/dashboard/raffle">
-          <Button
-            variant="outline"
-            className="h-12 w-full justify-start gap-3 text-left"
-          >
-            <span className="flex size-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
-              <FileTextIcon className="size-4" weight="duotone" />
-            </span>
-            <div className="flex-1">
-              <p className="text-sm font-medium">Raffle Room</p>
-              <p className="text-xs text-muted-foreground">
-                Draw winners from attendees
-              </p>
-            </div>
-            <ArrowRightIcon className="size-4 text-muted-foreground" />
-          </Button>
-        </Link>
-
-        <Link href="/dashboard/participants">
+        <Link href="/dashboard/participants" className="block">
           <Button
             variant="outline"
             className="h-12 w-full justify-start gap-3 text-left"
@@ -118,9 +100,9 @@ export function DashboardQuickActions() {
               <UsersIcon className="size-4" weight="duotone" />
             </span>
             <div className="flex-1">
-              <p className="text-sm font-medium">Participants</p>
+              <p className="text-sm font-medium">Participantes</p>
               <p className="text-xs text-muted-foreground">
-                Manage attendees & walk-ins
+                Gestiona asistentes e inscripciones
               </p>
             </div>
             <ArrowRightIcon className="size-4 text-muted-foreground" />
@@ -163,12 +145,12 @@ export function DashboardRecentRegistrations({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Recent Registrations</CardTitle>
-          <CardDescription>Latest sign-ups</CardDescription>
+          <CardTitle>Inscripciones Recientes</CardTitle>
+          <CardDescription>Últimas inscripciones</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="py-8 text-center text-sm text-muted-foreground">
-            No registrations yet.
+            Aún no hay inscripciones.
           </p>
         </CardContent>
       </Card>
@@ -178,8 +160,8 @@ export function DashboardRecentRegistrations({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Registrations</CardTitle>
-        <CardDescription>Latest sign-ups</CardDescription>
+        <CardTitle>Inscripciones Recientes</CardTitle>
+        <CardDescription>Últimas inscripciones</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
@@ -196,7 +178,7 @@ export function DashboardRecentRegistrations({
                   {reg.participantName}
                 </Link>
                 <p className="text-xs text-muted-foreground">
-                  {reg.vehicleCount} vehicle{reg.vehicleCount !== 1 ? "s" : ""}
+                  {reg.vehicleCount} vehículo{reg.vehicleCount !== 1 ? "s" : ""}
                 </p>
               </div>
               <Link
@@ -216,7 +198,7 @@ export function DashboardRecentRegistrations({
 
         <Link href="/dashboard/registrations">
           <Button variant="ghost" size="sm" className="mt-3 w-full gap-1.5">
-            View all registrations
+            Ver todas las inscripciones
             <ArrowRightIcon className="size-3" />
           </Button>
         </Link>

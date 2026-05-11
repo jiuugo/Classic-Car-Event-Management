@@ -26,15 +26,15 @@ export default function ParticipantRowActions({
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button variant="ghost" size="sm">
-            Edit
+            Editar
           </Button>
         </SheetTrigger>
 
         <SheetContent side="right">
           <SheetHeader>
-            <SheetTitle>Edit participant</SheetTitle>
+            <SheetTitle>Editar participante</SheetTitle>
             <SheetDescription>
-              Update participant information below.
+              Actualiza los datos del participante.
             </SheetDescription>
           </SheetHeader>
           <div className="p-6">

@@ -72,7 +72,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ url: session.url }, { status: 200 })
   } catch (err: unknown) {
     console.error("[checkout] Error:", err)
-    const message = err instanceof Error ? err.message : "Server error"
+
+    const isDev = process.env.NODE_ENV === "development"
+    const message =
+      isDev && err instanceof Error
+        ? err.message
+        : "Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo más tarde."
+
     return NextResponse.json(
       { success: false, error: message },
       { status: 500 }

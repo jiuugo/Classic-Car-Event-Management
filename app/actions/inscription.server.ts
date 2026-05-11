@@ -14,6 +14,7 @@ import {
 import { mapPrismaError } from "@/lib/errors"
 import { sendEmail } from "@/lib/email"
 import { generateConfirmationEmailHtml } from "@/lib/email-templates"
+import { assignNextEntryNumbers } from "@/lib/entry-number"
 
 export type InscriptionResult = {
   success: boolean
@@ -115,7 +116,7 @@ export async function submitInscription(
           // Ownership check: plate must belong to this participant
           if (existingVehicle.participant_id !== participant.id) {
             throw new Error(
-              `La matrícula ${v.license_plate} ya está registrada por otro participante.`
+              `La matrícula ${v.license_plate} ya está registrada a nombre de otro participante. Si es tu vehículo, contacta con la organización.`
             )
           }
           // Update vehicle details in case brand/model changed
@@ -149,7 +150,7 @@ export async function submitInscription(
   } catch (err: unknown) {
     if (err instanceof ZodError) {
       const firstError = err.issues?.[0]?.message
-      return { success: false, error: firstError || "Validation error" }
+      return { success: false, error: firstError || "Los datos enviados no son válidos. Revisa el formulario." }
     }
 
     // Handle our own thrown errors (e.g. vehicle ownership check)
@@ -166,7 +167,7 @@ export async function submitInscription(
 
     const friendlyPerField: Record<string, string> = {
       license_plate:
-        "Esta matrícula ya está registrada por otro participante. Si es tu vehículo y crees que es un error, contacta con la organización.",
+        "Esta matrícula ya pertenece a otro participante. Si es tu vehículo y crees que es un error, contacta con la organización.",
     }
 
     let fieldErrors: Record<string, string> | undefined = undefined
@@ -216,6 +217,8 @@ export async function confirmPayment(
           status: "COMPLETED",
         },
       })
+
+      await assignNextEntryNumbers(tx, registrationId)
     })
 
     // Send confirmation email — non-blocking: payment is already confirmed
@@ -267,7 +270,7 @@ export async function confirmPayment(
 
     return { success: true }
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error"
+    const message = err instanceof Error ? err.message : "Error inesperado."
     return { success: false, error: message }
   }
 }
@@ -287,7 +290,7 @@ export async function reconcileBySessionId(
     })
 
     if (!registration) {
-      return { success: false, error: "Registration not found" }
+      return { success: false, error: "Inscripción no encontrada" }
     }
 
     if (registration.status === "PAID") {
@@ -296,7 +299,7 @@ export async function reconcileBySessionId(
 
     return confirmPayment(registration.id, amountEur)
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error"
+    const message = err instanceof Error ? err.message : "Error desconocido"
     return { success: false, error: message }
   }
 }
@@ -438,6 +441,11 @@ export async function createManualInscription(
       })
 
       // 3. Upsert vehicles and create RegistrationItems
+      const maxResult = await tx.registrationItem.aggregate({
+        _max: { entry_number: true },
+      })
+      let nextEntry = (maxResult._max.entry_number ?? 100) + 1
+
       for (const v of parsed.vehicles) {
         const existingVehicle = await tx.vehicle.findUnique({
           where: { license_plate: v.license_plate },
@@ -447,7 +455,7 @@ export async function createManualInscription(
         if (existingVehicle) {
           if (existingVehicle.participant_id !== participant.id) {
             throw new Error(
-              `La matrícula ${v.license_plate} ya está registrada por otro participante.`
+              `La matrícula ${v.license_plate} ya está registrada a nombre de otro participante. Si es tu vehículo, contacta con la organización.`
             )
           }
           vehicle = await tx.vehicle.update({
@@ -471,6 +479,7 @@ export async function createManualInscription(
             id: randomUUID(),
             registration_id: regId,
             vehicle_id: vehicle.id,
+            entry_number: nextEntry++,
           },
         })
       }
@@ -497,7 +506,7 @@ export async function createManualInscription(
   } catch (err: unknown) {
     if (err instanceof ZodError) {
       const firstError = err.issues?.[0]?.message
-      return { success: false, error: firstError || "Validation error" }
+      return { success: false, error: firstError || "Los datos enviados no son válidos. Revisa el formulario." }
     }
 
     // Handle our own thrown errors (e.g. vehicle ownership check)
@@ -513,7 +522,7 @@ export async function createManualInscription(
 
     const friendlyPerField: Record<string, string> = {
       license_plate:
-        "Esta matrícula ya está registrada por otro participante. Si es tu vehículo y crees que es un error, contacta con la organización.",
+        "Esta matrícula ya pertenece a otro participante. Si es tu vehículo y crees que es un error, contacta con la organización.",
     }
 
     let fieldErrors: Record<string, string> | undefined = undefined
@@ -526,5 +535,91 @@ export async function createManualInscription(
     }
 
     return { success: false, error: message, fieldErrors, code }
+  }
+}
+
+/**
+ * Resends the confirmation email (with QR code) to a participant.
+ * Uses the most recent PAID registration for the email content.
+ * Only callable by staff or admin.
+ */
+export async function resendConfirmationEmail(
+  participantId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await requireStaffOrAdmin()
+
+    const participant = await prisma.participant.findUnique({
+      where: { id: participantId },
+      include: {
+        registrations: {
+          where: { status: "PAID" },
+          orderBy: { created_at: "desc" },
+          take: 1,
+          include: {
+            items: { include: { vehicle: true } },
+            payments: { where: { status: "COMPLETED" } },
+          },
+        },
+      },
+    })
+
+    if (!participant) {
+      return { success: false, error: "Participante no encontrado" }
+    }
+
+    const registration = participant.registrations[0]
+    if (!registration) {
+      return {
+        success: false,
+        error:
+          "Este participante no tiene ninguna inscripción pagada. No se puede reenviar el email.",
+      }
+    }
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ""
+    const qrImageUrl = siteUrl
+      ? `${siteUrl}/api/qr?token=${encodeURIComponent(participant.qr_token)}`
+      : ""
+
+    const totalPaid = registration.payments
+      .reduce((sum, p) => sum + Number(p.amount), 0)
+      .toFixed(2)
+
+    const html = generateConfirmationEmailHtml({
+      participantName: participant.full_name,
+      email: participant.email,
+      nationalId: participant.national_id,
+      qrImageUrl,
+      vehicles: registration.items.map((i) => ({
+        brand: i.vehicle.brand,
+        model: i.vehicle.model,
+        license_plate: i.vehicle.license_plate,
+        entry_number: i.entry_number,
+      })),
+      totalPaid,
+      registrationId: registration.id,
+    })
+
+    const emailResult = await sendEmail({
+      to: participant.email,
+      subject:
+        "Inscripción confirmada — II Concentración de coches clásicos Villa de la Robla",
+      html,
+      idempotencyKey: `resend-qr/${participantId}/${Date.now()}`,
+    })
+
+    if (!emailResult.success) {
+      return {
+        success: false,
+        error: emailResult.error ?? "Error al enviar el email",
+      }
+    }
+
+    return { success: true }
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Error inesperado al reenviar email"
+    return { success: false, error: message }
   }
 }

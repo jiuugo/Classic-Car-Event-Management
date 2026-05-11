@@ -28,17 +28,17 @@ const statusConfig: Record<
   }
 > = {
   PENDING: {
-    label: "Pending",
+    label: "Pendiente",
     variant: "outline",
     icon: <ClockIcon className="size-3" />,
   },
   PAID: {
-    label: "Paid",
+    label: "Pagado",
     variant: "default",
     icon: <CheckCircleIcon className="size-3" />,
   },
   CANCELLED: {
-    label: "Cancelled",
+    label: "Cancelado",
     variant: "destructive",
     icon: <XCircleIcon className="size-3" />,
   },
@@ -48,8 +48,8 @@ const paymentStatusConfig: Record<
   string,
   { label: string; variant: "default" | "destructive" }
 > = {
-  COMPLETED: { label: "Completed", variant: "default" },
-  FAILED: { label: "Failed", variant: "destructive" },
+  COMPLETED: { label: "Completado", variant: "default" },
+  FAILED: { label: "Fallido", variant: "destructive" },
 }
 
 export default function ParticipantRegistrationsTab({
@@ -62,7 +62,7 @@ export default function ParticipantRegistrationsTab({
       <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed py-12 text-center">
         <ReceiptIcon className="size-10 text-muted-foreground/50" />
         <p className="text-sm text-muted-foreground">
-          No registrations found for this participant.
+          No se encontraron inscripciones para este participante.
         </p>
       </div>
     )
@@ -79,14 +79,14 @@ export default function ParticipantRegistrationsTab({
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-sm font-medium">
                   <ReceiptIcon className="size-4 text-muted-foreground" />
-                  Registration
+                  Inscripción
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/dashboard/registrations/${reg.id}`}
                     className="text-xs text-primary underline-offset-4 hover:underline"
                   >
-                    View details →
+                    Ver detalle →
                   </Link>
                   <Badge variant={config.variant} className="gap-1">
                     {config.icon}
@@ -104,7 +104,7 @@ export default function ParticipantRegistrationsTab({
               {reg.items.length > 0 && (
                 <div>
                   <p className="mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                    Vehicles in this registration
+                    Vehículos en esta inscripción
                   </p>
                   <div className="space-y-2">
                     {reg.items.map((item) => (
@@ -120,7 +120,7 @@ export default function ParticipantRegistrationsTab({
                   <Separator />
                   <div>
                     <p className="mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                      Payments
+                      Pagos
                     </p>
                     <div className="space-y-2">
                       {reg.payments.map((payment) => (
@@ -135,7 +135,7 @@ export default function ParticipantRegistrationsTab({
                 <>
                   <Separator />
                   <p className="text-xs text-muted-foreground italic">
-                    No payments recorded for this registration.
+                    No hay pagos registrados para esta inscripción.
                   </p>
                 </>
               )}
@@ -162,14 +162,14 @@ function RegistrationItemRow({ item }: { item: ParticipantRegistrationItem }) {
         </p>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <code className="font-mono">{item.vehicle.license_plate}</code>
-          {item.entry_number != null && <span>· Bib #{item.entry_number}</span>}
+          {item.entry_number != null && <span>· Dorsal #{item.entry_number}</span>}
         </div>
       </div>
       <Badge
         variant={isCheckedIn ? "default" : "outline"}
         className="shrink-0 text-[10px]"
       >
-        {isCheckedIn ? "Present" : "Absent"}
+        {isCheckedIn ? "Presente" : "Ausente"}
       </Badge>
     </div>
   )
@@ -189,7 +189,7 @@ function PaymentRow({ payment }: { payment: ParticipantPayment }) {
         <p className="text-sm font-medium">
           {Number(payment.amount).toFixed(2)} €
         </p>
-        <p className="text-xs text-muted-foreground">via {payment.provider}</p>
+        <p className="text-xs text-muted-foreground">vía {payment.provider}</p>
       </div>
       <Badge variant={config.variant} className="shrink-0 text-[10px]">
         {config.label}

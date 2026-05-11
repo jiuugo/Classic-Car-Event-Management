@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { Providers } from "./providers"
+import { Toaster } from "@/components/ui/sonner"
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -32,7 +33,10 @@ export default function RootLayout({
       <body>
         <Providers>
           <TooltipProvider>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              {children}
+              <Toaster />
+            </ThemeProvider>
           </TooltipProvider>
         </Providers>
       </body>

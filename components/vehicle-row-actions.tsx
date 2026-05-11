@@ -20,15 +20,15 @@ export default function VehicleRowActions({ vehicle }: { vehicle: any }) {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button variant="ghost" size="sm">
-            Edit
+            Editar
           </Button>
         </SheetTrigger>
 
         <SheetContent side="right">
           <SheetHeader>
-            <SheetTitle>Edit vehicle</SheetTitle>
+            <SheetTitle>Editar vehículo</SheetTitle>
             <SheetDescription>
-              Update vehicle information below.
+              Actualiza los datos del vehículo.
             </SheetDescription>
           </SheetHeader>
           <div className="p-6">

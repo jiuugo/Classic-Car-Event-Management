@@ -76,14 +76,14 @@ export function DataTable<TData extends object>({
       <Checkbox
         checked={(table as any).getIsAllRowsSelected?.()}
         onCheckedChange={(v) => (table as any).toggleAllRowsSelected?.(!!v)}
-        aria-label="Select all rows"
+        aria-label="Seleccionar todas las filas"
       />
     ),
     cell: ({ row }: any) => (
       <Checkbox
         checked={(row as any).getIsSelected?.()}
         onCheckedChange={(v) => (row as any).toggleSelected?.(!!v)}
-        aria-label="Select row"
+        aria-label="Seleccionar fila"
       />
     ),
   }
@@ -171,7 +171,7 @@ export function DataTable<TData extends object>({
       <CardContent>
         <div className="mb-2 flex items-center justify-between">
           <Input
-            placeholder="Search..."
+            placeholder="Buscar..."
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
             className="max-w-sm"
@@ -190,7 +190,7 @@ export function DataTable<TData extends object>({
                         onCheckedChange={(v) =>
                           (table as any).toggleAllRowsSelected?.(!!v)
                         }
-                        aria-label="Select all rows"
+                        aria-label="Seleccionar todas las filas"
                       />
                     ) : (
                       flexRender(
@@ -232,7 +232,7 @@ export function DataTable<TData extends object>({
                                 onCheckedChange={(v) =>
                                   (row as any).toggleSelected?.(!!v)
                                 }
-                                aria-label="Select row"
+                                aria-label="Seleccionar fila"
                               />
                             ) : (
                               flexRender(
@@ -260,7 +260,7 @@ export function DataTable<TData extends object>({
                             onCheckedChange={(v) =>
                               (row as any).toggleSelected?.(!!v)
                             }
-                            aria-label="Select row"
+                            aria-label="Seleccionar fila"
                           />
                         ) : (
                           flexRender(
@@ -277,7 +277,7 @@ export function DataTable<TData extends object>({
               <TableRow>
                 <TableCell colSpan={finalColumns.length}>
                   <div className="py-6 text-center text-sm text-muted-foreground">
-                    No results.
+                    Sin resultados.
                   </div>
                 </TableCell>
               </TableRow>
@@ -288,11 +288,11 @@ export function DataTable<TData extends object>({
         {enablePagination && (
           <div className="mt-4 flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              Page {table.getState().pagination.pageIndex + 1} of{" "}
+              Página {table.getState().pagination.pageIndex + 1} de{" "}
               {table.getPageCount()}
             </div>
             <div className="flex items-center gap-2">
-              <label className="text-sm text-muted-foreground">Rows:</label>
+              <label className="text-sm text-muted-foreground">Filas:</label>
               <select
                 className="rounded-2xl border border-input bg-input/30 px-2 py-1 text-sm"
                 value={(
@@ -313,7 +313,7 @@ export function DataTable<TData extends object>({
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
-                Prev
+                Anterior
               </Button>
               <Button
                 variant="outline"
@@ -321,7 +321,7 @@ export function DataTable<TData extends object>({
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
               >
-                Next
+                Siguiente
               </Button>
             </div>
           </div>

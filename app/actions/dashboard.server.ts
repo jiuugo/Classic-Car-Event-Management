@@ -4,12 +4,16 @@ import prisma from "@/lib/prisma"
 import { mapPrismaError } from "@/lib/errors"
 
 export type DashboardStats = {
-  totalParticipants: number
-  totalVehicles: number
+  /** Participants with at least one PAID registration */
+  confirmedParticipants: number
+  /** Vehicles linked to a PAID registration item */
+  confirmedVehicles: number
   totalRevenue: number
   liveAttendanceRate: number
+  /** Checked-in vehicles (from PAID registrations only) */
   checkedInVehicles: number
-  totalRegistrationItems: number
+  /** Total vehicles expected (from PAID registrations only) */
+  expectedVehicles: number
   registrationsByStatus: {
     PENDING: number
     PAID: number
@@ -32,11 +36,15 @@ export async function getDashboardStats(): Promise<
   { success: true; data: DashboardStats } | { success: false; error: string }
 > {
   try {
+    const paidFilter = {
+      registration: { status: "PAID" as const },
+    }
+
     // Run all aggregate queries in parallel
     const [
-      totalParticipants,
-      totalVehicles,
-      totalRegistrationItems,
+      confirmedParticipants,
+      confirmedVehicles,
+      expectedVehicles,
       checkedInItems,
       revenueResult,
       pendingRegs,
@@ -46,11 +54,30 @@ export async function getDashboardStats(): Promise<
       failedPayments,
       recentRegs,
     ] = await Promise.all([
-      prisma.participant.count(),
-      prisma.vehicle.count(),
-      prisma.registrationItem.count(),
+      // Participants with at least one PAID registration
+      prisma.participant.count({
+        where: {
+          registrations: { some: { status: "PAID" } },
+        },
+      }),
+      // Distinct vehicles linked through a PAID registration item
+      prisma.vehicle.count({
+        where: {
+          registration_item: {
+            is: paidFilter,
+          },
+        },
+      }),
+      // Registration items from PAID registrations only
       prisma.registrationItem.count({
-        where: { checkin_date: { not: null } },
+        where: paidFilter,
+      }),
+      // Checked-in items from PAID registrations only
+      prisma.registrationItem.count({
+        where: {
+          ...paidFilter,
+          checkin_date: { not: null },
+        },
       }),
       prisma.payment.aggregate({
         _sum: { amount: true },
@@ -73,17 +100,17 @@ export async function getDashboardStats(): Promise<
 
     const totalRevenue = Number(revenueResult._sum.amount ?? 0)
     const liveAttendanceRate =
-      totalRegistrationItems > 0
-        ? Math.round((checkedInItems / totalRegistrationItems) * 100)
+      expectedVehicles > 0
+        ? Math.round((checkedInItems / expectedVehicles) * 100)
         : 0
 
     const data: DashboardStats = {
-      totalParticipants,
-      totalVehicles,
+      confirmedParticipants,
+      confirmedVehicles,
       totalRevenue,
       liveAttendanceRate,
       checkedInVehicles: checkedInItems,
-      totalRegistrationItems,
+      expectedVehicles,
       registrationsByStatus: {
         PENDING: pendingRegs,
         PAID: paidRegs,

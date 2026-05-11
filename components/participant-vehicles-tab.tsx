@@ -68,7 +68,7 @@ export default function ParticipantVehiclesTab({
 
   const handleAction = () => {
     if (selectedCount === 0) {
-      toast.error("Select at least one item.")
+      toast.error("Selecciona al menos un elemento.")
       return
     }
 
@@ -84,7 +84,7 @@ export default function ParticipantVehiclesTab({
 
     if (selectedCount > 5) {
       const confirmed = confirm(
-        `You are about to ${mode === "mark" ? "mark" : mode === "undo" ? "undo" : "toggle"} ${selectedCount} items. Continue?`
+        `Estás a punto de ${mode === "mark" ? "marcar" : mode === "undo" ? "deshacer" : "alternar"} ${selectedCount} elementos. ¿Continuar?`
       )
       if (!confirmed) return
     }
@@ -97,12 +97,12 @@ export default function ParticipantVehiclesTab({
         })
 
         if (res && (res as any).success) {
-          const msg = `${(res as any).updatedCount ?? selectedCount} item(s) updated.`
+          const msg = `${(res as any).updatedCount ?? selectedCount} elemento(s) actualizado(s).`
           toast.success(msg)
           clearSelection()
           router.refresh()
         } else {
-          const err = ((res as any)?.error as string) ?? "Unknown error"
+          const err = ((res as any)?.error as string) ?? "Error desconocido"
           toast.error(err)
         }
       } catch (err: any) {
@@ -112,18 +112,18 @@ export default function ParticipantVehiclesTab({
   }
 
   const actionLabel = (() => {
-    if (selectedCount === 0) return "Select items"
+    if (selectedCount === 0) return "Seleccionar elementos"
     const selectedItems = vehicles
       .map((v) => vehicleItemMap.get(v.id))
       .filter(
         (item): item is NonNullable<typeof item> => !!item && selected[item.id]
       )
-    if (selectedItems.length === 0) return "Select items"
+    if (selectedItems.length === 0) return "Seleccionar elementos"
     const allChecked = selectedItems.every((it) => !!it.checkin_date)
     const allUnchecked = selectedItems.every((it) => !it.checkin_date)
-    if (allUnchecked) return "Mark selected as checked in"
-    if (allChecked) return "Undo check-in for selected"
-    return "Toggle check-in for selected"
+    if (allUnchecked) return "Marcar como registrados"
+    if (allChecked) return "Deshacer registro de seleccionados"
+    return "Alternar registro de seleccionados"
   })()
 
   if (vehicles.length === 0) {
@@ -131,7 +131,7 @@ export default function ParticipantVehiclesTab({
       <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed py-12 text-center">
         <CarIcon className="size-10 text-muted-foreground/50" />
         <p className="text-sm text-muted-foreground">
-          No vehicles registered for this participant.
+          No hay vehículos registrados para este participante.
         </p>
       </div>
     )
@@ -140,19 +140,19 @@ export default function ParticipantVehiclesTab({
   return (
     <div className="flex flex-col gap-4">
       {/* Toolbar */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-sm font-medium text-muted-foreground">
-          Registered Vehicles
+          Vehículos Registrados
         </h3>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={selectAll}>
-            Select all
+            Seleccionar todos
           </Button>
           <Button variant="outline" size="sm" onClick={clearSelection}>
-            Clear
+            Limpiar
           </Button>
           <span className="text-sm text-muted-foreground">
-            {vehicles.length} item{vehicles.length !== 1 ? "s" : ""}
+            {vehicles.length} vehículo{vehicles.length !== 1 ? "s" : ""}
           </span>
         </div>
       </div>
@@ -182,7 +182,7 @@ export default function ParticipantVehiclesTab({
                   </div>
                   <div className="text-xs text-muted-foreground">
                     {vehicle.license_plate}
-                    {item ? ` · Bib: ${item.entry_number ?? "—"}` : ""}
+                    {item ? ` · Dorsal: ${item.entry_number ?? "—"}` : ""}
                   </div>
                 </div>
               </div>
@@ -191,9 +191,9 @@ export default function ParticipantVehiclesTab({
                 {item ? (
                   item.registrationStatus === "PAID" ? (
                     item.checkin_date ? (
-                      <Badge variant="default">Present</Badge>
+                      <Badge variant="default">Presente</Badge>
                     ) : (
-                      <Badge variant="outline">Not present</Badge>
+                      <Badge variant="outline">Ausente</Badge>
                     )
                   ) : (
                     <Badge variant="secondary">
@@ -210,7 +210,7 @@ export default function ParticipantVehiclesTab({
                 <Link
                   href={`/dashboard/vehicles?q=${encodeURIComponent(vehicle.license_plate)}`}
                   className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                  title="View in Vehicle Fleet"
+                  title="Ver en flota de vehículos"
                 >
                   <ArrowSquareOutIcon className="size-4" />
                 </Link>
@@ -222,25 +222,27 @@ export default function ParticipantVehiclesTab({
 
       {/* Bottom action bar */}
       <div className="sticky bottom-0 mt-2 border-t bg-background p-4">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <span className="text-sm text-muted-foreground">
-            {selectedCount} selected
+            {selectedCount} seleccionados
           </span>
-          <div className="ml-auto flex gap-2">
+          <div className="flex w-full flex-col gap-2 sm:ml-auto sm:w-auto sm:flex-row">
             <Button
               variant="ghost"
               size="sm"
               onClick={clearSelection}
               disabled={selectedCount === 0}
+              className="w-full sm:w-auto"
             >
-              Clear
+              Limpiar
             </Button>
             <Button
               onClick={handleAction}
               disabled={isPending || selectedCount === 0}
               variant={selectedCount === 0 ? "outline" : "default"}
+              className="w-full sm:w-auto"
             >
-              {isPending ? "Processing..." : actionLabel}
+              {isPending ? "Procesando..." : actionLabel}
             </Button>
           </div>
         </div>
