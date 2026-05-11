@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useMemo, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -699,9 +700,13 @@ export default function InscriptionForm() {
                   className="cursor-pointer text-sm leading-snug text-muted-foreground"
                 >
                   Acepto los{" "}
-                  <span className="font-medium text-foreground underline underline-offset-2">
+                  <Link
+                    href="/terminos"
+                    target="_blank"
+                    className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
+                  >
                     términos y condiciones
-                  </span>{" "}
+                  </Link>{" "}
                   del evento*
                 </label>
               </div>
